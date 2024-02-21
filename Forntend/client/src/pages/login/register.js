@@ -239,20 +239,19 @@ const Register = () => {
                             <input className="birthday" type="date" id="birthday" name="birthday" onChange={(e) => setHBD(e.target.value)} required />
                             <select id="gender" name="gender" className="selectGender" defaultValue="" required>
                                         <option value="" disabled>Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
+                                        <option value="true">Male</option>
+                                        <option value="false">Female</option>
                             </select>
                         </div>
                         <div className="form__groupF field">
                             {governorates && 
                             <select id="city" name="city" className="selectGov" defaultValue="" onChange={(e) => setSelectedGovernorate(e.target.value)} required>
-                                <option value="" disabled>Select a City</option>
+                                <option value="" disabled>Select Your Governorate</option>
                                 <Governorates governorates={governorates} />
                             </select>}
                             {areas && 
                             <select id="area" name="area" className="selectArea" defaultValue="" onChange={(e) => setSelectedArea(e.target.value)} required>
-                                <option value="" disabled>Select an Area</option>
+                                <option value="" disabled>Select Your Area</option>
                                 <Areas areas={areas} />
                             </select>}
                         </div>

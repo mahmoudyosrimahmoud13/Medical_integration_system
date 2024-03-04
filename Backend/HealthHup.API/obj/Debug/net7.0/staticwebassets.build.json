@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "Hash": "+GbOwBGd6VEGiIZxoNfQjt5bBqi6YMRF0V7gK4pnyVs=",
+  "Source": "HealthHup.API",
+  "BasePath": "_content/HealthHup.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "HealthHup.API\\wwwroot",
+      "Source": "HealthHup.API",
+      "ContentRoot": "E:\\Medical_integration_system\\Backend\\HealthHup.API\\wwwroot\\",
+      "BasePath": "_content/HealthHup.API",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "E:\\Medical_integration_system\\Backend\\HealthHup.API\\wwwroot\\Image\\User\\3c920ba0-9980-4656-9490-e9b14c4e9203.webp",
+      "SourceId": "HealthHup.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\Medical_integration_system\\Backend\\HealthHup.API\\wwwroot\\",
+      "BasePath": "_content/HealthHup.API",
+      "RelativePath": "Image/User/3c920ba0-9980-4656-9490-e9b14c4e9203.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Image\\User\\3c920ba0-9980-4656-9490-e9b14c4e9203.webp"
+    },
+    {
+      "Identity": "E:\\Medical_integration_system\\Backend\\HealthHup.API\\wwwroot\\Image\\User\\9aa29773-5456-40af-80a7-94a9e094c219.webp",
+      "SourceId": "HealthHup.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\Medical_integration_system\\Backend\\HealthHup.API\\wwwroot\\",
+      "BasePath": "_content/HealthHup.API",
+      "RelativePath": "Image/User/9aa29773-5456-40af-80a7-94a9e094c219.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Image\\User\\9aa29773-5456-40af-80a7-94a9e094c219.webp"
+    }
+  ]
+}

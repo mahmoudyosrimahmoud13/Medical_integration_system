@@ -75,7 +75,6 @@ const Register = () => {
                 else if(res.ok){
                     if(errorData.message === "Go To Login Page"){
                         sp.style.visibility = "hidden";
-                        // setErrorMsg(errorData);
                         window.location.reload();
                     }
                     else{

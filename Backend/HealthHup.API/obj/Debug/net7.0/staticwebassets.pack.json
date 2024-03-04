@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "E:\\Medical_integration_system\\Backend\\HealthHup.API\\wwwroot\\Image\\User\\3c920ba0-9980-4656-9490-e9b14c4e9203.webp",
+      "PackagePath": "staticwebassets\\Image\\User\\3c920ba0-9980-4656-9490-e9b14c4e9203.webp"
+    },
+    {
+      "Id": "E:\\Medical_integration_system\\Backend\\HealthHup.API\\wwwroot\\Image\\User\\9aa29773-5456-40af-80a7-94a9e094c219.webp",
+      "PackagePath": "staticwebassets\\Image\\User\\9aa29773-5456-40af-80a7-94a9e094c219.webp"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.HealthHup.API.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.build.HealthHup.API.props",
+      "PackagePath": "build\\HealthHup.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.HealthHup.API.props",
+      "PackagePath": "buildMultiTargeting\\HealthHup.API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.buildTransitive.HealthHup.API.props",
+      "PackagePath": "buildTransitive\\HealthHup.API.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

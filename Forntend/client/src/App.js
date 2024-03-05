@@ -3,7 +3,7 @@ import './App.css';
 import Home from './pages/home';
 import Login from './pages/login/login';
 import Profile from './pages/profile';
-import Modal from './pages/Doctor/form';
+import BeDoctor from './pages/Doctor/form';
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/profile' element={<Profile />} />
-        <Route path='/modal' element={<Modal />} />
+        <Route path='/bedoctor' element={<BeDoctor />} />
       </Routes>
       </div>
     </Router>

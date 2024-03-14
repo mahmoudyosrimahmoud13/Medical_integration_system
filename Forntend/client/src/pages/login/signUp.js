@@ -5,7 +5,7 @@ import GovernoratesProps from "../../components/login/governoratesProps";
 import AreasProps from "../../components/login/areasProps";
 import FetchHook from "../../components/login/fetchHook";
 
-const Register = () => {
+const SignUp = () => {
     const [selectedGovernorate, setSelectedGovernorate] = useState('');
 
 
@@ -69,13 +69,25 @@ const Register = () => {
 
                 const errorData = await res.json();
                 if (!res.ok) {
-                    sp.style.visibility = "visible";
-                    throw new Error("Must fill inputs");
+                    // if(errorData.isLogin === "false"){
+                        sp.style.visibility = "visible";
+                        throw new Error("Must fill inputs");
+                    // }
+                    
                 }
                 else if(res.ok){
                     if(errorData.message === "Go To Login Page"){
-                        sp.style.visibility = "hidden";
-                        window.location.reload();
+                        let notif = document.getElementById('notif');
+                        let prog = document.getElementById('prog');
+                        notif.style.animation= 'fade-in 3s linear';
+                        prog.style.animation = 'progress 2.5s 0.3s linear';
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 3000);
+                    }
+                    else if(errorData.isLogin === false){
+                        sp.style.visibility = "visible";
+                        throw new Error(errorData.message);
                     }
                     else{
                         sp.style.visibility = "visible";
@@ -100,7 +112,7 @@ const Register = () => {
                         <h1>create a new account</h1>
                         <div className="form__group field">
                             <input type="text" name="UNR" className="form__field3" placeholder="Username" onChange={(e) => setValue3(e.target.value)} />
-                            <label htmlFor="unr" className="form__label3">username</label>
+                            <label htmlFor="unr" className="form__label3">full name</label>
                         </div>
                         <div className="form__group field">
                             <input type="email" name="EM" className="form__field4" placeholder="Email" onChange={(e) => setValue4(e.target.value)} />
@@ -144,7 +156,7 @@ const Register = () => {
                             <p id="errMsg"><span id="sp2">* </span>{errorMsg}</p>
                         </div>
                         <input type="submit" value="Register" id="r" className="send" />
-                        <p className="signup" id="already">already have an account ? <a href="#5545" onClick={ () => toggleForm()}>login</a></p> 
+                        <p className="signup" id="already">already have an account ? <a href="#login" onClick={ () => toggleForm()}>login</a></p> 
                     </form>
                 </div>
                 <div className="imgBx"><img src={Image} alt="not found" /></div>
@@ -153,4 +165,4 @@ const Register = () => {
     );
 }
 
-export default Register;
+export default SignUp;

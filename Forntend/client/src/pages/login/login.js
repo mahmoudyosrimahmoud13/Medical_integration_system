@@ -1,13 +1,16 @@
 import SignIn from "./signIn";
-import Register from "./register";
+import SignUp from "./signUp";
+import SuccessfullyMsg from "../../components/success";
+
 
 const Login = () => {
     return (
         <section className="login">
             <div className="container">
                 <SignIn />
-                <Register />
+                <SignUp />
             </div>
+            <SuccessfullyMsg />
         </section>
     );
 }

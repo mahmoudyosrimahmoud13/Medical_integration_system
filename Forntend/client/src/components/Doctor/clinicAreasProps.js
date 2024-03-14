@@ -3,7 +3,7 @@ const ClinicAreasProps = (props) => {
     return (
         <>
             {areas.map(area => (
-                <option key={area.id}>{area.key}</option>
+                <option value={area.id} key={area.id}>{area.key}</option>
             ))}
         </>
     );

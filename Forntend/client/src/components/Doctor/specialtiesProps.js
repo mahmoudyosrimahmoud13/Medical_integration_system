@@ -3,7 +3,7 @@ const SpecialtiesProps = (props) => {
     return (
         <>
             {specialties.map(specialty => (
-                <option key={specialty.id}>{specialty.key}</option>
+                <option value={specialty.id} key={specialty.id}>{specialty.name}</option>
             ))}
         </>
     );

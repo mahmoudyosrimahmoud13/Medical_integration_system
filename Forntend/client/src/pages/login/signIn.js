@@ -97,7 +97,7 @@ const SignIn = () => {
                         setErrorMsg(null);
                         
                         
-                        navigate('/profile');
+                        navigate('/settings');
                     }
                     else{
                         sp.style.visibility = "visible";
@@ -122,7 +122,7 @@ const SignIn = () => {
                         <h1>log in</h1>
                         <div className="form__group field">
                             <input type="text" name="UN" className="form__field" placeholder="Username or Email" onChange={(e) => setValue(e.target.value)} />
-                            <label htmlFor="un" className="form__label">username or email</label>
+                            <label htmlFor="un" className="form__label">email</label>
                         </div>
                         <div className="form__group field">
                             <input type="password" name="PSS" className="form__field2" placeholder="Username or Email" onChange={(e) => setValue2(e.target.value)} />
@@ -132,7 +132,7 @@ const SignIn = () => {
                             <p id="errMsg"><span id="sp">* </span>{errorMsg}</p>
                         </div>
                         <input type="submit" value="Login" id="l" className="send" />
-                        <p className="signup">don't have an account ? <a href="#111" id="reg" onClick={() => toggleForm()}>register</a></p>
+                        <p className="signup">don't have an account ? <a href="#register" id="reg" onClick={() => toggleForm()}>register</a></p>
                     </form>
                 </div>
             </div>

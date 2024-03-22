@@ -63,7 +63,7 @@
 
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { Button, Eventcalendar, formatDate, Popup, setOptions, Toast } from '@mobiscroll/react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 
 setOptions({
   theme: 'ios',
@@ -303,7 +303,41 @@ const defaultAppointments = [
   },
 ];
 
+
+    
+
 const Calendar = () => {
+//   const [events, setEvents] = useState([]);
+
+//     useEffect(() => {
+//         const fetchEvents = async () => {
+//             try {
+//                 const response = await fetch('https://api-generator.retool.com/ePa8Iy/appointments');
+//                 if (!response.ok) {
+//                     throw new Error('Failed to fetch events');
+//                 }
+//                 const data = await response.json();
+//                 setEvents(data);
+//             } catch (error) {
+//                 console.error('Error fetching events:', error);
+//             }
+//         };
+
+//         fetchEvents();
+//     }, []);
+// const mappedAppointments = useMemo(() => {
+
+//   return events.map(appointment => ({
+//     name: appointment.title,
+//       age: appointment.age,
+//       start: appointment.start,
+//       end: appointment.end,
+//       confirmed: appointment.confirmed,
+//       reason: appointment.reason,
+//       location: appointment.location,
+//       color: appointment.color,
+//   }))
+// }, [events]);
   const [appointments, setAppointments] = useState(defaultAppointments);
   const [isOpen, setOpen] = useState(false);
   const [anchor, setAnchor] = useState(null);
@@ -329,15 +363,15 @@ const Calendar = () => {
 
     setCurrentEvent(event);
 
-    if (event.confirmed) {
-      setStatus('Confirmed');
-      setButtonText('Cancel appointment');
-      setButtonType('warning');
-    } else {
-      setStatus('Canceled');
-      setButtonText('Confirm appointment');
-      setButtonType('success');
-    }
+    // if (event.confirmed) {
+    //   setStatus('Confirmed');
+    //   setButtonText('Cancel appointment');
+    //   setButtonType('warning');
+    // } else {
+    //   setStatus('Canceled');
+    //   setButtonText('Confirm appointment');
+    //   setButtonType('success');
+    // }
 
     setBgColor(event.color);
     setInfo(event.title + ', Age: ' + event.age);
@@ -389,18 +423,18 @@ const Calendar = () => {
     setToastOpen(true);
   }, [appointments, currentEvent]);
 
-  const viewFile = useCallback(() => {
-    setOpen(false);
-    setToastMessage('View file');
-    setToastOpen(true);
-  }, []);
+  // const viewFile = useCallback(() => {
+  //   setOpen(false);
+  //   setToastMessage('View file');
+  //   setToastOpen(true);
+  // }, []);
 
-  const deleteApp = useCallback(() => {
-    setAppointments(appointments.filter((item) => item.id !== currentEvent.id));
-    setOpen(false);
-    setToastMessage('Appointment deleted');
-    setToastOpen(true);
-  }, [appointments, currentEvent]);
+  // const deleteApp = useCallback(() => {
+  //   setAppointments(appointments.filter((item) => item.id !== currentEvent.id));
+  //   setOpen(false);
+  //   setToastMessage('Appointment deleted');
+  //   setToastOpen(true);
+  // }, [appointments, currentEvent]);
 
   return (
     <>
@@ -447,12 +481,12 @@ const Calendar = () => {
             <div className="md-tooltip-title">
               Location: <span className="md-tooltip-location md-tooltip-text">{location}</span>
             </div>
-            <Button color="secondary" className="md-tooltip-view-button" onClick={viewFile}>
+            {/* <Button color="secondary" className="md-tooltip-view-button" onClick={viewFile}>
               View patient file
             </Button>
             <Button color="danger" variant="outline" className="md-tooltip-delete-button" onClick={deleteApp}>
               Delete appointment
-            </Button>
+            </Button> */}
           </div>
         </div>
       </Popup>

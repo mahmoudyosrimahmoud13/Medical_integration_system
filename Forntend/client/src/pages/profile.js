@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 
 const Settings = () => {
     const userToken = localStorage.getItem('usertoken');
-    // const [convertToken, setConvertToken] = useState(JSON.parse(userToken));
     const convertToken = JSON.parse(userToken);
     const [user, setData] = useState('');
     const [imgSrc, setSelectedImage] = useState('');

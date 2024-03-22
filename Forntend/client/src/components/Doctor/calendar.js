@@ -307,38 +307,37 @@ const defaultAppointments = [
     
 
 const Calendar = () => {
-//   const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState([]);
 
-//     useEffect(() => {
-//         const fetchEvents = async () => {
-//             try {
-//                 const response = await fetch('https://api-generator.retool.com/ePa8Iy/appointments');
-//                 if (!response.ok) {
-//                     throw new Error('Failed to fetch events');
-//                 }
-//                 const data = await response.json();
-//                 setEvents(data);
-//             } catch (error) {
-//                 console.error('Error fetching events:', error);
-//             }
-//         };
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const response = await fetch('http://localhost:5225/Hospital/Doctor/BookedAppointments');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch events');
+                }
+                const data = await response.json();
+                setEvents(data);
+            } catch (error) {
+                console.error('Error fetching events:', error);
+            }
+        };
 
-//         fetchEvents();
-//     }, []);
-// const mappedAppointments = useMemo(() => {
+        fetchEvents();
+    }, []);
+const mappedAppointments = useMemo(() => {
 
-//   return events.map(appointment => ({
-//     name: appointment.title,
-//       age: appointment.age,
-//       start: appointment.start,
-//       end: appointment.end,
-//       confirmed: appointment.confirmed,
-//       reason: appointment.reason,
-//       location: appointment.location,
-//       color: appointment.color,
-//   }))
-// }, [events]);
-  const [appointments, setAppointments] = useState(defaultAppointments);
+  return events.map(appointment => ({
+      name: appointment.title,
+      // age: appointment.age,
+      start: appointment.start,
+      end: appointment.end,
+      reason: appointment.reason,
+      location: appointment.location,
+      color: appointment.color,
+  }))
+}, [events]);
+  const [appointments, setAppointments] = useState(events);
   const [isOpen, setOpen] = useState(false);
   const [anchor, setAnchor] = useState(null);
   const [currentEvent, setCurrentEvent] = useState(null);

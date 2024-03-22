@@ -17,6 +17,7 @@ const optionsLine = {
     legend: { position: 'bottom' },
     colors: ['#87CEEB'],
 };
+
 const dataPie = [
     ['Gender', 'Population'],
     ['Men', 45],

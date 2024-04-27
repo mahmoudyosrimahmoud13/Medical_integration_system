@@ -62,7 +62,7 @@
 // export default Calendar;
 
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
-import { Button, Eventcalendar, formatDate, Popup, setOptions, Toast } from '@mobiscroll/react';
+import { Eventcalendar, Popup, setOptions, Toast } from '@mobiscroll/react';
 import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
 
 setOptions({
@@ -307,12 +307,19 @@ const defaultAppointments = [
     
 
 const Calendar = () => {
+  const userToken = localStorage.getItem('usertoken');
+  const convertToken = JSON.parse(userToken);
   const [events, setEvents] = useState([]);
 
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await fetch('http://localhost:5225/Hospital/Doctor/BookedAppointments');
+                const response = await fetch('http://localhost:5225/Hospital/Doctor/BookedAppointments', {
+                  method: "GET",
+                  headers: {
+                      'Authorization': `Bearer ${convertToken.token}`
+                  },
+              });
                 if (!response.ok) {
                     throw new Error('Failed to fetch events');
                 }
@@ -328,26 +335,28 @@ const Calendar = () => {
 const mappedAppointments = useMemo(() => {
 
   return events.map(appointment => ({
-      name: appointment.title,
+      // name: appointment.patientName,
       // age: appointment.age,
-      start: appointment.start,
-      end: appointment.end,
-      reason: appointment.reason,
-      location: appointment.location,
-      color: appointment.color,
+      start: appointment.From,
+      day: appointment.day,
+      // reason: appointment.reason,
+      // location: appointment.location,
+      color: '#143F6B',
   }))
 }, [events]);
   const [appointments, setAppointments] = useState(events);
   const [isOpen, setOpen] = useState(false);
   const [anchor, setAnchor] = useState(null);
   const [currentEvent, setCurrentEvent] = useState(null);
-  const [info, setInfo] = useState('');
+  // const [info, setInfo] = useState('');
   const [time, setTime] = useState('');
-  const [status, setStatus] = useState('');
-  const [reason, setReason] = useState('');
-  const [location, setLocation] = useState('');
-  const [buttonText, setButtonText] = useState('');
-  const [buttonType, setButtonType] = useState('');
+  const [day, setDay] = useState('');
+
+  // const [status, setStatus] = useState('');
+  // const [reason, setReason] = useState('');
+  // const [location, setLocation] = useState('');
+  // const [buttonText, setButtonText] = useState('');
+  // const [buttonType, setButtonType] = useState('');
   const [bgColor, setBgColor] = useState('');
   const [isToastOpen, setToastOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -358,7 +367,7 @@ const mappedAppointments = useMemo(() => {
 
   const handleEventHoverIn = useCallback((args) => {
     const event = args.event;
-    const time = formatDate('hh:mm A', new Date(event.start)) + ' - ' + formatDate('hh:mm A', new Date(event.end));
+    // const time = formatDate('hh:mm A', new Date(event.start)) + ' - ' + formatDate('hh:mm A', new Date(event.end));
 
     setCurrentEvent(event);
 
@@ -373,10 +382,11 @@ const mappedAppointments = useMemo(() => {
     // }
 
     setBgColor(event.color);
-    setInfo(event.title + ', Age: ' + event.age);
-    setTime(time);
-    setReason(event.reason);
-    setLocation(event.location);
+    setTime(event.from);
+    setDay(event.day);
+
+    // setReason(event.reason);
+    // setLocation(event.location);
 
     if (timerRef.current) {
       clearTimeout(timerRef.current);
@@ -412,15 +422,15 @@ const mappedAppointments = useMemo(() => {
     setToastOpen(false);
   }, []);
 
-  const setStatusButton = useCallback(() => {
-    setOpen(false);
-    const index = appointments.findIndex((item) => item.id === currentEvent.id);
-    const newApp = [...appointments];
-    newApp[index].confirmed = !appointments[index].confirmed;
-    setAppointments(newApp);
-    setToastMessage('Appointment ' + (currentEvent.confirmed ? 'confirmed' : 'canceled'));
-    setToastOpen(true);
-  }, [appointments, currentEvent]);
+  // const setStatusButton = useCallback(() => {
+  //   setOpen(false);
+  //   const index = appointments.findIndex((item) => item.id === currentEvent.id);
+  //   const newApp = [...appointments];
+  //   newApp[index].confirmed = !appointments[index].confirmed;
+  //   setAppointments(newApp);
+  //   setToastMessage('Appointment ' + (currentEvent.confirmed ? 'confirmed' : 'canceled'));
+  //   setToastOpen(true);
+  // }, [appointments, currentEvent]);
 
   // const viewFile = useCallback(() => {
   //   setOpen(false);
@@ -464,21 +474,21 @@ const mappedAppointments = useMemo(() => {
       >
         <div className='pop' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
           <div className="md-tooltip-header" style={{ backgroundColor: '#87CEEB' }}>
-            <span className="md-tooltip-name-age">{info}</span>
+            <span className="md-tooltip-name-age">{day}</span>
             <span className="md-tooltip-time">{time}</span>
           </div>
           <div className="md-tooltip-info">
             <div className="md-tooltip-title">
-              Status: <span className="md-tooltip-status md-tooltip-text">{status}</span>
-              <Button color={buttonType} variant="outline" className="md-tooltip-status-button" onClick={setStatusButton}>
+              Status: <span className="md-tooltip-status md-tooltip-text"></span>
+              {/* <Button color={buttonType} variant="outline" className="md-tooltip-status-button" onClick={setStatusButton}>
                 {buttonText}
-              </Button>
+              </Button> */}
             </div>
             <div className="md-tooltip-title">
-              Reason for visit: <span className="md-tooltip-reason md-tooltip-text">{reason}</span>
+              {/* Reason for visit: <span className="md-tooltip-reason md-tooltip-text">{reason}</span> */}
             </div>
             <div className="md-tooltip-title">
-              Location: <span className="md-tooltip-location md-tooltip-text">{location}</span>
+              {/* Location: <span className="md-tooltip-location md-tooltip-text">{location}</span> */}
             </div>
             {/* <Button color="secondary" className="md-tooltip-view-button" onClick={viewFile}>
               View patient file

@@ -3,22 +3,78 @@ import femaleImage from '../../photos/Doctor-dp-Girl-doctor-removebg-preview.png
 import notifIcon from '../../photos/bell.png';
 import { useState, useEffect } from 'react';
 import Charts from '../../components/Doctor/charts';
-import icon from '../../photos/group.png';
-import icon2 from '../../photos/stethoscope.png';
-import icon3 from '../../photos/heart.png';
 import Calendar from '../../components/Doctor/calendar';
 import Navbar from '../../components/Doctor/navbar';
+import Reports from '../../components/Doctor/roports';
+import Dates from '../../components/Doctor/doctorDates';
+
 
 
 const Doctor = () => {
+    
     const userToken = localStorage.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
     const [user, setData] = useState('');
-    const url = `http://localhost:5225/Auth/GetUser?Email=${convertToken.email}`;
+    const [appointments, setAppointments] = useState('0');
+    const [specialites, setSpecialites] = useState('');
+
+
     
+    const urlUser = `http://localhost:5225/Auth/GetUser?Email=${convertToken.email}`;
+    
+
+    const urlAppointments = `http://localhost:5225/Hospital/Doctor/BookedAppointments`;
+
+    const urlDoctor = `http://localhost:5225/Hospital/Doctor/GetDoctor?Id=9e721d6d-6e23-4329-86cf-cac01acb9185`;
+
+    const getDoctorDB = async () => {
+        try {
+                const res = await fetch(urlDoctor, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${convertToken.token}`
+                    },
+                });
+                if (!res.ok) {
+                    throw new Error("no appointments");
+                }
+                const data = await res.json();
+                setSpecialites(data);
+                if(data.length < 1){
+                    setAppointments('0');
+                }
+            }
+            catch (error) {
+                throw new Error('no data');  
+            }
+    };
+
+    const getNumberAppointments = async () => {
+        try {
+                const res = await fetch(urlAppointments, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${convertToken.token}`
+                    },
+                });
+                if (!res.ok) {
+                    throw new Error("no appointments");
+                }
+                const data = await res.json();
+                setAppointments(data);
+                if(data.length < 1){
+                    setAppointments('0');
+                }
+            }
+            catch (error) {
+                throw new Error('no data');  
+            }
+    };
+
+
     const getUserData = async () => {
         try {
-                const res = await fetch(url, {
+                const res = await fetch(urlUser, {
                     method: "GET",
                     headers: {
                         'Authorization': `Bearer ${convertToken.token}`
@@ -36,7 +92,9 @@ const Doctor = () => {
     };
     useEffect(() => {
         getUserData();
-    }, [url]);
+        getNumberAppointments();
+        getDoctorDB();
+    }, [urlUser, urlAppointments, urlDoctor]);
 
 
     return(
@@ -60,37 +118,14 @@ const Doctor = () => {
                             <div className='doctorData'>
                                 <p>Welcome back,</p>
                                 <h1>dr. {user.name}</h1>
-                                <p>specialites</p>
-                                <p>you have total <span>appointments</span> today!</p>
+                                {specialites && <p>{specialites.departmentName}</p>}
+                                <p>you have total {appointments && <span>{appointments} appointments</span>} today!</p>
                             </div>
                             {convertToken.gender ? <img src={doctorImage} alt='not found' /> : 
                             <img src={femaleImage} alt='not found' />}
                         </div>
                         <div className='reports'>
-                            <h3>reports</h3>
-                            <div className='numbers'>
-                                <div className='number'>
-                                    <div>
-                                        <img src={icon} alt='not found' />
-                                        <p>patients</p>
-                                    </div>
-                                    <h1>466</h1>
-                                </div>
-                                <div className='number'>
-                                    <div>
-                                        <img src={icon2} alt='not found' />
-                                        <p>consultation</p>
-                                    </div>
-                                    <h1>210</h1>
-                                </div>
-                                <div className='number'>
-                                    <div>
-                                        <img src={icon3} alt='not found' />
-                                        <p>love</p>
-                                    </div>
-                                    <h1>100</h1>
-                                </div>
-                            </div>
+                            <Reports />
                         </div>
                         <div className='charts'>
                             <Charts />
@@ -103,7 +138,9 @@ const Doctor = () => {
                             <Calendar />
                             </div>
                         </div>
-                        <div></div>
+                        <div className='dates'>
+                            <Dates />
+                        </div>
                     </div>
                 </div>
             </div>

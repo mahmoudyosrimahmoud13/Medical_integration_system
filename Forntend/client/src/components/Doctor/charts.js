@@ -1,5 +1,6 @@
 import React from "react";
 import { Chart } from "react-google-charts";
+import { useState, useEffect } from "react";
 
 const dataLine = [
     ['Day', 'Patients'],
@@ -18,20 +19,80 @@ const optionsLine = {
     colors: ['#87CEEB'],
 };
 
-const dataPie = [
-    ['Gender', 'Population'],
-    ['Men', 45],
-    ['Women', 55],
-];
 
-const optionsPie = {
-    title: 'Gender',
-    pieHole: .4,
-    colors: ['#143F6B', '#FF69B4'],
-};
+
+
 
 
 const Charts = () => {
+    const userToken = localStorage.getItem('usertoken');
+    const convertToken = JSON.parse(userToken);
+    // const [data, setData] = useState('');
+    const [dataPie, setData] = useState('');
+    useEffect(() => {
+        const fetchData = async () => {
+        try {
+            const apiUrl = 'http://localhost:5225/Hospital/Doctor/PatientPercentage';
+            const response = await fetch(apiUrl, {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${convertToken.token}`
+                },
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const data = await response.json();
+            if(data.length < 1){
+                const dataPie = [
+                    ['Gender', 'Population'],
+                    ['Men', data],
+                    ['Women', 100-data],
+                ];
+                setData(dataPie);
+            }
+            else if(data === 100){
+                const dataPie = [
+                    ['Gender', 'Population'],
+                    ['Men', data],
+                    ['Women', 100-data],
+                ];
+                setData(dataPie);
+            }
+            
+            else{
+                const dataPie = [
+                    ['Gender', 'Population'],
+                    ['Men', data],
+                    ['Women', 100-data],
+                ];
+                setData(dataPie);
+            }
+    
+            
+        }
+        catch (error) {
+            console.log(error);
+        }
+        };
+    
+        fetchData();
+    }, []);
+
+
+
+
+
+
+    
+
+    const optionsPie = {
+        title: 'Gender',
+        pieHole: .4,
+        colors: ['#143F6B', '#FF69B4'],
+    };
     return (
         <>
             <div className='chart'>

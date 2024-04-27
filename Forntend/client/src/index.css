@@ -728,7 +728,7 @@
 
 
 .notif{
-  position: absolute;
+  position: fixed;
   top: 4px;
   width: max-content;
   border-radius: 6px;
@@ -737,7 +737,7 @@
   transform: translateY(-30px);
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   opacity: 0;
-  visibility: hidden;
+  visibility: hidden;z-index: 999;
 }
 .notifBody{
   display: flex;
@@ -873,8 +873,71 @@
 
 .calendar{
   width: 100%;
-  /* height: 87%; */
   border-radius: 10px;
+}
+.dates{
+  width: 100%;
+  margin-top: 20%;
+}
+.contDP{
+  border-radius: 10px;
+}
+.dates .dateP{
+  border-radius: 10px;
+}
+.dates button {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: white;
+  background-color: #35589A;
+  padding: 1em 2em;
+  border: none;
+  border-radius: .6rem;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  margin-left: 70%;
+}
+
+.dates button span:not(:nth-child(6)) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 30px;
+  width: 30px;
+  background-color: #000;
+  border-radius: 50%;
+  transition: .6s ease;
+}
+
+.dates button span:nth-child(6) {
+  position: relative;
+}
+
+.dates button span:nth-child(1) {
+  transform: translate(-3.3em, -4em);
+}
+
+.dates button span:nth-child(2) {
+  transform: translate(-6em, 1.3em);
+}
+
+.dates button span:nth-child(3) {
+  transform: translate(-.2em, 1.8em);
+}
+
+.dates button span:nth-child(4) {
+  transform: translate(3.5em, 1.4em);
+}
+
+.dates button span:nth-child(5) {
+  transform: translate(3.5em, -3.8em);
+}
+
+.dates button:hover span:not(:nth-child(6)) {
+  transform: translate(-50%, -50%) scale(4);
+  transition: 1.5s ease;
 }
 .md-tooltip-header{
   padding: 10px;
@@ -1102,68 +1165,119 @@
 
 
 
-.loader {
-  width: 2.5em;
-  height: 2.5em;
-  transform: rotate(165deg);
-  position: absolute;
-  top: calc(50% - 1.25em);
-  left: calc(50% - 1.25em);
-  z-index: 999;
-  visibility: hidden;
+
+
+/* all doctors */
+
+.home{
+  min-height: 100vh;
+  width: 100%;
+  padding: 0 10%;
+  padding: 10px;
 }
-.loader:before, .loader:after {
-  content: "";
+.home section{
+  width: 100%;
+  position: relative;
+  display: flex;
+}
+.home section .cards {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 5% 10%;
+  position: absolute;
+}
+.home section .cards::before{
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 3px;
+  border-radius: 10px;
+  background-color: #ddd;
+  top: 5%;
+  left: 50%;
+}
+.home section .cards .card{
+  width: 350px;
+  height: 500px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: transform .5s ease;
+}
+.home section .cards .card:nth-child(odd){
+  align-self: flex-start;
+}
+.home section .cards .card:nth-child(even){
+  align-self: flex-end;
+}
+.home section .cards .card .lazy{
+  width: 100%;
+  height: 100%;
+}
+.home section .cards .card img{
+  width: 100%;
+  height: 60%;
+}
+.home section .cards .card:hover{
+  transform: scale(1.1);
+}
+.home section .cards .card .docInf{
+  width: 100%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5%;
+  align-items: center;
+  justify-content: center;
+}
+.home section .cards .card .docInf h1{
+  color: #87cefa;
+}
+.datesInf{
+  display: flex;
+}
+.home section .cards .card .datesInf p{
+  padding: 5px;
+  color: #ccc;
+}
+
+.home .card button {
+  padding: 20px;
+  border: 2px solid #87cefa;
+  position: relative;
+  overflow: hidden;
+  background-color: transparent;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 16px;
+  transition: .3s;
+  z-index: 1;
+  font-family: inherit;
+  color: #87cefa;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.home .card button::before {
+  content: '';
+  width: 0;
+  height: 300%;
   position: absolute;
   top: 50%;
   left: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: #87cefa;
+  transition: .5s ease;
   display: block;
-  width: 0.5em;
-  height: 0.5em;
-  border-radius: 0.25em;
-  transform: translate(-50%, -50%);
-}
-.loader:before {
-  animation: before8 2s infinite;
-}
-.loader:after {
-  animation: after6 2s infinite;
-}
-@keyframes before8 {
-  0% {
-    width: 0.5em;
-    box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
-  }
-  35% {
-    width: 2.5em;
-    box-shadow: 0 -0.5em rgba(225, 20, 98, 0.75), 0 0.5em rgba(111, 202, 220, 0.75);
-  }
-  70% {
-    width: 0.5em;
-    box-shadow: -1em -0.5em rgba(225, 20, 98, 0.75), 1em 0.5em rgba(111, 202, 220, 0.75);
-  }
-  100% {
-    box-shadow: 1em -0.5em rgba(225, 20, 98, 0.75), -1em 0.5em rgba(111, 202, 220, 0.75);
-  }
-}
-@keyframes after6 {
-  0% {
-    height: 0.5em;
-    box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
-  }
-  35% {
-    height: 2.5em;
-    box-shadow: 0.5em 0 rgba(61, 184, 143, 0.75), -0.5em 0 rgba(233, 169, 32, 0.75);
-  }
-  70% {
-    height: 0.5em;
-    box-shadow: 0.5em -1em rgba(61, 184, 143, 0.75), -0.5em 1em rgba(233, 169, 32, 0.75);
-  }
-  100% {
-    box-shadow: 0.5em 1em rgba(61, 184, 143, 0.75), -0.5em -1em rgba(233, 169, 32, 0.75);
-  }
+  z-index: -1;
 }
 
-
-
-
+.home .card button:hover::before {
+  width: 105%;
+}
+.home .card button:hover {
+  color: #111;
+}

@@ -1,0 +1,116 @@
+import 'package:final_project/pages/homepages/models/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class CacheHelper {
+  static late final SharedPreferences _prefs;
+
+  static Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  static Future<bool> clearUserData() async {
+    return _prefs.clear();
+  }
+
+  static Future<void> setIsFavorite(bool value) async {
+    await _prefs.setBool('isFavorite', value);
+  }
+
+  static Future<void> setInCart(int value) async {
+    await _prefs.setInt('inCart', value);
+  }
+
+  ////////////////////////////////////////
+  static Future<void> setLat(String value) async {
+    await _prefs.setString('lat', value);
+  }
+
+  static Future<void> setLng(String value) async {
+    await _prefs.setString('lng', value);
+  }
+
+  static Future<void> setCurrentLocation(String value) async {
+    await _prefs.setString('currentLocation', value);
+  }
+  static Future<void> setLocation(String value) async {
+    await _prefs.setString('location', value);
+  }
+  //////////////
+
+
+  static Future<void> setOnboarding({required bool onBoarding}) async {
+    await _prefs.setBool('onBoarding', onBoarding);
+  }
+
+  static bool? getOnBoarding() {
+    return _prefs.getBool('onBoarding');
+  }
+  static String? getLat() {
+    return _prefs.getString('lat');
+  }
+
+  static String? getLng() {
+    return _prefs.getString('lng');
+  }
+
+  static String? getCurrentLocation() {
+    return _prefs.getString('currentLocation');
+  }
+  static String? getLocation() {
+    return _prefs.getString('location');
+  }
+
+  static Future<void> removeLocation() async {
+    await _prefs.remove('lat');
+    await _prefs.remove('lng');
+    await _prefs.remove('location');
+  }
+
+///////////////////////////////////////////
+  static int? getInCart() {
+    return _prefs.getInt('inCart');
+  }
+
+  static String? getUserToken() {
+    return _prefs.getString('token');
+  }
+
+  static String? getUserImage() {
+    return _prefs.getString('image');
+  }
+
+  static String? getUserName() {
+    return _prefs.getString('fullname');
+  }
+
+  static String? getUserPhone() {
+    return _prefs.getString('phone');
+  }
+  static String? getUserCity() {
+    return _prefs.getString('city');
+  }
+  static int? getUserIsVip() {
+    return _prefs.getInt('isVip');
+  }
+
+  static String? getcityId() {
+    return _prefs.getString('cityId');
+  }
+  static Future<void> saveUserData(UserrData model) async {
+    await _prefs.setString("token", model.token!);
+  
+
+
+
+  }
+
+
+  static Future<void> saveEditData( model) async {
+
+  }
+
+  static bool isAuth() {
+    String? token = _prefs.getString("token");
+    return token != null || (token ?? "").isNotEmpty;
+  }
+}

@@ -1,0 +1,3 @@
+[submodule "Medical_integration_system"]
+	path = Medical_integration_system
+	url = https://github.com/mahmoudyosrimahmoud13/Medical_integration_system.git

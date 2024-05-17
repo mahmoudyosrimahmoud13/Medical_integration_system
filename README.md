@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # final_project
 
 A new Flutter project.
@@ -14,3 +15,7 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+=======
+# Medical_integration_system
+ Graduation project repo.
+>>>>>>> 185c2b69f386bd907f63d9c6745a7955607afa9e

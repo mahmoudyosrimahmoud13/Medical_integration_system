@@ -291,6 +291,7 @@ class _SignupPageState extends State<SignupPage> {
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
+                                
                                 children: [
                                   DropdownButton<bool>(
                                     value: RegisterCubit.get(context).isMale,
@@ -336,26 +337,31 @@ class _SignupPageState extends State<SignupPage> {
                                     }).toList(),
                                   ),
                                   const SizedBox(height: 20),
-                                  DropdownButton<String>(
-                                    value:
-                                        RegisterCubit.get(context).selectedArea,
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        RegisterCubit.get(context)
-                                            .selectedArea = newValue!;
-                                      });
-                                    },
-                                    items: cityAreaMap[selectedCity]!
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                  ),
+                                 
                                 ],
+
                               )),
+                               FadeInUp(
+                                 duration: const Duration(milliseconds: 1400),
+                                 child: DropdownButton<String>(
+                                      value:
+                                          RegisterCubit.get(context).selectedArea,
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          RegisterCubit.get(context)
+                                              .selectedArea = newValue!;
+                                        });
+                                      },
+                                      items: cityAreaMap[selectedCity]!
+                                          .map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
+                               ),
                         ],
                       ),
                       FadeInUp(

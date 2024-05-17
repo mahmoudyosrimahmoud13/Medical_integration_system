@@ -23,6 +23,6 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         title: 'Medical App',
-        home: onboarding ? const AnimatedSplashScreenPage() : const Home());
+        home: onboarding ? const Home() : const AnimatedSplashScreenPage());
   }
 }

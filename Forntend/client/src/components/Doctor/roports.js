@@ -2,10 +2,11 @@ import icon from '../../photos/group.png';
 import icon2 from '../../photos/stethoscope.png';
 import icon3 from '../../photos/heart.png';
 import { useState, useEffect } from 'react';
+import sLS from 'react-secure-storage';
 
 
 const Reports = () => {
-    const userToken = localStorage.getItem('usertoken');
+    const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
     const [patients, setPatients] = useState('');
     const [appointments, setAppointments] = useState('');
@@ -20,7 +21,29 @@ const Reports = () => {
 
 
 
-    const getNumberAppointments = async () => {
+    // const getNumberAppointments = async () => {
+    //     try {
+    //             const res = await fetch(urlAppointments, {
+    //                 method: "GET",
+    //                 headers: {
+    //                     'Authorization': `Bearer ${convertToken.token}`
+    //                 },
+    //             });
+    //             if (!res.ok) {
+    //                 throw new Error("no appointments");
+    //             }
+    //             const data = await res.json();
+    //             setAppointments(data);
+    //             if(data.length < 1){
+    //                 setAppointments('0');
+    //             }
+    //         }
+    //         catch (error) {
+    //             throw new Error('no data');  
+    //         }
+    // };
+    
+    const getNumberPatients = async () => {
         try {
                 const res = await fetch(urlAppointments, {
                     method: "GET",
@@ -32,29 +55,7 @@ const Reports = () => {
                     throw new Error("no appointments");
                 }
                 const data = await res.json();
-                setAppointments(data);
-                if(data.length < 1){
-                    setAppointments('0');
-                }
-            }
-            catch (error) {
-                throw new Error('no data');  
-            }
-    };
-    
-    const getNumberPatients = async () => {
-        try {
-                const res = await fetch(url, {
-                    method: "GET",
-                    headers: {
-                        'Authorization': `Bearer ${convertToken.token}`
-                    },
-                });
-                if (!res.ok) {
-                    throw new Error("no appointments");
-                }
-                const data = await res.json();
-                setPatients(data);
+                setPatients(data.length);
                 if(data.length < 1){
                     setPatients('0');
                 }
@@ -67,8 +68,8 @@ const Reports = () => {
 
     useEffect(() => {
         getNumberPatients();
-        getNumberAppointments();
-    }, [url, urlAppointments]);
+        // getNumberAppointments();
+    }, [urlAppointments]);
     return(
         <>
             <h3>reports</h3>
@@ -85,15 +86,15 @@ const Reports = () => {
                         <img src={icon2} alt='not found' />
                         <p>consultation</p>
                     </div>
-                    {appointments && <h1>{appointments}</h1>}
+                    {patients && <h1>{patients}</h1>}
                 </div>
-                <div className='number'>
+                {/* <div className='number'>
                     <div>
                         <img src={icon3} alt='not found' />
                         <p>love</p>
                     </div>
                     <h1>100</h1>
-                </div>
+                </div> */}
             </div>
         </>
     )

@@ -5,7 +5,7 @@ import Login from './pages/login/login';
 import Settings from './pages/profile';
 import BeDoctor from './pages/Doctor/form';
 import Doctor from './pages/Doctor/doctor';
-
+import Chat from './pages/chat';
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
         <Route path='/Settings' element={<Settings />} />
         <Route path='/be-doctor' element={<BeDoctor />} />
         <Route path='/doctor' element={<Doctor />} />
-
+        <Route path='/chat' element={<Chat />} />
       </Routes>
       </div>
     </Router>

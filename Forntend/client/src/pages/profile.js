@@ -1,15 +1,17 @@
 import uploadIcon from '../photos/upload.png';
 import { useState, useEffect } from 'react';
+import sLS from 'react-secure-storage';
 
 
 const Settings = () => {
-    const userToken = localStorage.getItem('usertoken');
+    
+    const userToken = sLS.getItem('usertoken');
+    
     const convertToken = JSON.parse(userToken);
+    
     const [user, setData] = useState('');
     const [imgSrc, setSelectedImage] = useState('');
-    
     const url = `http://localhost:5225/Auth/GetUser?Email=${convertToken.email}`;
-    
     const getUserData = async () => {
         try {
                 const res = await fetch(url, {
@@ -70,7 +72,7 @@ const Settings = () => {
             handleImageUpload();
         }
     }, [url, imgSrc]);
-
+    console.log(convertToken.imgSrc);
     return(
         <div className="profile">
             <header className="header">

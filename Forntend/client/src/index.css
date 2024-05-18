@@ -155,9 +155,9 @@
 .form__field2:focus,
 .form__field3:focus,
 .form__field4:focus,
-.form__label5:focus,
-.form__label6:focus,
-.form__label7:focus{
+.form__field5:focus,
+.form__field6:focus,
+.form__field7:focus{
   padding-bottom: 6px;
   border-width: 3px;
   border-bottom: 2px solid #87cefa;
@@ -200,14 +200,19 @@
   padding: 10px;
   border: 1px solid gray;
   color: #2c3e50;
+  outline: none;
 }
-.birthday::-webkit-calendar-picker-indicator {
-  /* filter: invert(1); */
-  color: midnightblue;
+.birthday:focus{
+  border: 1px solid #87cefa;
 }
+
+
 .login select{
   color: #2c3e50;
   outline: none;
+}
+.login select:focus{
+  border: 1px solid #87cefa;
 }
 .login select::-ms-expand {
   display: none;
@@ -223,6 +228,7 @@
   margin-left: 10px;
   padding: 10px;
   outline: none;
+
 }
 .selectArea, .selectGov {
   padding: 10px;
@@ -516,6 +522,7 @@
 }
 
 
+/* be doctor form */
 
 .bedoc{
   min-height: 100vh;
@@ -782,8 +789,7 @@
 
 
 
-
-
+/* doctor profile */
 .doctor {
   display: flex;
   flex-direction: row;
@@ -833,12 +839,14 @@
   flex-direction: column;
   row-gap: 3%;
   padding: 1%;
+  z-index: 2;
 }
 .doctor .page .content .right{
   width: 30%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  row-gap: 2%;
 }
 .right .appointments{
   display: flex;
@@ -846,20 +854,21 @@
   border-radius: 10px;
   border: 1px solid #ccccccbf;
   width: 100%;
-  height: 50%;
-  /* overflow: hidden; */
+  height: 40%;
   padding: 10px;
+  overflow: hidden;
+  row-gap: 2%;
 }
 .appointments p{
   text-transform: capitalize;
   font-size: 1rem;
   margin-bottom: 10px;
   width: 100%;
-  height: 13%;
   position: relative;
   font-weight: 500;
   padding: 10px;
   text-align: left;
+  color: #143F6B;
 }
 .appointments p::before{
   content: '';
@@ -875,17 +884,194 @@
   width: 100%;
   border-radius: 10px;
 }
-.dates{
+.md-tooltip-header{
+  padding: 10px;
+}
+.md-tooltip-info{
+  padding: 10px;
+}
+.booked{
+  height: 70%;
   width: 100%;
-  margin-top: 20%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 3%;
 }
-.contDP{
+.booked h3{
+  text-transform: capitalize;
+  color: #143F6B;
+}
+.bACard{
+  width: 100%;
+  background-color: #87cfeb60;
+  padding: 20px 15px;
   border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  transition: all ease-in-out .3s;
+  cursor: pointer;
 }
-.dates .dateP{
+.bACard:hover{
+  transform: translateX(-1%);
+}
+.bACard img{
+  border-radius: 50%;
+  width: 50px;
+}
+.bACard .appointInfo h1{
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: left;
+}
+.bACard .appointInfo p{
+  color: rgba(128, 128, 128, 0.749);
+  font-size: .9rem;
+}
+.bACard .userAppoint{
+  width: 30px;
+  background-color: #fff;
+
+}
+
+.booked .showAllAppointments{
+  width: 100%;
+  padding: 15px;
   border-radius: 10px;
+  background-color: rgba(211, 211, 211, 0.692);
+  display: flex;
+  transition: all ease-in-out .3s;
+  cursor: pointer;
 }
-.dates button {
+.booked .showAllAppointments:hover{
+  transform: translateY(2%);
+}
+.showAllAppointments a{
+  width: 100%;
+  text-decoration: none;
+  text-transform: capitalize;
+  color: #143F6B;
+  display: flex;
+  column-gap: 2%;
+  justify-content: center;
+}
+.showAllAppointments .viewAllIcon{
+  width: 20px;
+}
+.middle{
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  column-gap: 2%;
+}
+.middleL{
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+  row-gap: 2%;
+}
+.middleR{
+  display: flex;
+  width: 50%;
+  flex-direction: column;
+}
+
+.showDocDates{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  align-items: center;
+  row-gap: 2%;
+  /* z-index: 2; */
+}
+.showDocDates h3{
+  text-transform: capitalize;
+  color: #143F6B;
+}
+.showDocDates .allDates{
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+.showDocDates .allDates .datesCards{
+  background-color: #87cfeb60;
+  border-radius: 10px;
+  width: 100%;
+  padding: 10px;
+  margin: 1%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  transition: .2s all ease-in-out;
+}
+.showDocDates .allDates .datesCards .iconsDatesDoctor{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  column-gap: 10%;
+  /* width: 50%; */
+}
+
+.showDocDates .allDates .datesCards .iconsDatesDoctor .doctoeDateImage{
+  width: 20px;
+  opacity: 0;
+  cursor: pointer;
+  transition: .5s all ease-in-out;
+
+}
+.showDocDates .allDates .datesCards:hover{
+  background-color: rgba(211, 211, 211, 0.692);
+}
+.showDocDates .allDates .datesCards:hover .doctoeDateImage{
+  opacity: 1;
+}
+.addBtnIcon{
+  width: 40px;
+  margin: 10px 0 0 85%;
+  cursor: pointer;
+  transition: .2s all ease-in-out;
+}
+.addBtnIcon:hover{
+  transform: scale(1.1);
+}
+
+.dates{
+  width: 500px;
+  display: none;
+  position: fixed;
+  left: 35%;
+  top: 45%;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.addDiv{
+  color: red;
+  margin: 3%;
+}
+.dates .promptBtns{
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  column-gap: 10%;
+}
+.dates .cancelPrompt{
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: white;
+  background-color: darkred;
+  padding: 1em 2em;
+  border: none;
+  border-radius: .6rem;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+.dates .addPromptBtn {
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
   color: white;
@@ -896,10 +1082,9 @@
   position: relative;
   cursor: pointer;
   overflow: hidden;
-  margin-left: 70%;
 }
 
-.dates button span:not(:nth-child(6)) {
+.dates .addPromptBtn span:not(:nth-child(6)) {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -911,39 +1096,225 @@
   transition: .6s ease;
 }
 
-.dates button span:nth-child(6) {
+.dates .addPromptBtn span:nth-child(6) {
   position: relative;
 }
 
-.dates button span:nth-child(1) {
+.dates .addPromptBtn span:nth-child(1) {
   transform: translate(-3.3em, -4em);
 }
 
-.dates button span:nth-child(2) {
+.dates .addPromptBtn span:nth-child(2) {
   transform: translate(-6em, 1.3em);
 }
 
-.dates button span:nth-child(3) {
+.dates .addPromptBtn span:nth-child(3) {
   transform: translate(-.2em, 1.8em);
 }
 
-.dates button span:nth-child(4) {
+.dates .addPromptBtn span:nth-child(4) {
   transform: translate(3.5em, 1.4em);
 }
 
-.dates button span:nth-child(5) {
+.dates .addPromptBtn span:nth-child(5) {
   transform: translate(3.5em, -3.8em);
 }
 
-.dates button:hover span:not(:nth-child(6)) {
+.dates .addPromptBtn:hover span:not(:nth-child(6)) {
   transform: translate(-50%, -50%) scale(4);
   transition: 1.5s ease;
 }
-.md-tooltip-header{
+
+
+.dates .cancelPrompt span:not(:nth-child(6)) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 30px;
+  width: 30px;
+  background-color: #000;
+  border-radius: 50%;
+  transition: .6s ease;
+}
+
+.dates .cancelPrompt span:nth-child(6) {
+  position: relative;
+}
+
+.dates .cancelPrompt span:nth-child(1) {
+  transform: translate(-3.3em, -4em);
+}
+
+.dates .cancelPrompt span:nth-child(2) {
+  transform: translate(-6em, 1.3em);
+}
+
+.dates .cancelPrompt span:nth-child(3) {
+  transform: translate(-.2em, 1.8em);
+}
+
+.dates .cancelPrompt span:nth-child(4) {
+  transform: translate(3.5em, 1.4em);
+}
+
+.dates .cancelPrompt span:nth-child(5) {
+  transform: translate(3.5em, -3.8em);
+}
+
+.dates .cancelPrompt:hover span:not(:nth-child(6)) {
+  transform: translate(-50%, -50%) scale(4);
+  transition: 1.5s ease;
+}
+
+.updateDates{
+  width: 500px;
+  display: none;
+  position: fixed;
+  left: 35%;
+  top: 45%;
+  background-color: white;
+  border-radius: 10px;
   padding: 10px;
 }
-.md-tooltip-info{
-  padding: 10px;
+
+.addDiv{
+  color: red;
+  margin: 3%;
+}
+.updateDates .promptBtns{
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+  column-gap: 10%;
+}
+.updateDates .cancelPrompt{
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: white;
+  background-color: darkred;
+  padding: 1em 2em;
+  border: none;
+  border-radius: .6rem;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+.updateDates .addPromptBtn {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: white;
+  background-color: #35589A;
+  padding: 1em 2em;
+  border: none;
+  border-radius: .6rem;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.updateDates .addPromptBtn span:not(:nth-child(6)) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 30px;
+  width: 30px;
+  background-color: #000;
+  border-radius: 50%;
+  transition: .6s ease;
+}
+
+.updateDates .addPromptBtn span:nth-child(6) {
+  position: relative;
+}
+
+.updateDates .addPromptBtn span:nth-child(1) {
+  transform: translate(-3.3em, -4em);
+}
+
+.updateDates .addPromptBtn span:nth-child(2) {
+  transform: translate(-6em, 1.3em);
+}
+
+.updateDates .addPromptBtn span:nth-child(3) {
+  transform: translate(-.2em, 1.8em);
+}
+
+.updateDates .addPromptBtn span:nth-child(4) {
+  transform: translate(3.5em, 1.4em);
+}
+
+.updateDates .addPromptBtn span:nth-child(5) {
+  transform: translate(3.5em, -3.8em);
+}
+
+.updateDates .addPromptBtn:hover span:not(:nth-child(6)) {
+  transform: translate(-50%, -50%) scale(4);
+  transition: 1.5s ease;
+}
+
+
+.updateDates .cancelPrompt span:not(:nth-child(6)) {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 30px;
+  width: 30px;
+  background-color: #000;
+  border-radius: 50%;
+  transition: .6s ease;
+}
+
+.updateDates .cancelPrompt span:nth-child(6) {
+  position: relative;
+}
+
+.updateDates .cancelPrompt span:nth-child(1) {
+  transform: translate(-3.3em, -4em);
+}
+
+.updateDates .cancelPrompt span:nth-child(2) {
+  transform: translate(-6em, 1.3em);
+}
+
+.updateDates .cancelPrompt span:nth-child(3) {
+  transform: translate(-.2em, 1.8em);
+}
+
+.updateDates .cancelPrompt span:nth-child(4) {
+  transform: translate(3.5em, 1.4em);
+}
+
+.updateDates .cancelPrompt span:nth-child(5) {
+  transform: translate(3.5em, -3.8em);
+}
+
+.updateDates .cancelPrompt:hover span:not(:nth-child(6)) {
+  transform: translate(-50%, -50%) scale(4);
+  transition: 1.5s ease;
+}
+
+
+
+
+.writeP{
+  background-color: #06113C;
+  color: white;
+  padding: 7px;
+  border: none;
+  outline: none;
+  border-radius: 10px;
+  text-transform: capitalize;
+  margin-left: 50%;
+  cursor: pointer;
+  transition: .3s ease-in-out all;
+}
+.writeP:hover{
+  background-color: #87CEEB;
+  color: #06113C;
 }
 .doctor .page .content .center .doctorInfo{
   width: 100%;
@@ -990,13 +1361,14 @@
 }
 .doctor .page .content .center .reports{
   width: 100%;
-  height: 30%;
-  border: 1px solid #ccccccbf;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   row-gap: 10%;
   padding: 20px;
+  border: 1px solid #ccccccbf;
+  /* z-index: 2; */
+
 }
 
 .doctor .page .content .center .reports h3{
@@ -1005,6 +1377,7 @@
   text-transform: capitalize;
   text-align: left;
   font-size: 1rem;
+  color: #143F6B;
 }
 .doctor .page .content .center .reports .numbers{
   width: 100%;
@@ -1015,12 +1388,11 @@
 }
 .doctor .page .content .center .reports .numbers .number{
   width: 120px;
-  height: 120px;
+  height: 115px;
   border-radius: 10px;
   padding: 10px;
   display: flex;
   flex-direction: column;
-  padding: 15px;
   background: linear-gradient(315deg, #35589A, #85F4FF);
 }
 .doctor .page .content .center .reports .numbers .number div{
@@ -1046,10 +1418,10 @@
   display: flex;
   flex-direction: row;
   column-gap: 2%;
+
 }
 .chart{
-  width: 50%;
-  border: 1px solid #ccccccbf;
+  width: 100%;
   border-radius: 10px;
 }
 
@@ -1155,6 +1527,7 @@
   width: 35px;
   height: 35px;
 }
+/*  */
 
 
 
@@ -1166,62 +1539,48 @@
 
 
 
-
-/* all doctors */
+/* search doctors */
 
 .home{
   min-height: 100vh;
   width: 100%;
-  padding: 0 10%;
-  padding: 10px;
+  padding: 5% 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .home section{
   width: 100%;
   position: relative;
   display: flex;
+  min-height: 100vh;
 }
 .home section .cards {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  padding: 5% 10%;
-  position: absolute;
-}
-.home section .cards::before{
-  content: '';
-  position: absolute;
-  height: 100%;
-  width: 3px;
-  border-radius: 10px;
-  background-color: #ddd;
-  top: 5%;
-  left: 50%;
+  flex-direction: row;
+  margin-top: 5%;
+  column-gap: 5%;
 }
 .home section .cards .card{
   width: 350px;
-  height: 500px;
+  /* height: 450px; */
   position: relative;
   display: flex;
   flex-direction: column;
   transition: transform .5s ease;
+  z-index: 2;
 }
-.home section .cards .card:nth-child(odd){
-  align-self: flex-start;
-}
-.home section .cards .card:nth-child(even){
-  align-self: flex-end;
-}
+
 .home section .cards .card .lazy{
   width: 100%;
   height: 100%;
 }
 .home section .cards .card img{
-  width: 100%;
-  height: 60%;
+  width: 250px;
+  height: 250px;
 }
-.home section .cards .card:hover{
-  transform: scale(1.1);
-}
+
 .home section .cards .card .docInf{
   width: 100%;
   height: 50%;
@@ -1243,14 +1602,14 @@
 }
 
 .home .card button {
-  padding: 20px;
+  padding: 10px;
   border: 2px solid #87cefa;
   position: relative;
   overflow: hidden;
   background-color: transparent;
   text-align: center;
   text-transform: uppercase;
-  font-size: 16px;
+  font-size: 15px;
   transition: .3s;
   z-index: 1;
   font-family: inherit;
@@ -1260,6 +1619,7 @@
   cursor: pointer;
   border-radius: 10px;
 }
+
 
 .home .card button::before {
   content: '';
@@ -1281,3 +1641,546 @@
 .home .card button:hover {
   color: #111;
 }
+
+
+.searchS{
+  display: flex;
+  flex-direction: row;
+  column-gap: 5%;
+  
+}
+.selectSearch select {
+  appearance: none;
+  outline: 10px red;
+  border: 0;
+  box-shadow: none;
+  flex: 1;
+  padding: 0 1em;
+  color: #fff;
+  cursor: pointer;
+}
+.selectSearch select::-ms-expand {
+  display: none;
+}
+.selectSearch {
+  position: relative;
+  display: flex;
+  width: 20em;
+  height: 3em;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #06113C;
+  color: white;
+  font-weight: 600;
+
+}
+
+
+
+/* book appointment */
+.af{
+  background-color: #87CEEB;
+  width: 600px;
+  height: 320px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  border-radius: 10px;
+  position: fixed;
+  top: 30%;
+  /* opacity: 0; */
+}
+
+.af h1{
+  color: white;
+  margin-bottom: 3%;
+  text-transform: capitalize;
+}
+.af .row{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 2%;
+}
+.af .row .inputP{
+  display: flex;
+  flex-direction: column;
+}
+.af .row .inputP label{
+  margin-bottom: 1%;
+  color: white;
+  text-transform: capitalize;
+}
+.af .row .inputP input{
+  width: 250px;
+  padding: 10px;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+}
+.af button{
+  width: 170px;
+  outline: none;
+  border: none;
+  background-color: #06113C;
+  color: white;
+  padding: 10px;
+  text-transform: capitalize;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: .9rem;
+}
+.af button:hover{
+  background-color: white;
+  transition: ease-in-out .5s all;
+  color: #06113C;
+}
+.af .msg{
+  color: #ffffff;
+  text-transform: capitalize;
+  font-weight: 400;
+  font-size: 1rem;
+}
+.rating {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0.1rem;
+  justify-content: center;
+  --stroke: #666;
+  --fill: #ffc73a;
+}
+.rating input {
+  appearance: unset;
+}
+.rating label {
+  cursor: pointer;
+}
+.rating svg {
+  width: 1.5rem;
+  height: 2rem;
+  overflow: visible;
+  fill: transparent;
+  stroke: var(--stroke);
+  stroke-linejoin: bevel;
+  stroke-dasharray: 12;
+  animation: idle 4s linear infinite;
+  transition: stroke 0.2s, fill 0.5s;
+}
+@keyframes idle {
+  from {
+      stroke-dashoffset: 24;
+  }
+}
+.rating label:hover svg {
+  stroke: var(--fill);
+}
+.rating input:checked ~ label svg {
+  transition: 0s;
+  animation: idle 4s linear infinite, yippee 0.75s backwards;
+  fill: var(--fill);
+  stroke: var(--fill);
+  stroke-opacity: 0;
+  stroke-dasharray: 0;
+  stroke-linejoin: miter;
+  stroke-width: 8px;
+}
+@keyframes yippee {
+0% {
+  transform: scale(1);
+  fill: var(--fill);
+  fill-opacity: 0;
+  stroke-opacity: 1;
+  stroke: var(--stroke);
+  stroke-dasharray: 10;
+  stroke-width: 1px;
+  stroke-linejoin: bevel;
+  }
+30% {
+  transform: scale(0);
+  fill: var(--fill);
+  fill-opacity: 0;
+  stroke-opacity: 1;
+  stroke: var(--stroke);
+  stroke-dasharray: 10;
+  stroke-width: 1px;
+  stroke-linejoin: bevel;
+  }
+30.1% {
+  stroke: var(--fill);
+  stroke-dasharray: 0;
+  stroke-linejoin: miter;
+  stroke-width: 8px;
+  }
+60% {
+  transform: scale(1.2);
+  fill: var(--fill);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Prescription form */
+
+
+.prescriptionForm{
+  position: fixed;
+  left: 20%;
+  top: 20%;
+  width: 1000px;
+  height: 550px;
+  row-gap: 5%;
+  z-index: 999;
+  background-color: whitesmoke;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  padding: 10px;
+  align-items: center;
+}
+.prescriptionForm h1{
+  color: #143F6B;
+  text-transform: capitalize;
+}
+.prescriptionForm .rowPrForm {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  column-gap: 5%;
+  padding: 10px;
+  border-radius: 10px;
+}
+.prescriptionForm .rowPrForm .drugSearch {
+  width: 60%;
+  padding: 15px;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: white;
+  color: #143F6B;
+  border: none;
+}
+.prescriptionForm .rowPrForm .drugSearch::placeholder{
+  color: #143F6B;
+}
+.prescriptionForm .rowPrForm .drugSearch:focus {
+  border-color: #66afe9;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+
+}
+
+.prescriptionForm .rowPrForm .drugSelect {
+  width: 30%;
+  padding: 15px;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  color: #143F6B;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: white;
+  border: none;
+}
+
+.prescriptionForm .rowPrForm .drugSelect:focus {
+  border-color: #66afe9;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+.prescriptionForm .rowPrForm .labelInput{
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.prescriptionForm .rowPrForm .labelInputRadio{
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.prescriptionForm .rowPrForm .labelInputRadio .radioL{
+  text-transform: capitalize;
+  color: #143F6B;
+  margin-bottom: 2%;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+.radio-buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.radio-button {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.radio-button__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-button__label {
+  display: inline-block;
+  padding-left: 30px;
+  margin-bottom: 10px;
+  position: relative;
+  font-size: 16px;
+  color: #143F6B;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.radio-button__custom {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #555;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.radio-button__input:checked + .radio-button__label .radio-button__custom {
+  transform: translateY(-50%) scale(0.9);
+  border: 5px solid #4c8bf5;
+  color: #4c8bf5;
+}
+
+.radio-button__input:checked + .radio-button__label {
+  color: #4c8bf5;
+}
+
+.radio-button__label:hover .radio-button__custom {
+  transform: translateY(-50%) scale(1.2);
+  border-color: #4c8bf5;
+  box-shadow: 0 0 10px #4c8bf580;
+}
+
+
+.prescriptionForm .rowPrForm .labelInput label{
+  text-transform: capitalize;
+  color: #143F6B;
+  margin-bottom: 2%;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+.prescriptionForm .rowPrForm .labelInput input{
+  width: 300px;
+  padding: 10px;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: white;
+  border: none;
+  color: #143F6B;
+}
+
+.prescriptionForm .rowPrForm .labelInput input:focus{
+  border-color: #66afe9;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+.prescriptionForm .rowPrForm .labelInput textarea{
+  padding: 5px;
+  border-radius: 10px;
+  outline: none;
+  background-color: white;
+  border: none;
+  color: #143F6B;
+}
+.prescriptionForm .rowPrForm .labelInput textarea:focus{
+  border-color: #66afe9;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+.prescriptionForm button{
+  padding: 10px 30px;
+  outline: none;
+  text-transform: capitalize;
+  background-color: #143F6B;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  margin-left: 70%;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: .2s ease-in-out all;
+}
+.prescriptionForm button:hover{
+  background-color: #35589A;
+}
+/* .calendarAppointments{
+  z-index: 2;
+}
+.prescriptionForm .rowPrForm {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  column-gap: 20px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.prescriptionForm .rowPrForm .drugSearch {
+  width: 60%;
+  padding: 15px;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #06113C;
+  color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-color: #66afe9;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+.prescriptionForm .rowPrForm .drugSearch::placeholder{
+  color: white;
+}
+.prescriptionForm .rowPrForm .drugSearch:focus {
+  border-color: #143F6B;
+  box-shadow: 0 0 8px #143F6B;
+}
+
+.prescriptionForm .rowPrForm .drugSelect {
+  width: 30%;
+  padding: 15px;
+  border-radius: 10px;
+  outline: none;
+  font-size: 16px;
+  color: white;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #06113C;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-color: #66afe9;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.prescriptionForm .rowPrForm .drugSelect:focus {
+  border-color: #143F6B;
+  box-shadow: 0 0 8px #143F6B;
+}
+.prescriptionForm .rowPrForm .labelInput{
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.prescriptionForm .rowPrForm .labelInput label{
+  text-transform: capitalize;
+  color: white;
+  margin-bottom: 5%;
+  font-weight: 500;
+  font-size: 1.2rem;
+}
+.prescriptionForm .rowPrForm .labelInput input{
+  width: 300px;
+  padding: 10px;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: #06113C;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-color: #66afe9;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+  color: white;
+}
+
+.prescriptionForm .rowPrForm .labelInput input:focus{
+  border-color: #143F6B;
+  box-shadow: 0 0 8px #143F6B;
+}
+.prescriptionForm .rowPrForm .labelInput textarea{
+  padding: 5px;
+  border-radius: 10px;
+  outline: none;
+  background-color: #06113C;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-color: #66afe9;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+  color: white;
+}
+.prescriptionForm .rowPrForm .labelInput textarea:focus{
+  border-color: #143F6B;
+  box-shadow: 0 0 8px #143F6B;
+}
+
+
+.radio-buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.radio-button {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+}
+
+.radio-button__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-button__label {
+  display: inline-block;
+  padding-left: 30px;
+  margin-bottom: 10px;
+  position: relative;
+  font-size: 16px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.radio-button__custom {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid white;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.radio-button__input:checked + .radio-button__label .radio-button__custom {
+  transform: translateY(-50%) scale(0.9);
+  border: 5px solid #4c8bf5;
+  color: #4c8bf5;
+}
+
+.radio-button__input:checked + .radio-button__label {
+  color: #4c8bf5;
+}
+
+.radio-button__label:hover .radio-button__custom {
+  transform: translateY(-50%) scale(1.2);
+  border-color: #4c8bf5;
+  box-shadow: 0 0 10px #4c8bf580;
+}
+
+
+
+ */

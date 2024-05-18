@@ -5,6 +5,7 @@ import image from '../../photos/Health_professional_team_Customizable_Isometric_
 import { useState } from 'react';
 import SuccessfullyMsg from '../../components/success';
 import LazyLoad from 'react-lazyload';
+import sLS from 'react-secure-storage';
 
 
 
@@ -28,7 +29,7 @@ const BeDoctor = () => {
     let prog = document.getElementById('prog');
 
 
-    const userToken = localStorage.getItem('usertoken');
+    const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
 
     const specialties = FetchHook(`http://localhost:5225/Hospital/Specialties`);

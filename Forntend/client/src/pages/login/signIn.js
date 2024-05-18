@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import sLS from 'react-secure-storage';
+
+
+
 
 import Image from '../../photos/Free Vector _ Detailed doctors and nurses illustration.jpg';
 import Swal from 'sweetalert2';
@@ -19,12 +23,15 @@ const SignIn = () => {
     const data = { userName, password };
     const navigate = useNavigate();
     
+
+
+
     // Login
     const submit = (e) => {
         e.preventDefault();
         let u = document.querySelector("[name='UN']");
         let p = document.querySelector("[name='PSS']");
-        let sp = document.getElementById("sp")
+        let sp = document.getElementById("sp");
 
         const fetchData = async () => {
             try {
@@ -81,7 +88,8 @@ const SignIn = () => {
                     u.style.borderBottom = "#ccc solid 1px";
                     p.style.borderBottom = "#ccc solid 1px";
                     if(loginToken.isLogin === true){
-                        localStorage.setItem('usertoken', JSON.stringify(loginToken));
+                        const userToken = JSON.stringify(loginToken);
+                        sLS.setItem('usertoken', userToken);
                     }
                     if(!loginToken.message){
                         Swal.fire({
@@ -133,9 +141,12 @@ const SignIn = () => {
                         </div>
                         <input type="submit" value="Login" id="l" className="send" />
                         <p className="signup">don't have an account ? <a href="#register" id="reg" onClick={() => toggleForm()}>register</a></p>
+                        
+
                     </form>
                 </div>
             </div>
+            
         </>
     );
 }

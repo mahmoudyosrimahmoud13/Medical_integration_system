@@ -1,6 +1,7 @@
 import React from "react";
 import { Chart } from "react-google-charts";
 import { useState, useEffect } from "react";
+import sLS from 'react-secure-storage';
 
 const dataLine = [
     ['Day', 'Patients'],
@@ -25,7 +26,7 @@ const optionsLine = {
 
 
 const Charts = () => {
-    const userToken = localStorage.getItem('usertoken');
+    const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
     // const [data, setData] = useState('');
     const [dataPie, setData] = useState('');
@@ -90,15 +91,18 @@ const Charts = () => {
 
     const optionsPie = {
         title: 'Gender',
+        titleTextStyle: {
+            color: '#143F6B' // Change to your desired color
+        },
         pieHole: .4,
         colors: ['#143F6B', '#FF69B4'],
     };
     return (
         <>
-            <div className='chart'>
+            {/* <div className='chart'>
                 <Chart chartType="LineChart" width="100%" height="200px" data={dataLine} options={optionsLine} 
                 loader={<div>Loading Chart...</div>}/>
-            </div>
+            </div> */}
             <div className='chart'>
                 <Chart chartType="PieChart" width="100%" height="200px" data={dataPie} options={optionsPie}
                 loader={<div>Loading Chart...</div>}/>

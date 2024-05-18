@@ -6,30 +6,28 @@ import Charts from '../../components/Doctor/charts';
 import Calendar from '../../components/Doctor/calendar';
 import Navbar from '../../components/Doctor/navbar';
 import Reports from '../../components/Doctor/roports';
-import Dates from '../../components/Doctor/doctorDates';
-
+import sLS from 'react-secure-storage';
+import BookedAppointments from '../../components/Doctor/bookedAppointments';
+import ShowAllDatesDoctor from '../../components/Doctor/showDoctorDates';
 
 
 const Doctor = () => {
     
-    const userToken = localStorage.getItem('usertoken');
+    const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
     const [user, setData] = useState('');
-    const [appointments, setAppointments] = useState('0');
+    // const [appointments, setAppointments] = useState('0');
     const [specialites, setSpecialites] = useState('');
 
-
-    
     const urlUser = `http://localhost:5225/Auth/GetUser?Email=${convertToken.email}`;
     
 
-    const urlAppointments = `http://localhost:5225/Hospital/Doctor/BookedAppointments`;
 
-    const urlDoctor = `http://localhost:5225/Hospital/Doctor/GetDoctor?Id=9e721d6d-6e23-4329-86cf-cac01acb9185`;
+    const urlSpecialites = `http://localhost:5225/Hospital/Doctor/GetDoctorSpecialtie`;
 
     const getDoctorDB = async () => {
         try {
-                const res = await fetch(urlDoctor, {
+                const res = await fetch(urlSpecialites, {
                     method: "GET",
                     headers: {
                         'Authorization': `Bearer ${convertToken.token}`
@@ -38,38 +36,17 @@ const Doctor = () => {
                 if (!res.ok) {
                     throw new Error("no appointments");
                 }
-                const data = await res.json();
+                
+                const data = await res.text();
+
                 setSpecialites(data);
-                if(data.length < 1){
-                    setAppointments('0');
-                }
+                
             }
             catch (error) {
                 throw new Error('no data');  
             }
     };
 
-    const getNumberAppointments = async () => {
-        try {
-                const res = await fetch(urlAppointments, {
-                    method: "GET",
-                    headers: {
-                        'Authorization': `Bearer ${convertToken.token}`
-                    },
-                });
-                if (!res.ok) {
-                    throw new Error("no appointments");
-                }
-                const data = await res.json();
-                setAppointments(data);
-                if(data.length < 1){
-                    setAppointments('0');
-                }
-            }
-            catch (error) {
-                throw new Error('no data');  
-            }
-    };
 
 
     const getUserData = async () => {
@@ -92,9 +69,9 @@ const Doctor = () => {
     };
     useEffect(() => {
         getUserData();
-        getNumberAppointments();
+        // getNumberAppointments();
         getDoctorDB();
-    }, [urlUser, urlAppointments, urlDoctor]);
+    }, [urlSpecialites, urlUser]);
 
 
     return(
@@ -118,18 +95,26 @@ const Doctor = () => {
                             <div className='doctorData'>
                                 <p>Welcome back,</p>
                                 <h1>dr. {user.name}</h1>
-                                {specialites && <p>{specialites.departmentName}</p>}
-                                <p>you have total {appointments && <span>{appointments} appointments</span>} today!</p>
+                                <p>{specialites}</p>
+                                <p>check your <span>appointments</span> today!</p>
                             </div>
                             {convertToken.gender ? <img src={doctorImage} alt='not found' /> : 
                             <img src={femaleImage} alt='not found' />}
                         </div>
-                        <div className='reports'>
-                            <Reports />
+                        <div className='middle'>
+                        <div className='middleL'>
+                            <div className='reports'>
+                                <Reports />
+                            </div>
+                            <div className='charts'>
+                                <Charts />
+                            </div>
                         </div>
-                        <div className='charts'>
-                            <Charts />
+                        <div className='middleR'>
+                            <ShowAllDatesDoctor />
                         </div>
+                        </div>
+                        
                     </div>
                     <div className='right'>
                         <div className='appointments'>
@@ -138,12 +123,13 @@ const Doctor = () => {
                             <Calendar />
                             </div>
                         </div>
-                        <div className='dates'>
-                            <Dates />
+                        <div className='booked'>
+                            <BookedAppointments />
                         </div>
                     </div>
                 </div>
             </div>
+            
         </div>
     )
 }

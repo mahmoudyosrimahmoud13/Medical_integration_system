@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:healthhub/screens/authentication/login.dart';
+import 'package:healthhub/screens/home/home_screen.dart';
 import 'package:healthhub/screens/splashscreen.dart';
 import 'package:healthhub/constants/themes.dart';
 
@@ -14,8 +16,8 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: mainTheme,
-      darkTheme: darkTheme,
-      home: SplashScreen(),
+      // darkTheme: darkTheme,
+      home: const HomePage(),
     );
   }
 }

@@ -16,7 +16,7 @@ const BeDoctor = () => {
     const [graduationYear, setValue4] = useState('');
     const [specialtieId, setValue5] = useState('');
     const [summaryCareer, setValue6] = useState('');
-    const [certificates, setValue7] = useState('');
+    const [certificates, setValue7] = useState([]);
 
     
     const [errorMsg, setErrorMsg] = useState(null);
@@ -138,7 +138,7 @@ const BeDoctor = () => {
                         <div className='formrow'>
                             <div className='forminput'>
                                 <label>upload certificates</label>
-                                    <input className='file' type='file' multiple onChange={(e) => setValue7([...e.target.files])} />
+                                    <input className='file' type='file' onChange={(e) => setValue7(e.target.files[0])} />
                             </div>
                         </div>
                         <p style={{color: 'red', marginTop: '10px'}}>{errorMsg}</p>

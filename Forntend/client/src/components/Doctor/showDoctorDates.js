@@ -21,6 +21,8 @@ const ShowAllDatesDoctor =  () => {
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [addDiv, setAddDiv] = useState('');
+    const [addDiv2, setAddDiv2] = useState('');
+
     const [oldDay, setOldDay] = useState('');
 
     const handleDateTimeChange = (event, inst) => {
@@ -53,6 +55,9 @@ const ShowAllDatesDoctor =  () => {
 
     const updateDate = async () => {
         const data = {dayName: getDayName(selectedDay), from: getTimeString(startTime), to: getTimeString(endTime)};
+        if(!selectedDay || !startTime || !endTime ){
+            return setAddDiv2('Please add your Appointments');
+        }
         try {
             const response = await fetch(`http://localhost:5225/Hospital/Doctor/EditAppointmentBook?OldDayName=${oldDay}`, {
                 method: "PUT",
@@ -237,7 +242,7 @@ const ShowAllDatesDoctor =  () => {
             placeholder="Update your Dates..."
             onChange={handleDateTimeChange}
             />
-        {/* {addDiv && <p className="addDiv">! {addDiv}</p>} */}
+        {addDiv2 && <p className="addDiv">! {addDiv2}</p>}
         <div className="promptBtns">
         <button className="addPromptBtn" onClick={() => updateDate()}>
             <span className="circle1"></span>

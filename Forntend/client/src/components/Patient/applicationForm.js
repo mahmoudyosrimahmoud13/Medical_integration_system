@@ -55,17 +55,11 @@ const PatientForm = ({ doctorId }) => {
     const cancel = () => {
         let af = document.querySelector('.af');
         af.style.display = 'none'
-        // let cs = document.querySelector('.cards');
-
-        // af.style.opacity = 0;
-        // af.style.zIndex = '1';
-        // cs.style.zIndex = '2';
-        // cs.style.filter = "blur(0)";
     }
 
     return(
         <form className="af" onSubmit={submit}>
-            <h1>consultation form</h1>
+            <h1>hello sir, can you complete this information</h1>
             <div className="row">
                 <div className="inputP">
                     <label>day</label>
@@ -81,7 +75,7 @@ const PatientForm = ({ doctorId }) => {
             </div>
             <div className="row">
             <button>submit consultation</button>
-            <button onClick={() => cancel()}>close form</button>
+            <button onClick={() => cancel()}>cancel consultation</button>
             </div>
         </form>
     )

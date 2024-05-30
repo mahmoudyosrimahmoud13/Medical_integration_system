@@ -10,24 +10,30 @@ import PatientForm from '../components/Patient/applicationForm';
 import sLS from 'react-secure-storage';
 
 
-const Home = () => {
+const Search = () => {
     const [doctors, setDoctors] = useState([]);
 
     const [selectedDoctorId, setSelectedDoctorId] = useState('0');
-
+    const userToken = sLS.getItem('usertoken');
+    const convertToken = JSON.parse(userToken);
     const [areaID, setAreaID] = useState('');
     const [specialID, setSpecialID] = useState('');
     // const [rate, setRate] = useState(1);
 
-    const userToken = sLS.getItem('usertoken');
-    const convertToken = JSON.parse(userToken);
-    console.log(convertToken.token);
-    const handleGetSpecialId = (areaId) => {
-        setSpecialID(areaId);
+    
+    const handleGetSpecialId = (speciaId) => {
+        setSpecialID(speciaId);
     };
-    const url = `http://localhost:5225/Hospital/Doctor/GetDoctorsInArea?area=${areaID}&Specialtie=${specialID}&Index=0`;
+    // let url;
+    
+    // if(areaID && specialID){
+    //     url = `http://localhost:5225/Hospital/Doctor/GetDoctorsInArea?area=${areaID}&Specialtie=${specialID}&Index=0`;
+    // }
+    // else if(specialID){
+    //     url = `http://localhost:5225/Hospital/Doctor/GetDoctorsInArea?Specialtie=${specialID}&Index=0`;
+    // }
 
-    const fetchData = async () => {
+    const fetchData = async (url) => {
         try {
             const res = await fetch(url, {
                 method: "GET",
@@ -47,10 +53,16 @@ const Home = () => {
     
 
     useEffect(() => {
-        if (areaID && specialID) {
-            fetchData();
+        let url;
+        if (specialID && areaID) {
+            url = `http://localhost:5225/Hospital/Doctor/GetDoctorsInArea?area=${areaID}&Specialtie=${specialID}&Index=0`;
+        } else if (specialID) {
+            url = `http://localhost:5225/Hospital/Doctor/GetDoctorsInArea?Specialtie=${specialID}&Index=0`;
         }
-    }, [url]);
+        if (url) {
+            fetchData(url);
+        }
+    }, [specialID, areaID]);
 
     const handleGetAreaId = (areaId) => {
         setAreaID(areaId);
@@ -93,7 +105,6 @@ const Home = () => {
                 <SelectSpecialtie onGetSpecialId={handleGetSpecialId} />
             </div>
             
-
             <section>
                 <div className='cards'>
                     {doctors.map(doctor => (
@@ -120,7 +131,7 @@ const Home = () => {
                                     </label>
                                 </div> */}
                                 <div className='docInf'>
-                                    <h1>{doctor.name}</h1>
+                                    <h1>dr. {doctor.name}</h1>
                                     {doctor.dates && doctor.dates.map((date, index) => (
                                     <div key={index} className='datesInf'>
                                         <p>{date.dayName}</p>
@@ -140,4 +151,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Search;

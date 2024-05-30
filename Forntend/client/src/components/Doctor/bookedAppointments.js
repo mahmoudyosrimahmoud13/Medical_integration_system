@@ -67,9 +67,6 @@ const BookedAppointments = () => {
 
     const prescriptionForm = document.querySelector('.prescriptionForm');
     
-    
-
-
     const openPrescriptionForm = () => {
         prescriptionForm.style.display = 'flex';
         
@@ -99,7 +96,7 @@ const BookedAppointments = () => {
             ) : (
                 <p>No appointments for today</p>
             )}
-            <div className="showAllAppointments"><Link>view all appoinments <img className="viewAllIcon" src={icon2} alt="not found" /></Link></div> 
+            <Link className="showAllAppointments" to={'/AllBookedAppointments'}>view all appoinments <img className="viewAllIcon" src={icon2} alt="not found" /></Link> 
         </>
     );
 };

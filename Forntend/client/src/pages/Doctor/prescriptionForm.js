@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import sLS from 'react-secure-storage';
 import '@mobiscroll/react/dist/css/mobiscroll.min.css';
 import { Datepicker, setOptions } from '@mobiscroll/react';
+import close from '../../photos/cancel (2).png';
 
 setOptions({
     theme: 'ios',
@@ -106,7 +107,12 @@ const Prescription = ({ patientEmail, name }) => {
         };
         fetchData();
     };
+    const prescriptionForm = document.querySelector('.prescriptionForm');
     
+    const closePrescriptionForm = () => {
+        prescriptionForm.style.display = 'none';
+        
+    }
 
 
     return (
@@ -274,6 +280,7 @@ const Prescription = ({ patientEmail, name }) => {
             <div className="rowPrForm">
                 <button type="submit">Save</button>
             </div>
+            <img className="close" src={close} alt="note found" onClick={() => closePrescriptionForm()} />
         </form>
     );
 };

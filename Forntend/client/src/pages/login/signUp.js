@@ -26,6 +26,8 @@ const SignUp = () => {
     const [birday, setValue8] = useState('');
     const [area, setValue9] = useState('');
     const [gender, setValue10] = useState('');
+    const [nationalID, setValue11] = useState('');
+
 
 
 
@@ -53,6 +55,7 @@ const SignUp = () => {
             birday: birday,
             area: area,
             gender: gender,
+            nationalID: nationalID
         };
         formData.append("input", JSON.stringify(input));
         if (password !== passwordConfirm) {
@@ -76,7 +79,11 @@ const SignUp = () => {
                     
                 }
                 else if(res.ok){
-                    if(errorData.message === "Go To Login Page"){
+                    if(errorData.isLogin === false){
+                        if(errorData.error === true){
+                            sp.style.visibility = "visible";
+                            throw new Error(errorData.message);
+                        }
                         let notif = document.getElementById('notif');
                         let prog = document.getElementById('prog');
                         notif.style.animation= 'fade-in 3s linear';
@@ -131,7 +138,10 @@ const SignUp = () => {
                             <input type="number" name="TEL" className="form__field7" placeholder="Phone" onChange={(e) => setValue7(e.target.value)} />
                             <label htmlFor="tel" className="form__label7"><img className="eg" src={flag} alt="not found" />+20</label>
                         </div>
-                        
+                        <div className="form__group field">
+                            <input type="text" name="NI" className="form__field8" placeholder="14 digits" onChange={(e) => setValue11(e.target.value)} />
+                            <label htmlFor="ni" className="form__label8">national iD</label>
+                        </div>
                         <div className="form__groupU field">
                             <input className="birthday" type="date" id="birthday" name="birthday" onChange={(e) => setValue8(e.target.value)} />
                             <select id="gender" name="gender" className="selectGender" defaultValue="" onChange={(e) => setValue10(e.target.value)}>

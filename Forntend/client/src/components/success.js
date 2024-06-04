@@ -5,7 +5,7 @@ const SuccessfullyMsg = () => {
     return(
             <div className='notif' id='notif'>
                 <div className='notifBody' id='notifText'>
-                    <img src={icon} alt='not found' className='notifIcon' />
+                    <img src={icon} alt='not found' />
                     your account has been created successfully!
                 </div>
                 <div className='notifProg' id='prog'></div>

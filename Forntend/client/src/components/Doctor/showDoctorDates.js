@@ -98,7 +98,7 @@ const ShowAllDatesDoctor =  () => {
             console.error('Error fetching events:', error);
         }
     };
-
+    
     const fetchEvents = async () => {
         try {
             const response = await fetch('http://localhost:5225/Hospital/Doctor/DoctorDates', {
@@ -120,11 +120,11 @@ const ShowAllDatesDoctor =  () => {
     };
     const deleteBtn = (dayName) => {
         Swal.fire({
-            title: "Are you sure?",
+            title: "Are you sure you want cancel this appointment?",
             icon: "warning",
             showCancelButton: true,
-            confirmButtonText: "Yes, delete it!",
-            cancelButtonText: "Cancel",
+            confirmButtonText: "Yes, cancel it!",
+            cancelButtonText: "No",
         }).then((result) => {
             if (result.isConfirmed) {
                 deleteDate(dayName);
@@ -161,6 +161,7 @@ const ShowAllDatesDoctor =  () => {
         if(!res.ok) {
             setAddDiv(msg);
         }
+        
         if(res.ok){
             hidePrompt();
             fetchEvents();

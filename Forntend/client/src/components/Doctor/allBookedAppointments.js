@@ -48,53 +48,7 @@ const AllBookedAppointments = () => {
             console.error('Error fetching events:', error);
         }
     };
-    // const [session, setSession] = useState('');
-
-    // const getSession = async (email) => {
-    //     try {
-    //         const res = await fetch(`http://localhost:5225/Hospital/Doctor/MedicalSession/GetMedicalSessionWithDoctor?PaientEmail=${email}`, {
-    //             method: "GET",
-    //             headers: {
-    //                 'Authorization': `Bearer ${convertToken.token}`
-    //             },
-    //         });
-    //         if (!res.ok) {
-    //             throw new Error("No user found");
-    //         }
-    //         const userData = await res.json();
-    //         setSession(userData[0]);
-
-    //     } catch (error) {
-    //         console.error('Error fetching user data:', error);
-    //     }
-    // };
-    // const [drugs, setDrugs] = useState([]);
-
-    // const getCurrentDrugs = async (email) => {
-    //     try {
-    //         const res = await fetch(`http://localhost:5225/Hospital/Patient/information/GetCurrentDrugs?PatientEmail=${email}`, {
-    //             method: "GET",
-    //             headers: {
-    //                 'Authorization': `Bearer ${convertToken.token}`
-    //             },
-    //         });
-    //         if (!res.ok) {
-    //             throw new Error("No user found");
-    //         }
-    //         const userData = await res.json();
-    //         setDrugs(userData);
-    //     } catch (error) {
-    //         console.error('Error fetching user data:', error);
-    //     }
-    // };
-
-    // let prescriptionCard = document.querySelector('.prescriptionCard');
-    // const open = (email) => {
-    //     setEmail(email);
-    //     getCurrentDrugs(email);
-    //     getSession(email);
-    //     prescriptionCard.style.display = 'block';
-    // }
+    
     
 
 
@@ -116,13 +70,11 @@ const AllBookedAppointments = () => {
                             <p>{appointment.dayName} {appointment.from} - {appointment.to}</p>
                         </div>
                         <Link to={`/profile/${appointment.email}`} className="viewPatient">view</Link>
-                        {/* <img className="userAppoint" src={icon} alt="not found" /> */}
                     </div>
                     </>
                     )
             })}
         </div>
-        {/* <PatientPrescription diseaseName={session.diseaseName} date={session.sessionDate} drugs={drugs} /> */}
         </>
     )
 }

@@ -97,7 +97,9 @@
 .form__field4,
 .form__field5,
 .form__field6,
-.form__field7{
+.form__field7,
+.form__field8
+{
   outline: none;
   font-family: inherit;
   width: 250px;
@@ -118,7 +120,9 @@
 .form__field4::placeholder,
 .form__field5::placeholder,
 .form__field6::placeholder,
-.form__field7::placeholder{
+.form__field7::placeholder,
+.form__field8::placeholder
+{
   color: transparent;
 }
 
@@ -128,7 +132,9 @@
 .form__field4:placeholder-shown ~ .form__label4,
 .form__field5:placeholder-shown ~ .form__label5,
 .form__field6:placeholder-shown ~ .form__label6,
-.form__field7:placeholder-shown ~ .form__label7{
+.form__field7:placeholder-shown ~ .form__label7,
+.form__field8:placeholder-shown ~ .form__label8
+{
   font-size: 17px;
   cursor: text;
   top: 30px;
@@ -140,7 +146,8 @@
 .form__label4,
 .form__label5,
 .form__label6,
-.form__label7{
+.form__label7,
+.form__label8{
   position: absolute;
   top: 0;
   display: block;
@@ -157,7 +164,9 @@
 .form__field4:focus,
 .form__field5:focus,
 .form__field6:focus,
-.form__field7:focus{
+.form__field7:focus,
+.form__field8:focus
+{
   padding-bottom: 6px;
   border-width: 3px;
   border-bottom: 2px solid #87cefa;
@@ -169,7 +178,9 @@
 .form__field4:focus ~ .form__label4,
 .form__field5:focus ~ .form__label5,
 .form__field6:focus ~ .form__label6,
-.form__field7:focus ~ .form__label7{
+.form__field7:focus ~ .form__label7,
+.form__field8:focus ~ .form__label8
+{
   position: absolute;
   top: 0;
   display: block;
@@ -186,7 +197,9 @@
 .form__field4:required, .form__field4:invalid,
 .form__field5:required, .form__field5:invalid,
 .form__field6:required, .form__field6:invalid,
-.form__field7:required, .form__field7:invalid{
+.form__field7:required, .form__field7:invalid,
+.form__field8:required, .form__field8:invalid
+{
   box-shadow: none;
 }
 .eg{
@@ -567,6 +580,12 @@
   text-transform: capitalize;
   color: #143F6B;
 }
+.paientAppointments .day{
+  text-transform: capitalize;
+  color: #143F6B;
+  font-size: 1rem;
+  font-weight: 500;
+}
 .paientAppointments .patientACard{
   width: 100%;
   background-color: #87cfeb60;
@@ -639,6 +658,7 @@
   border-radius: 76% 24% 83% 17% / 19% 74% 26% 81%  ;
   background-color: white;
 }
+
 .bedoc .forminfo{
   width: 60%;
   height: 100%;
@@ -668,6 +688,7 @@
 .bedoc .forminfo form .formrow .forminput{
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 .cat{
   text-transform: capitalize;
@@ -675,13 +696,14 @@
   font-weight: 700;
   font-size: 1.3rem;
   margin: 10px 0;
+  text-align: left;
 }
 .forminput input{
     outline: none;
     width: 170px;
     padding: 5px 10px;
     font-size: .8rem;
-    color: midnightblue;
+    color: #143F6B;
     background-color: #fff;
     background-clip: padding-box;
     border: .0625rem solid #87cefa;
@@ -701,7 +723,7 @@
   padding: 5px 10px;
   border: .0625rem solid #87cefa;
   background-color: #fff;
-  color: midnightblue;
+  color: #143F6B;
 }
 .forminput textarea{
   outline: none;
@@ -709,6 +731,25 @@
   width: 170px;
   height: 100px;
   padding: 5px;
+}
+.handleCertificates{
+  display: flex;
+  column-gap: 2%;
+}
+.img-previews{
+  display: flex;
+  column-gap: 2%;
+  background-color: #fff;
+  border-radius: .5rem;
+  display: none;
+  padding: 10px;
+  position: absolute;
+  bottom: 1%;
+  right: -40%;
+}
+.bedoc .pos{
+  width: 50px;
+  border-radius: 10px;
 }
 /* .certificate{
   margin-top: 10px;
@@ -839,7 +880,10 @@
   padding: 16px 10px;
   text-transform: capitalize;
 }
-
+.notifBody img{
+  border-radius: 50%;
+  width: 20px;
+}
 .notifProg{
   position: absolute;
   left: 4px;
@@ -1087,6 +1131,7 @@
   justify-content: space-between;
   transition: .2s all ease-in-out;
 }
+
 .showDocDates .allDates .datesCards .iconsDatesDoctor{
   display: flex;
   flex-direction: row;
@@ -1574,10 +1619,13 @@
   cursor: pointer;
   position: relative;
 }
+.notifications {
+  position: relative;
+}
 .notifications::after{
   content: '';
   position: absolute;
-  top: 20%;
+  top: 10%;
   left: 25%;
   width: 10px;
   height: 10px;
@@ -2216,17 +2264,17 @@
   align-items: center;
   flex-direction: column;
 }
-.notificationsPage .down div{
+.notificationsPage .down .notification{
   width: 1000px;
   height: 90px;
   margin-bottom: 3%;
-  background-color: #87cfeb60;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-transform: capitalize;
   color: #143F6B;
+  background-color: #87cfeb60;
 }
 .notificationsPage .down p{
   text-transform: capitalize;

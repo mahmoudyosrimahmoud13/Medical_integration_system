@@ -3,10 +3,12 @@ import delIcon from '../../photos/x-button.png';
 import { useState, useEffect } from 'react';
 import sLS from 'react-secure-storage';
 
+
 const PatientAppointments = () => {
     const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
     const [appointments, setAppointments] = useState([]);
+
 
     const fetchEvents = async () => {
         try {
@@ -25,6 +27,8 @@ const PatientAppointments = () => {
             console.error('Error fetching events:', error);
         }
     };
+    
+
     useEffect(() => {
         fetchEvents();
     }, []);
@@ -33,15 +37,18 @@ const PatientAppointments = () => {
             <div className='paientAppointments'>
                 <h1>your appointments</h1>
                 {appointments.length > 0 ? (
-                    appointments.map((appointment, index) => (
-                        <div key={index} className="patientACard">
+                    appointments.map(appointment => (
+                        <div key={appointment.doctorId}>
+                        <p className='day'>{appointment.dayName} {appointment.date}</p>
+                        <div className="patientACard">
                             <div className="appointInfo">
-                                <p>{appointment.date} {appointment.doctorName}, {appointment.doctorSpecialty}, {appointment.areaName} {appointment.dayName} {appointment.from} - {appointment.to}</p>
+                                <p>{appointment.doctorName}, {appointment.doctorSpecialty}, {appointment.areaName} {appointment.from} - {appointment.to}</p>
                             </div>
                             <div className='showIcons'>
                                 <img src={editIcon} alt='not found' />
                                 <img src={delIcon} alt='not found' />
                             </div>
+                        </div>
                         </div>
                 ))) : (<p>no appointments</p>)}
             </div>

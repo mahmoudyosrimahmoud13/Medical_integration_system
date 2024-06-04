@@ -11,12 +11,10 @@ import ShowAllDatesDoctor from '../../components/Doctor/showDoctorDates';
 import Notifications from '../../components/notifications';
 
 const Doctor = () => {
-    
     const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
     const [user, setData] = useState('');
     const [specialites, setSpecialites] = useState('');
-
     const urlUser = `http://localhost:5225/Auth/GetUser?Email=${convertToken.email}`;
     
 

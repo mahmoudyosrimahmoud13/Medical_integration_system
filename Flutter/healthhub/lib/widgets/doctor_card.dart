@@ -7,21 +7,21 @@ class DoctorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       width: double.infinity,
       child: Card(
         child: ListTile(
-          leading: CircleAvatar(
+          leading: const CircleAvatar(
             backgroundImage: AssetImage(
                 'assets/placeholders/pngtree-male-doctor-avatar-icon-illustration-png-image_8537702.png'),
           ),
-          title: Text("dr.Doctor"),
+          title: const Text("dr.Doctor"),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Specialization : ????'),
+              const Text('Specialization : ????'),
               RatingBar.builder(
-                itemBuilder: (context, index) => Icon(
+                itemBuilder: (context, index) => const Icon(
                   Icons.star,
                   color: Colors.orangeAccent,
                   size: 1,

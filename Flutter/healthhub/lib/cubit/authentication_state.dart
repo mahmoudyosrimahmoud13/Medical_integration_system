@@ -4,3 +4,11 @@ part of 'authentication_cubit.dart';
 sealed class AuthenticationState {}
 
 final class AuthenticationInitial extends AuthenticationState {}
+
+final class AuthenticationSuccess extends AuthenticationState {}
+
+final class AuthenticationError extends AuthenticationState {
+  final String error;
+
+  AuthenticationError({required this.error});
+}

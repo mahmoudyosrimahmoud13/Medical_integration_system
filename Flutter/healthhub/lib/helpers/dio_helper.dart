@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 class DioHelper {
   static final Dio _dio =
-      Dio(BaseOptions(baseUrl: "http://healthhub.runasp.net", headers: {
+      Dio(BaseOptions(baseUrl: "http://healthhubserver.runasp.net/", headers: {
     'Accept': 'application/json',
   }));
 
@@ -13,15 +13,10 @@ class DioHelper {
     try {
       var response = await _dio.post(endPoint, data: data);
       return ResponseData(
-          message: response.data['message'] ?? '',
-          isSuccess: !response.data['error'],
-          response: response);
+          isSuccess: !response.data['error'], response: response);
     } on DioException catch (ex) {
       print(ex.response?.data);
-      return ResponseData(
-          message: ex.response?.data['message'] ?? '',
-          isSuccess: false,
-          response: ex.response);
+      return ResponseData(isSuccess: false, response: ex.response);
     }
   }
 
@@ -34,15 +29,9 @@ class DioHelper {
         endPoint,
         data: FormData.fromMap(data ?? {}),
       );
-      return ResponseData(
-          message: response.data['message'],
-          isSuccess: true,
-          response: response);
+      return ResponseData(isSuccess: true, response: response);
     } on DioException catch (ex) {
-      return ResponseData(
-          message: ex.response?.data['message'] ?? '',
-          isSuccess: false,
-          response: ex.response);
+      return ResponseData(isSuccess: false, response: ex.response);
     }
   }
 
@@ -52,15 +41,9 @@ class DioHelper {
   }) async {
     try {
       var response = await _dio.delete(endPoint, data: data);
-      return ResponseData(
-          message: response.data['message'],
-          isSuccess: true,
-          response: response);
+      return ResponseData(isSuccess: true, response: response);
     } on DioException catch (ex) {
-      return ResponseData(
-          message: ex.response!.data["message"],
-          isSuccess: false,
-          response: ex.response);
+      return ResponseData(isSuccess: false, response: ex.response);
     }
   }
 
@@ -70,15 +53,10 @@ class DioHelper {
   }) async {
     try {
       var response = await _dio.get(endPoint, queryParameters: data);
-      return ResponseData(
-          message: response.data["message"] ?? '',
-          isSuccess: true,
-          response: response);
+      final lol = ResponseData(isSuccess: true, response: response);
+      return lol;
     } on DioException catch (ex) {
-      return ResponseData(
-          message: ex.response!.data["message"],
-          isSuccess: false,
-          response: ex.response);
+      return ResponseData(isSuccess: false, response: ex.response);
     }
   }
 
@@ -88,23 +66,16 @@ class DioHelper {
   }) async {
     try {
       var response = await _dio.put(endPoint, data: data);
-      return ResponseData(
-          message: response.data["message"],
-          isSuccess: true,
-          response: response);
+      return ResponseData(isSuccess: true, response: response);
     } on DioException catch (ex) {
-      return ResponseData(
-          message: ex.response!.data["message"],
-          isSuccess: false,
-          response: ex.response);
+      return ResponseData(isSuccess: false, response: ex.response);
     }
   }
 }
 
 class ResponseData {
-  late final String message;
   late final bool isSuccess;
   late final Response? response;
 
-  ResponseData({required this.message, required this.isSuccess, this.response});
+  ResponseData({required this.isSuccess, this.response});
 }

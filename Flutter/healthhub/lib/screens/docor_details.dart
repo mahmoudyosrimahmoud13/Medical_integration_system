@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:healthhub/widgets/doctor_tabs.dart';
+import 'package:intl/intl.dart';
 
 class DoctorDetailsScreen extends StatefulWidget {
   const DoctorDetailsScreen({super.key});
@@ -10,19 +11,110 @@ class DoctorDetailsScreen extends StatefulWidget {
 }
 
 class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
+  TimeOfDay? _hour;
+  DateTime? _day;
+
   void _showBookModalSheet() {
     showModalBottomSheet(
+      showDragHandle: true,
       context: context,
-      builder: (context) => Scaffold(
-        body: Container(
-          child: YearPicker(
-            firstDate: DateTime(2002),
-            lastDate: DateTime(2002),
-            selectedDate: DateTime.now(),
-            onChanged: (value) {},
-          ),
-        ),
-      ),
+      builder: (context) => Container(
+          padding: EdgeInsets.all(20),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(
+                size: 90,
+                Icons.book,
+                color: Theme.of(context).colorScheme.error.withAlpha(100),
+              ),
+              Text(
+                'Book an appointment',
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.bold),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.error.withAlpha(100),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12))),
+                onPressed: () {
+                  setState(() async {
+                    _day = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(Duration(days: 30)),
+                        helpText: 'Booking day');
+                  });
+                },
+                child: Text(
+                  'Choose a day',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.calendar_month,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  Text(_day == null
+                      ? "Choose a date"
+                      : DateFormat.yMd().format(_day!))
+                ],
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.error.withAlpha(100),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12))),
+                onPressed: () {
+                  setState(() async {
+                    _hour = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                      helpText: 'Booking hour',
+                    );
+                  });
+                },
+                child: Text(
+                  'Choose a hour',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.alarm,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  Text(
+                      _hour == null ? "Choose an hour" : _hour!.hour.toString())
+                ],
+              ),
+            ],
+          )),
     );
   }
 

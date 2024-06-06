@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:healthhub/screens/authentication/login.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthhub/cubit/adress/adress_cubit.dart';
 import 'package:healthhub/screens/authentication/sign_up.dart';
-import 'package:healthhub/screens/docor_details.dart';
-import 'package:healthhub/screens/home/home_screen.dart';
-import 'package:healthhub/screens/splashscreen.dart';
 import 'package:healthhub/constants/themes.dart';
 
 void main() {
@@ -15,11 +13,18 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: mainTheme,
-      // darkTheme: darkTheme,
-      home: const DoctorDetailsScreen(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AdressCubit(),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: mainTheme,
+        // darkTheme: darkTheme,
+        home: const SignUpScreen(),
+      ),
     );
   }
 }

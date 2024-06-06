@@ -32,114 +32,151 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
-          borderRadius: const BorderRadius.only(
-            bottomRight: Radius.circular(180),
-          ),
-        ),
-        height: size.height * 0.9,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _key,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          const SvgPicture(
-                            SvgAssetLoader('assets/logo/logo.svg'),
-                          ),
-                          Text(
-                            'Helth\nHub.',
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary,
+                borderRadius: const BorderRadius.only(
+                  bottomRight: Radius.circular(100),
+                ),
+              ),
+              height: size.height * 0.8,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _key,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            const SvgPicture(
+                              SvgAssetLoader('assets/logo/logo.svg'),
+                            ),
+                            Text(
+                              'Helth\nHub.',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium!
+                                  .copyWith(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .background),
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Text('Email',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.background)),
+                      GenericTextField(
+                        hint: 'Email',
+                        textEditingController: _emailController,
+                        textInputType: TextInputType.emailAddress,
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Text(
+                        'Password',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.background),
+                      ),
+                      GenericTextField(
+                        hint: 'Password',
+                        textInputType: TextInputType.visiblePassword,
+                        textEditingController: _passowrdController,
+                        obscureText: _showPassword,
+                        iconButton: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _showPassword
+                                    ? _showPassword = false
+                                    : _showPassword = true;
+                              });
+                            },
+                            icon: Icon(_showPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility)),
+                      ),
+                      TextButton(
+                          onPressed: () {},
+                          child: Text(
+                            'Forget your password?',
                             style: Theme.of(context)
                                 .textTheme
-                                .displayMedium!
+                                .bodyMedium!
                                 .copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
                                         .background),
-                          )
-                        ],
+                          )),
+                      Container(
+                        height: 75,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(100),
+                                      bottomLeft: Radius.circular(10),
+                                      topLeft: Radius.circular(10),
+                                      topRight: Radius.circular(10)))),
+                          child: Text(
+                            'Login',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Text('Email',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.background)),
-                  GenericTextField(
-                    hint: 'Email',
-                    textEditingController: _emailController,
-                    textInputType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Text(
-                    'Password',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.background),
-                  ),
-                  GenericTextField(
-                    hint: 'Password',
-                    textInputType: TextInputType.visiblePassword,
-                    textEditingController: _passowrdController,
-                    obscureText: _showPassword,
-                    iconButton: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _showPassword
-                                ? _showPassword = false
-                                : _showPassword = true;
-                          });
-                        },
-                        icon: Icon(_showPassword
-                            ? Icons.visibility_off
-                            : Icons.visibility)),
-                  ),
-                  TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Forget your password?',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Theme.of(context).colorScheme.background),
-                      )),
-                  Container(
-                    height: 75,
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(180),
-                                  bottomLeft: Radius.circular(10),
-                                  topLeft: Radius.circular(10),
-                                  topRight: Radius.circular(10)))),
-                      child: Text(
-                        'Login',
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.primary),
-                      ),
-                    ),
-                  )
-                ],
+                ),
               ),
             ),
-          ),
+            SizedBox(
+              height: 15,
+            ),
+            Text('Don\'t have an account?'),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              height: 50,
+              width: size.width * 0.9,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    elevation: 0,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)))),
+                child: Text(
+                  'Sign up!',
+                  style: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

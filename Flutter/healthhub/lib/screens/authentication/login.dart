@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/screens/authentication/sign_up.dart';
 import 'package:healthhub/widgets/generic_texfield.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -14,15 +16,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final _key = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passowrdController = TextEditingController();
-  bool _showPassword = false;
+  bool _showPassword = true;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     bool _isPassword(String value) {
-      RegExp regExp = RegExp(
-          r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[_#$^+=!*()@%&]).{8,}$");
+      RegExp regExp =
+          RegExp(r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
       return regExp.hasMatch(value);
     }
 
@@ -42,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   bottomRight: Radius.circular(100),
                 ),
               ),
-              height: size.height * 0.8,
+              height: size.height * 0.85,
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Form(
@@ -83,6 +85,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         hint: 'Email',
                         textEditingController: _emailController,
                         textInputType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (!_isEmail(value!)) {
+                            return 'Enter a correct email.';
+                          }
+                        },
                       ),
                       const SizedBox(
                         height: 30,
@@ -108,6 +115,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             icon: Icon(_showPassword
                                 ? Icons.visibility_off
                                 : Icons.visibility)),
+                        validator: (value) {
+                          if (!_isPassword(value!)) {
+                            return 'Choose a strong password';
+                          }
+                        },
                       ),
                       TextButton(
                           onPressed: () {},
@@ -126,7 +138,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            showMessage(
+                                message: 'message', type: MessageType.success);
+                            _key.currentState!.validate();
+                          },
                           style: ElevatedButton.styleFrom(
                               shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadius.only(
@@ -150,18 +166,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
-            Text('Don\'t have an account?'),
-            SizedBox(
+            const Text('Don\'t have an account?'),
+            const SizedBox(
               height: 15,
             ),
             Container(
               height: 50,
               width: size.width * 0.9,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  navigateTo(toPage: SignUpScreen());
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     elevation: 0,

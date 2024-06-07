@@ -11,7 +11,8 @@ class GenericTextField extends StatelessWidget {
       this.validator,
       this.textInputType,
       this.radius,
-      this.alpha}) {
+      this.alpha,
+      this.length}) {
     obscureText ??= false;
     radius ??= 5;
     alpha ??= 100;
@@ -25,12 +26,15 @@ class GenericTextField extends StatelessWidget {
   bool? obscureText;
   double? radius;
   int? alpha;
+  int? length;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         TextFormField(
           controller: textEditingController,
+          maxLength: length,
           decoration: InputDecoration(
               focusedBorder: OutlineInputBorder(
                   borderSide:

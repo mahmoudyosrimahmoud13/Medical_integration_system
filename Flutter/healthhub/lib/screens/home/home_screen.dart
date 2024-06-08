@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/screens/home/appointments.dart';
+import 'package:healthhub/screens/home/prescription.dart';
 import 'package:healthhub/screens/home/search_screen.dart';
+import 'package:healthhub/screens/home/settings_screen.dart';
 import 'package:healthhub/widgets/nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,12 +14,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 1;
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
+    Widget screen = SearchScreen();
+    if (_currentIndex == 0) {
+      setState(() {
+        screen = SettingsScreen();
+      });
+    }
+    if (_currentIndex == 1) {
+      setState(() {
+        screen = appointmentScreen();
+      });
+    }
+    if (_currentIndex == 2) {
+      setState(() {
+        screen = SearchScreen();
+      });
+    }
+    if (_currentIndex == 3) {
+      setState(() {
+        screen = PrescriptionScreen();
+      });
+    }
     return Scaffold(
-        body: SearchScreen(),
+        body: screen,
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniCenterDocked,
         floatingActionButton: FloatingActionButton(
@@ -23,9 +48,11 @@ class _HomePageState extends State<HomePage> {
           shape: CircleBorder(),
           elevation: 5,
           clipBehavior: Clip.hardEdge,
-          onPressed: () {},
+          onPressed: () {
+            navigateTo(toPage: SettingsScreen());
+          },
           child: Icon(
-            Icons.bookmark_add_rounded,
+            Icons.alarm_add,
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),

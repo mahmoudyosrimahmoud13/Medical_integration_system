@@ -133,7 +133,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           final governrates = state.governrates;
           final areas = state.areas;
           return Scaffold(
-              body: Container(
+              body: SizedBox(
             height: size.height,
             child: Column(
               children: [

@@ -15,9 +15,9 @@ class NavBar extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.background,
         icons: const [
           Icons.reorder_rounded,
-          Icons.person_2_rounded,
+          Icons.schedule,
           Icons.search,
-          Icons.home_rounded
+          Icons.description
         ],
         activeIndex: currentIndex,
         onTap: ontap,

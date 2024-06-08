@@ -1,8 +1,13 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:healthhub/cubit/authentication/authentication_cubit.dart';
 import 'package:healthhub/helpers/helper_methods.dart';
 import 'package:healthhub/screens/authentication/sign_up.dart';
+import 'package:healthhub/screens/home/search_screen.dart';
 import 'package:healthhub/widgets/generic_texfield.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -31,6 +36,26 @@ class _LoginScreenState extends State<LoginScreen> {
     bool _isEmail(String value) {
       RegExp regExp = RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
       return regExp.hasMatch(value);
+    }
+
+    void _login(AuthenticationCubit cubit, AuthenticationState state) {
+      if (_key.currentState!.validate()) {
+        final Map<String, String> data = {
+          "userName": _emailController.text,
+          "password": _passowrdController.text
+        };
+        cubit.login(data: data);
+        if (state is AuthenticationSuccess) {
+          if (state.message == null) {
+            showMessage(message: 'Login successful');
+            navigateTo(toPage: SearchScreen(), replace: true);
+          } else {
+            showMessage(message: state.message!);
+          }
+        } else if (state is AuthenticationError) {
+          showMessage(message: state.error, type: MessageType.faild);
+        }
+      }
     }
 
     return Scaffold(
@@ -137,28 +162,45 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 75,
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            showMessage(
-                                message: 'message', type: MessageType.success);
-                            _key.currentState!.validate();
+                        child: BlocBuilder<AuthenticationCubit,
+                            AuthenticationState>(
+                          builder: (context, state) {
+                            return ElevatedButton(
+                              onPressed: () {
+                                final cubit =
+                                    BlocProvider.of<AuthenticationCubit>(
+                                        context);
+                                _login(cubit, state);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          bottomRight: Radius.circular(100),
+                                          bottomLeft: Radius.circular(10),
+                                          topLeft: Radius.circular(10),
+                                          topRight: Radius.circular(10)))),
+                              child: state is AuthenticationLoading
+                                  ? SizedBox(
+                                      height: 25,
+                                      width: 25,
+                                      child: CircularProgressIndicator(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary,
+                                      ),
+                                    )
+                                  : Text(
+                                      'Login',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                    ),
+                            );
                           },
-                          style: ElevatedButton.styleFrom(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(100),
-                                      bottomLeft: Radius.circular(10),
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10)))),
-                          child: Text(
-                            'Login',
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                          ),
                         ),
                       ),
                     ],

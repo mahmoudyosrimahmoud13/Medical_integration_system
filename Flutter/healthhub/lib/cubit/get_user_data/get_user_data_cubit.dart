@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 part 'get_user_data_state.dart';
 
 class GetUserDataCubit extends Cubit<GetUserDataState> {
-  GetUserDataCubit() : super(GetUserDataInitial());
+  GetUserDataCubit() : super(GetUserDataInitial()) {}
   void getData() async {
     emit(GetUserDataLoading());
     try {

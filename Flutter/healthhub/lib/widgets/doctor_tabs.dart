@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:healthhub/widgets/opinion.dart';
+import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/widgets/work_times.dart';
+import 'package:intl/intl.dart';
 
 class DcotorTabs extends StatefulWidget {
-  const DcotorTabs({super.key});
+  DcotorTabs({super.key, required this.data}) {}
+  final Map<String, dynamic> data;
 
   @override
   State<DcotorTabs> createState() => _DcotorTabsState();
 }
 
 class _DcotorTabsState extends State<DcotorTabs> {
-  final lis = [
-    Opinion(name: 'ahmed', comment: 'it was amazing'),
-    Opinion(name: 'mahmoud', comment: 'bad'),
-    Opinion(name: 'yasser', comment: 'Best doctor'),
-    Opinion(name: 'hanaa', comment: 'bad'),
-    Opinion(name: 'sss', comment: 'it was amazing'),
-    Opinion(name: 'lol', comment: 'bad'),
-    Opinion(name: 'sss', comment: 'it was amazing'),
-    Opinion(name: 'lol', comment: 'bad'),
-  ];
   @override
   Widget build(BuildContext context) {
-    final _textTheme = Theme.of(context).textTheme;
-    final _colors = Theme.of(context).colorScheme;
+    List dates = widget.data['dates'];
+    List texts = dates
+        .map((e) => WorkTimes(
+            day: e['dayName'].toString(),
+            form: e['from'].toString(),
+            to: e['to'].toString()))
+        .toList();
+    final textTheme = Theme.of(context).textTheme;
+    final colors = Theme.of(context).colorScheme;
 
-    final _decoration = BoxDecoration(
+    final decoration = BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(12)),
-        color: _colors.primary.withAlpha(50));
+        color: colors.primary.withAlpha(50));
 
     return DefaultTabController(
         length: 3,
@@ -72,10 +72,10 @@ class _DcotorTabsState extends State<DcotorTabs> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(12),
-                        child: Text('Prices',
+                        child: Text('Worktime',
                             style: Theme.of(context)
                                 .textTheme
-                                .titleMedium!
+                                .titleSmall!
                                 .copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
@@ -91,42 +91,111 @@ class _DcotorTabsState extends State<DcotorTabs> {
               Expanded(
                 child: TabBarView(children: [
                   Container(
-                    decoration: _decoration,
+                    padding: EdgeInsets.all(15),
+                    decoration: decoration,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Univirsty: ',
+                              style: textTheme.titleLarge!
+                                  .copyWith(color: colors.primary),
+                            ),
+                            Text(
+                              widget.data['collegeName'],
+                              style: textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Specialty: ',
+                              style: textTheme.titleLarge!
+                                  .copyWith(color: colors.primary),
+                            ),
+                            Text(
+                              widget.data['departmentName'],
+                              style: textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Email: ',
+                              style: textTheme.titleLarge!
+                                  .copyWith(color: colors.primary),
+                            ),
+                            Text(
+                              widget.data['email'],
+                              style: textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Joining date: ',
+                              style: textTheme.titleLarge!
+                                  .copyWith(color: colors.primary),
+                            ),
+                            Text(
+                              DateFormat('yMd').format(
+                                  DateTime.parse(widget.data['dateOfJoin'])),
+                              style: textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Gender: ',
+                              style: textTheme.titleLarge!
+                                  .copyWith(color: colors.primary),
+                            ),
+                            Text(
+                              widget.data['gender'] ? 'Male' : 'Female',
+                              style: textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   Container(
-                    decoration: _decoration,
+                    padding: EdgeInsets.all(15),
+                    decoration: decoration,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              'Adress: ',
+                              style: textTheme.titleLarge!
+                                  .copyWith(color: colors.primary),
+                            ),
+                            Text(
+                              widget.data['addressDescrption'],
+                              style: textTheme.titleLarge,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                   Container(
-                    decoration: _decoration,
+                    padding: EdgeInsets.all(15),
+                    decoration: decoration,
+                    child: Column(
+                      children: [
+                        ...texts,
+                      ],
+                    ),
                   )
                 ]),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.mode_comment_outlined,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 30,
-                    ),
-                    Text(
-                      'Openions',
-                      style: _textTheme.bodyLarge!.copyWith(
-                          color: _colors.primary, fontWeight: FontWeight.bold),
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                decoration: _decoration,
-                height: 150,
-                child: ListView.builder(
-                  itemBuilder: (context, index) => lis[index],
-                  itemCount: lis.length,
-                  scrollDirection: Axis.horizontal,
-                ),
-              )
             ],
           ),
         ));

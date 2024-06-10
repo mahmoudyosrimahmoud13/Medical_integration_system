@@ -37,11 +37,12 @@ class _LoadingScreenState extends State<LoadingScreen>
           children: <Widget>[
             RotationTransition(
               turns: Tween(begin: 0.0, end: 10000.0).animate(_controller),
-              child: SizedBox(
+              child: const SizedBox(
                   height: 100,
                   width: 100,
-                  child: SvgPicture(
-                      SvgAssetLoader('assets/logo/colored logo.svg'))),
+                  child: Image(
+                      image: AssetImage(
+                          'assets/logo/svgviewer-png-output (5).png'))),
             ),
           ],
         ),

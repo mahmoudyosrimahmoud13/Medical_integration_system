@@ -39,8 +39,9 @@ class _CustomLoadingState extends State<CustomLoading>
             child: const SizedBox(
                 height: 100,
                 width: 100,
-                child:
-                    SvgPicture(SvgAssetLoader('assets/logo/colored logo.svg'))),
+                child: Image(
+                    image: AssetImage(
+                        'assets/logo/svgviewer-png-output (5).png'))),
           ),
         ],
       ),

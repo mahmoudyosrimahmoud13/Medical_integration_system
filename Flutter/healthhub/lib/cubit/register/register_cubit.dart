@@ -30,8 +30,10 @@ class RegisterCubit extends Cubit<RegisterState> {
             'input': json.encode(model.toMap())
           });
       print(response.response!.data);
-      emit(RegisterSuccess(message: response.response!.data['message']));
-      navigateTo(toPage: LoginScreen(), replace: true);
+      if (response.response!.statusCode == 200) {
+        emit(RegisterSuccess(message: response.response!.data['message']));
+        navigateTo(toPage: LoginScreen(), replace: true);
+      }
     } catch (e) {
       showMessage(message: e.toString(), type: MessageType.faild);
       print(e.toString());

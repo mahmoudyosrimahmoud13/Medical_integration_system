@@ -15,10 +15,9 @@ class DioHelper {
   }) async {
     try {
       var response = await _dio.post(endPoint, data: data);
-      return ResponseData(
-          isSuccess: !response.data['error'], response: response);
+      return ResponseData(isSuccess: true, response: response);
     } on DioException catch (ex) {
-      print(ex.response?.data);
+      print(ex.response?.data.toString());
       return ResponseData(isSuccess: false, response: ex.response);
     }
   }
@@ -47,6 +46,12 @@ class DioHelper {
     required String endPoint,
     Map<String, dynamic>? data,
   }) async {
+    _dio.options.headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ${CacheHelper.getData(key: 'token')}',
+    };
+    print(CacheHelper.getData(key: 'token'));
     try {
       var response = await _dio.delete(endPoint, data: data);
       return ResponseData(isSuccess: true, response: response);

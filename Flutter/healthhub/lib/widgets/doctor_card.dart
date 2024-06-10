@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:healthhub/cubit/get_doctor/get_doctor_cubit.dart';
 import 'package:healthhub/helpers/helper_methods.dart';
 import 'package:healthhub/screens/docor_details.dart';
 
@@ -24,6 +26,7 @@ class DoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<GetDoctorCubit>(context).getDoctor(id: id);
     return Container(
       padding: const EdgeInsets.all(10),
       width: double.infinity,

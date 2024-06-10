@@ -10,7 +10,9 @@ final class GetUserDataLoading extends GetUserDataState {}
 final class GetUserDataSuccess extends GetUserDataState {
   final Map<String, dynamic> data;
 
-  GetUserDataSuccess({required this.data});
+  GetUserDataSuccess({required this.data}) {
+    CacheHelper.saveData(key: 'name', value: data['name']);
+  }
 }
 
 final class GetUserDataError extends GetUserDataState {

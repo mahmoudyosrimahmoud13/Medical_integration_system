@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthhub/cubit/get_user_data/get_user_data_cubit.dart';
 import 'package:healthhub/helpers/cache_helper.dart';
 import 'package:healthhub/helpers/dio_helper.dart';
 import 'package:healthhub/helpers/helper_methods.dart';
@@ -30,6 +32,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         CacheHelper.saveData(key: 'email', value: data['email']);
         CacheHelper.saveData(
             key: 'image', value: responseData.response!.data['imgSrc']);
+        BlocProvider.of<GetUserDataCubit>(navigatorKey.currentState!.context)
+            .getData();
+
         print(CacheHelper.getData(key: 'image'));
       }
       if (message == null) {

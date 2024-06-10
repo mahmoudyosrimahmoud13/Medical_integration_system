@@ -1,31 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:healthhub/widgets/appointment_card.dart';
-import 'package:healthhub/widgets/doctor_card.dart';
-import 'package:healthhub/widgets/generic_texfield.dart';
 import 'package:intl/intl.dart';
 
 class appointmentScreen extends StatefulWidget {
-  const appointmentScreen({super.key});
+  const appointmentScreen({super.key, required this.name, required this.url});
+  final String name;
+  final String url;
 
   @override
   State<appointmentScreen> createState() => _appointmentScreenState();
 }
 
 class _appointmentScreenState extends State<appointmentScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  void _show_modal() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          height: 400,
-          width: double.infinity,
-          child: DoctorCard(),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -48,15 +34,27 @@ class _appointmentScreenState extends State<appointmentScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // user name:
-                          Text(
-                            'Hi, User.',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineLarge!
-                                .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: NetworkImage(widget.url),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Hi, ${widget.name}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ),
                           const SizedBox(
                             height: 8,
@@ -92,9 +90,6 @@ class _appointmentScreenState extends State<appointmentScreen> {
                       )
                     ],
                   ),
-
-                  // search Bar
-
                   const SizedBox(
                     height: 12,
                   ),
@@ -130,21 +125,18 @@ class _appointmentScreenState extends State<appointmentScreen> {
                 ),
                 AppointmentCard(
                   dKey: ValueKey(''),
+                  image:
+                      'assets/placeholders/pngtree-male-doctor-avatar-icon-illustration-png-image_8537702.png',
+                  name: 'Sara',
+                  date: DateTime.now(),
+                  startDate: DateTime.now(),
+                  endDate: DateTime.now(),
                 ),
               ],
             ),
           ))
         ],
       )),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        shape: CircleBorder(),
-        child: Icon(
-          Icons.add,
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-        onPressed: () {},
-      ),
     );
   }
 }

@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/screens/docor_details.dart';
 
 class DoctorCard extends StatelessWidget {
-  const DoctorCard({super.key});
+  const DoctorCard(
+      {super.key,
+      required this.image,
+      required this.name,
+      required this.phone,
+      required this.rate,
+      required this.area,
+      required this.adress,
+      required this.id});
+  final String image;
+  final String name;
+  final String phone;
+  final String area;
+  final String adress;
+  final String id;
+
+  final double rate;
 
   @override
   Widget build(BuildContext context) {
@@ -10,18 +28,18 @@ class DoctorCard extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       width: double.infinity,
       child: Card(
-        elevation: 0,
         child: ListTile(
-          leading: const CircleAvatar(
-            radius: 50,
-            backgroundImage: AssetImage(
-                'assets/placeholders/pngtree-male-doctor-avatar-icon-illustration-png-image_8537702.png'),
+          leading: CircleAvatar(
+            radius: 60,
+            backgroundImage: NetworkImage(image, scale: 1000),
           ),
-          title: const Text("dr.Doctor"),
+          title: Text("dr.$name"),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Specialization : ????'),
+              Text('Phone : $phone'),
+              Text('Area : $area'),
+              Text('Adress : $adress'),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -32,23 +50,27 @@ class DoctorCard extends StatelessWidget {
                       size: 1,
                     ),
                     onRatingUpdate: (value) {},
-                    initialRating: 5,
+                    initialRating: rate,
                     minRating: 0,
                     maxRating: 5,
-                    allowHalfRating: true,
                     glowRadius: 5,
                     ignoreGestures: true,
                     itemSize: 20,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 5,
                   ),
-                  Text('(5/5)')
+                  Text('(5/$rate)')
                 ],
               )
             ],
           ),
-          onTap: () {},
+          onTap: () {
+            navigateTo(
+                toPage: DoctorDetailsScreen(
+              id: id,
+            ));
+          },
         ),
       ),
     );

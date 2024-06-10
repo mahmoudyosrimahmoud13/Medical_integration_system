@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/screens/loading_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -127,8 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocBuilder<AdressCubit, AdressState>(
       builder: (context, state) {
         if (state is AdressLoading) {
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
+          return const LoadingScreen();
         } else if (state is AdressSucsses) {
           final governrates = state.governrates;
           final areas = state.areas;

@@ -1,9 +1,12 @@
 import 'package:dio/dio.dart';
+import 'package:healthhub/helpers/cache_helper.dart';
 
 class DioHelper {
   static final Dio _dio =
       Dio(BaseOptions(baseUrl: "http://healthhubserver.runasp.net/", headers: {
+    'Content-Type': 'application/json',
     'Accept': 'application/json',
+    'Authorization': 'Bearer ${CacheHelper.getData(key: 'token')}',
   }));
 
   static Future<ResponseData> sendData({
@@ -25,6 +28,11 @@ class DioHelper {
     Map<String, dynamic>? data,
   }) async {
     try {
+      _dio.options.headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${CacheHelper.getData(key: 'token')}',
+      };
       Response response = await _dio.post(
         endPoint,
         data: FormData.fromMap(data ?? {}),
@@ -52,6 +60,11 @@ class DioHelper {
     Map<String, dynamic>? data,
   }) async {
     try {
+      _dio.options.headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ${CacheHelper.getData(key: 'token')}',
+      };
       var response = await _dio.get(endPoint, queryParameters: data);
       final lol = ResponseData(isSuccess: true, response: response);
       return lol;

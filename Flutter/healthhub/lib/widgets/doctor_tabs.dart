@@ -10,10 +10,10 @@ class DcotorTabs extends StatefulWidget {
 
 class _DcotorTabsState extends State<DcotorTabs> {
   final lis = [
-    Opinion(name: 'sss', comment: 'it was amazing'),
-    Opinion(name: 'lol', comment: 'bad'),
-    Opinion(name: 'sss', comment: 'it was amazing'),
-    Opinion(name: 'lol', comment: 'bad'),
+    Opinion(name: 'ahmed', comment: 'it was amazing'),
+    Opinion(name: 'mahmoud', comment: 'bad'),
+    Opinion(name: 'yasser', comment: 'Best doctor'),
+    Opinion(name: 'hanaa', comment: 'bad'),
     Opinion(name: 'sss', comment: 'it was amazing'),
     Opinion(name: 'lol', comment: 'bad'),
     Opinion(name: 'sss', comment: 'it was amazing'),

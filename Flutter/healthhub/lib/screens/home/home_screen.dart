@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthhub/cubit/get_user_data/get_user_data_cubit.dart';
+import 'package:healthhub/helpers/cache_helper.dart';
 import 'package:healthhub/helpers/helper_methods.dart';
 import 'package:healthhub/screens/home/appointments.dart';
 import 'package:healthhub/screens/home/prescription.dart';
 import 'package:healthhub/screens/home/search_screen.dart';
 import 'package:healthhub/screens/home/settings_screen.dart';
+import 'package:healthhub/screens/loading_screen.dart';
 import 'package:healthhub/widgets/nav_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,7 +22,20 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget screen = SearchScreen();
+    BlocProvider.of<GetUserDataCubit>(context).getData();
+
+    Widget screen = BlocBuilder<GetUserDataCubit, GetUserDataState>(
+      builder: (context, state) {
+        if (state is GetUserDataSuccess) {
+          return SearchScreen(
+            name: state.data['name'],
+            url: CacheHelper.getData(key: 'image'),
+          );
+        } else {
+          return LoadingScreen();
+        }
+      },
+    );
     if (_currentIndex == 0) {
       setState(() {
         screen = SettingsScreen();
@@ -26,17 +43,48 @@ class _HomePageState extends State<HomePage> {
     }
     if (_currentIndex == 1) {
       setState(() {
-        screen = appointmentScreen();
+        screen = BlocBuilder<GetUserDataCubit, GetUserDataState>(
+            builder: (context, state) {
+          if (state is GetUserDataSuccess) {
+            return appointmentScreen(
+              name: state.data['name'],
+              url: CacheHelper.getData(key: 'image'),
+            );
+          } else {
+            return LoadingScreen();
+          }
+        });
       });
     }
     if (_currentIndex == 2) {
       setState(() {
-        screen = SearchScreen();
+        screen = BlocBuilder<GetUserDataCubit, GetUserDataState>(
+          builder: (context, state) {
+            if (state is GetUserDataSuccess) {
+              return SearchScreen(
+                name: state.data['name'],
+                url: CacheHelper.getData(key: 'image'),
+              );
+            } else {
+              return LoadingScreen();
+            }
+          },
+        );
       });
     }
     if (_currentIndex == 3) {
       setState(() {
-        screen = PrescriptionScreen();
+        screen = BlocBuilder<GetUserDataCubit, GetUserDataState>(
+            builder: (context, state) {
+          if (state is GetUserDataSuccess) {
+            return PrescriptionScreen(
+              name: state.data['name'],
+              url: CacheHelper.getData(key: 'image'),
+            );
+          } else {
+            return LoadingScreen();
+          }
+        });
       });
     }
     return Scaffold(

@@ -4,7 +4,8 @@ import 'package:healthhub/widgets/doctor_tabs.dart';
 import 'package:intl/intl.dart';
 
 class DoctorDetailsScreen extends StatefulWidget {
-  const DoctorDetailsScreen({super.key});
+  const DoctorDetailsScreen({super.key, required this.id});
+  final String id;
 
   @override
   State<DoctorDetailsScreen> createState() => _DoctorDetailsScreenState();
@@ -15,6 +16,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
   DateTime? _day;
 
   void _showBookModalSheet() {
+    print(widget.id);
     showModalBottomSheet(
       showDragHandle: true,
       context: context,
@@ -174,7 +176,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                       //   height: 25,
                       // ),
                       Text(
-                        'dr.doctor',
+                        'dr.Sara',
                         style: Theme.of(context)
                             .textTheme
                             .displayMedium!
@@ -195,7 +197,7 @@ class _DoctorDetailsScreenState extends State<DoctorDetailsScreen> {
                               .copyWith(
                                 color: Theme.of(context).colorScheme.onPrimary,
                               )),
-                      Text('Phone: 01xxxxxxxx',
+                      Text('Phone: 0100000000',
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!

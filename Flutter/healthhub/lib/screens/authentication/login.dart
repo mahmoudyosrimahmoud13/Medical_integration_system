@@ -1,13 +1,11 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:healthhub/cubit/authentication/authentication_cubit.dart';
 import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/screens/authentication/forget_password.dart';
 import 'package:healthhub/screens/authentication/sign_up.dart';
-import 'package:healthhub/screens/home/search_screen.dart';
 import 'package:healthhub/widgets/generic_texfield.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -45,14 +43,8 @@ class _LoginScreenState extends State<LoginScreen> {
           "password": _passowrdController.text
         };
         cubit.login(data: data);
-        if (state is AuthenticationSuccess) {
-          if (state.message == null) {
-            showMessage(message: 'Login successful');
-            navigateTo(toPage: SearchScreen(), replace: true);
-          } else {
-            showMessage(message: state.message!);
-          }
-        } else if (state is AuthenticationError) {
+
+        if (state is AuthenticationError) {
           showMessage(message: state.error, type: MessageType.faild);
         }
       }
@@ -147,7 +139,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            navigateTo(toPage: ForgetPasswordScreen());
+                          },
                           child: Text(
                             'Forget your password?',
                             style: Theme.of(context)

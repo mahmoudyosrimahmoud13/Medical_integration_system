@@ -1,30 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:healthhub/widgets/doctor_card.dart';
-import 'package:healthhub/widgets/generic_texfield.dart';
+
+import 'package:healthhub/widgets/prescription_card.dart';
 import 'package:intl/intl.dart';
 
 class PrescriptionScreen extends StatefulWidget {
-  const PrescriptionScreen({super.key});
+  const PrescriptionScreen({super.key, required this.name, required this.url});
+  final String name;
+  final String url;
 
   @override
   State<PrescriptionScreen> createState() => _PrescriptionScreenState();
 }
 
 class _PrescriptionScreenState extends State<PrescriptionScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  void _show_modal() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          height: 400,
-          width: double.infinity,
-          child: DoctorCard(),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -47,15 +35,27 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // user name:
-                          Text(
-                            'Hi, User.',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineLarge!
-                                .copyWith(
-                                    color:
-                                        Theme.of(context).colorScheme.onPrimary,
-                                    fontWeight: FontWeight.bold),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: NetworkImage(widget.url),
+                              ),
+                              const SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                'Hi, ${widget.name}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall!
+                                    .copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ],
                           ),
                           const SizedBox(
                             height: 8,
@@ -127,7 +127,18 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                DoctorCard(),
+                PrescriptionCard(
+                    dKey: ValueKey(''),
+                    image:
+                        'assets/placeholders/pngtree-male-doctor-avatar-icon-illustration-png-image_8537702.png',
+                    doctorName: 'Sara',
+                    date: DateTime.now(),
+                    note: 'Al-zhaimer notes',
+                    drugs: [
+                      'Thiosulfuric acid',
+                      'Vorapaxar',
+                      'Lanthanum carbonate'
+                    ])
               ],
             ),
           ))

@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class AppointmentCard extends StatelessWidget {
-  const AppointmentCard(
+class PrescriptionCard extends StatelessWidget {
+  const PrescriptionCard(
       {super.key,
       this.onDismissed,
       required this.dKey,
       required this.image,
-      required this.name,
-      required this.startDate,
-      required this.endDate,
-      required this.date});
+      required this.doctorName,
+      required this.date,
+      required this.note,
+      required this.drugs});
 
   final void Function(DismissDirection)? onDismissed;
   final Key dKey;
   final String image;
-  final String name;
+  final String doctorName;
   final DateTime date;
-  final DateTime startDate;
-  final DateTime endDate;
+  final String note;
+  final List<String> drugs;
 
   @override
   Widget build(BuildContext context) {
@@ -50,13 +50,33 @@ class AppointmentCard extends StatelessWidget {
               radius: 50,
               foregroundImage: AssetImage(image),
             ),
-            title: Text("dr.$name"),
+            title: Text("dr.$doctorName"),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('date : ${DateFormat.yMEd().format(date)}'),
-                Text('From : ${DateFormat.jm().format(endDate)}'),
-                Text('To : ${DateFormat.jm().format(endDate)}'),
+                SingleChildScrollView(
+                  scrollDirection: axisDirectionToAxis(AxisDirection.right),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Drugs:',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                  color: Theme.of(context).colorScheme.primary),
+                        ),
+                        ...drugs
+                            .map(
+                              (e) => Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 5),
+                                  child: Text(e)),
+                            )
+                            .toList(),
+                      ]),
+                )
               ],
             ),
             onTap: () {},

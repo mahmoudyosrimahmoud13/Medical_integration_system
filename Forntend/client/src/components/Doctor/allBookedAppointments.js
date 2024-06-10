@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import sLS from 'react-secure-storage';
-// import icon from '../../photos/right.png';
-// import PatientPrescription from "./prescriptionFromDoctor";
+
 
 const AllBookedAppointments = () => {
     const [appointments, setAppointments] = useState([]);
-    // const [email, setEmail] = useState('');
 
     const [usersData, setUsersData] = useState({});
     const userToken = sLS.getItem('usertoken');
@@ -58,7 +56,7 @@ const AllBookedAppointments = () => {
     return(
         <>
         <div className="allBookedAppointments">
-            <h1>all booked appointments</h1>
+            <h1>all patients</h1>
             {appointments.map(appointment => {
                 const user = usersData[appointment.email];
                 return (

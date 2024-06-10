@@ -1,154 +1,138 @@
-import '@mobiscroll/react/dist/css/mobiscroll.min.css';
-import { Eventcalendar, Popup, setOptions } from '@mobiscroll/react';
-import { useCallback, useMemo, useEffect, useRef, useState } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import sLS from 'react-secure-storage';
-import Prescription from '../../pages/Doctor/prescriptionForm';
+import Swal from 'sweetalert2';
+import { Calendar } from 'react-date-range';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 
-setOptions({
-  theme: 'ios',
-  themeVariant: 'light'
-});
+const CalendarSh = ({ appointments, fetchEvents }) => {
+    const userToken = sLS.getItem('usertoken');
+    const convertToken = JSON.parse(userToken);
+    const [isOpen, setOpen] = useState(false);
+    const [currentAppointments, setCurrentAppointments] = useState([]);
+    const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+    const timerRef = useRef(null);
 
-const Calendar = () => {
-  const userToken = sLS.getItem('usertoken');
-  const convertToken = JSON.parse(userToken);
-  const [appointments, setAppointments] = useState([]);
-  
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch('http://localhost:5225/Hospital/Doctor/BookedAppointments', {
-          method: "GET",
-          headers: {
-            'Authorization': `Bearer ${convertToken.token}`
-          },
-        });
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
+    const handleDayHoverIn = useCallback((date, e) => {
+        const filteredAppointments = appointments.filter(appointment =>
+            new Date(appointment.date).toDateString() === date.toDateString()
+        );
+
+        setCurrentAppointments(filteredAppointments);
+
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
         }
-        const data = await response.json();
-      setAppointments(data);
-        
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
+
+        const rect = e.target.getBoundingClientRect();
+        setTooltipPosition({ top: rect.top + window.scrollY, left: rect.left + window.scrollX });
+
+        setOpen(true);
+    }, [appointments]);
+
+    const handleDayHoverOut = useCallback(() => {
+        timerRef.current = setTimeout(() => {
+            setOpen(false);
+        }, 200);
+    }, []);
+
+    const handleMouseEnter = useCallback(() => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+        }
+    }, []);
+
+    const handleMouseLeave = useCallback(() => {
+        timerRef.current = setTimeout(() => {
+            setOpen(false);
+        }, 200);
+    }, []);
+
+    const cancelAppointment = async (appointment) => {
+        try {
+            const response = await fetch(`http://localhost:5225/Hospital/Doctor/CancelPatientDate?PatientEmail=${appointment.email}`, {
+                method: "DELETE",
+                headers: {
+                    'Authorization': `Bearer ${convertToken.token}`
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to cancel appointment');
+            }
+            Swal.fire("Deleted!", "Your appointment has been deleted.", "success");
+            fetchEvents();
+        } catch (error) {
+            console.error('Error canceling appointment:', error);
+        }
     };
 
-    fetchEvents();
-  }, []);
+    const deleteBtn = (appointment) => {
+        Swal.fire({
+            title: "Are you sure you want to cancel this appointment?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, cancel it!",
+            cancelButtonText: "No",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                cancelAppointment(appointment);
+            }
+        });
+    };
 
-  const [isOpen, setOpen] = useState(false);
-  const [anchor, setAnchor] = useState(null);
-  const [currentEvent, setCurrentEvent] = useState(null);
-
-  const [time, setTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-
-  const timerRef = useRef(null);
-
-  const myView = useMemo(() => ({ calendar: { type: 'week' } }), []);
-
-  const handleEventHoverIn = useCallback((args) => {
-    const event = args.event;
-    setCurrentEvent(event);
-    setTime(event.from);
-    setEndTime(event.to);
-    setName(event.patientName);
-    setPhone(event.patientPhone);
-    setEmail(event.email);
-
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-
-    setAnchor(args.domEvent.target);
-    setOpen(true);
-  }, []);
-
-  const handleEventHoverOut = useCallback(() => {
-    timerRef.current = setTimeout(() => {
-      setOpen(false);
-    }, 200);
-  }, []);
-
-  const handleEventClick = useCallback(() => {
-    setOpen(true);
-  }, []);
-
-  const handleMouseEnter = useCallback(() => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    timerRef.current = setTimeout(() => {
-      setOpen(false);
-    }, 200);
-  }, []);
-
-  const prescriptionOpen = () => {
-    const prescriptionForm = document.querySelector('.prescriptionForm');
-    const center = document.querySelector('.center');
-    const calendarAppointments = document.querySelector('.calendarAppointments');
-    const datesSection = document.querySelector('.dates');
-
-    prescriptionForm.style.opacity = 1;
-    center.style.zIndex = '0';
-    calendarAppointments.style.zIndex = '0';
-    datesSection.style.zIndex = '0';
-  };
-
-  return (
-    <>
-      <Eventcalendar
-        className='calendarAppointments'
-        view={myView}
-        data={appointments}
-        clickToCreate={false}
-        dragToCreate={false}
-        dragToMove={true}
-        dragToResize={false}
-        showEventTooltip={false}
-        height={200}
-        onEventHoverIn={handleEventHoverIn}
-        onEventHoverOut={handleEventHoverOut}
-        onEventClick={handleEventClick}
-      />
-      <Popup
-        display="anchored"
-        isOpen={isOpen}
-        anchor={anchor}
-        touchUi={false}
-        showOverlay={false}
-        contentPadding={false}
-        closeOnOverlayClick={false}
-        width={350}
-        cssClass="md-tooltip"
-      >
-        <div className='pop' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-          <div className="md-tooltip-header" style={{ backgroundColor: '#87CEEB' }}>
-            <span className="md-tooltip-name-age">{name}, </span>
-            <span className="md-tooltip-time">{time} : </span>
-            <span className="md-tooltip-time">{endTime}</span>
-          </div>
-          <div className="md-tooltip-info">
-            <div className="md-tooltip-title">
-              Email: <span className="md-tooltip-status md-tooltip-text">{email}</span>
+    const renderTooltip = () => (
+        <div
+            className={`tooltip ${isOpen && currentAppointments.length > 0 ? 'visible' : ''}`}
+            style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
+        >
+            <div className='tooltip-content' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+                <h1>patients</h1>
+                {currentAppointments.length > 0 ? (
+                    currentAppointments.map((appointment) => (
+                        <div key={appointment.id} className="tooltip-appointment">
+                            <p>{appointment.patientName}</p>
+                            <p>{appointment.from}</p>
+                            <button onClick={() => deleteBtn(appointment)}>Cancel</button>
+                        </div>
+                    ))
+                ) : (
+                    <div>No appointments on this day.</div>
+                )}
             </div>
-            <div className="md-tooltip-title">
-              Phone: <span className="md-tooltip-status md-tooltip-text">{phone}</span>
-            </div>
-            {/* <button className="writeP" onClick={prescriptionOpen}>write the prescription</button> */}
-          </div>
         </div>
-      </Popup>
-      {/* <Prescription patientEmail={email} name={name} /> */}
-    </>
-  );
-}
+    );
 
-export default Calendar;
+    const dayHasAppointments = (date) => {
+        return appointments.some(appointment =>
+            new Date(appointment.date).toDateString() === date.toDateString()
+        );
+    };
+
+    const renderDayContent = (day) => {
+        const date = new Date(day);
+        const hasAppointments = dayHasAppointments(date);
+
+        return (
+            <div
+                className={`day ${hasAppointments ? 'has-appointments' : 'no-appointments'}`}
+                onMouseEnter={(e) => handleDayHoverIn(date, e)}
+                onMouseLeave={handleDayHoverOut}
+            >
+                {date.getDate()}
+            </div>
+        );
+    };
+
+    return (
+        <div className='calendar-container'>
+            <Calendar
+                className='cal'
+                date={new Date()}
+                dayContentRenderer={renderDayContent}
+            />
+            {renderTooltip()}
+        </div>
+    );
+};
+
+export default CalendarSh;

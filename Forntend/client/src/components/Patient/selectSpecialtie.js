@@ -30,7 +30,7 @@ const SelectSpecialtie = ({ onGetSpecialId }) => {
 
     return(
         <select id="special" name="special" className="selectSearch" defaultValue="" onChange={handleSpecialChange}>
-            <option value="" disabled>Search by specialty</option>
+            <option value="" disabled>Select the specialty</option>
             {specialties.map(specialtie => (
                 <option key={specialtie.id} value={specialtie.id}>{specialtie.name}</option>
             ))}

@@ -28,10 +28,11 @@ const Notifications = () => {
                 else if (doctorData.error === true) {
                     if (doctorData.message === 'Your Request Has Not Yet been Reviewed') {
                         setNotifications(false);
+                        sLS.setItem(`notif${convertToken.email}`, true);
                     } 
                     else {
-                        sLS.setItem('notif', true);
-                        setNotifications(true);
+                        // sLS.setItem(`notif${convertToken.email}`, true);
+                        // setNotifications(true);
                     }
                 }
             }
@@ -40,13 +41,15 @@ const Notifications = () => {
         }
     };
     setInterval(getDoctorAccept, 3 * 60 * 10000);
-    const check = sLS.getItem('error');
+    const check = sLS.getItem(`error${convertToken.email}`);
     const err = JSON.parse(check);
     
     useEffect(() => {
         getDoctorAccept();
         if(err === false){
             setNotifications(false);
+            sLS.setItem(`notif${convertToken.email}`, false);
+            
         }
         else if(err === true){
             setNotifications(true);
@@ -54,16 +57,19 @@ const Notifications = () => {
         
         // return () => clearInterval(interval);
     }, []);
+    const nGet = sLS.getItem(`notif${convertToken.email}`);
     
     const handleClickNotifications = () => {
         // sLS.setItem('notif', false);
-        setNotifications(false);
+        // setNotifications(false);
+        sLS.setItem(`notif${convertToken.email}`, false);
     };
+    console.log(nGet);
 
     return (
         <div className="header">
             <div className='images'>
-                <Link to='/notifications' onClick={handleClickNotifications} className={notifications ? 'notifications' : ''}>
+                <Link to='/notifications' onClick={handleClickNotifications} className={nGet ? 'notifications' : null}>
                     <img className='notifIcon' src={notifIcon} alt='not found' />
                 </Link>
                 <img className='profileIcon' src={convertToken.imgSrc} alt='not found' />

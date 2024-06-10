@@ -19,6 +19,7 @@
     "react-chat-engine": "^1.11.28",
     "react-chat-engine-advanced": "^0.1.28",
     "react-chat-engine-pretty": "^0.1.8",
+    "react-date-range": "^2.0.1",
     "react-dom": "^18.2.0",
     "react-google-charts": "^4.0.1",
     "react-hook-form": "^7.51.0",

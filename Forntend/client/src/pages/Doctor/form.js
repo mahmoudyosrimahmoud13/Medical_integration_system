@@ -19,7 +19,7 @@ const BeDoctor = () => {
     const [errorMsg, setErrorMsg] = useState(null);
 
     let notif = document.getElementById('notif');
-    let notifText = document.getElementById('notifText');
+    let notifText = document.querySelector('.notifText');
     let prog = document.getElementById('prog');
 
     const userToken = sLS.getItem('usertoken');
@@ -62,7 +62,7 @@ const BeDoctor = () => {
                     if (doctorToken.error === true) {
                         setErrorMsg("*" + doctorToken.message);
                     } else {
-                        notifText.innerHTML = doctorToken.message;
+                        notifText.innerHTML = doctorToken.message + '!';
                         notif.style.animation = 'fade-in 3s linear';
                         prog.style.animation = 'progress 2.5s 0.3s linear';
                         setErrorMsg(null);

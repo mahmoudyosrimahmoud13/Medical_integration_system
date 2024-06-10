@@ -63,6 +63,7 @@ const Charts = () => {
                 setData(dataPie);
             }
             
+            
             else{
                 const dataPie = [
                     ['Gender', 'Population'],

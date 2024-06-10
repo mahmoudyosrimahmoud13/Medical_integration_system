@@ -1,18 +1,25 @@
 import { useState } from "react";
 import sLS from 'react-secure-storage';
+import image from '../../photos/pngaaa.com-3670877.png';
 
-const PatientForm = ({ doctorId }) => {
+const PatientForm = ({ doctorId, doctorDates }) => {
     const [from, setValue] = useState('');
     const [day, setValue2] = useState('');
     const [message, setMessage] = useState('');
+    const [color, setColor] = useState('red');
+
     const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
+
     const data = { from, day };
+
+    
     const extractTimeWithAMPM = (time) => {
         const date = new Date(`2000-01-01T${time}`);
         const formattedTime = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
         return formattedTime;
     }
+
 
     const submit = (e) => {
         e.preventDefault();
@@ -33,10 +40,11 @@ const PatientForm = ({ doctorId }) => {
                 else if(res.ok){
                     const m = await res.text();
                     if(m === 'Save.'){
-                        setMessage("booked successfully");
+                        setMessage("booked successfully !");
+                        setColor('#143F6B');
                         setTimeout(() => {
                             cancel();
-                        }, 2000);
+                        }, 1000);
                     }
                     else if(m === 'Choose The Appropriate Day' || m === 'Choose The Appropriate Time'){
                         setMessage('! that appointment is not available')
@@ -53,31 +61,29 @@ const PatientForm = ({ doctorId }) => {
     }
     
     const cancel = () => {
-        let af = document.querySelector('.af');
-        af.style.display = 'none'
-    }
+        let af = document.querySelector('.appForm');
+        let blur = document.querySelector('.search');
 
+        blur.style.filter = 'blur(0)';
+        af.style.display = 'none';
+    }
     return(
-        <form className="af" onSubmit={submit}>
-            <h1>hello sir, can you complete this information</h1>
-            <div className="row">
-                <div className="inputP">
-                    <label>day</label>
-                    <input type="date" onChange={(e) => setValue2(e.target.value)} required />
-                </div>
-                <div className="inputP">
-                    <label>time</label>
-                    <input type="time" onChange={(e) => setValue(extractTimeWithAMPM(e.target.value))} required />
-                </div>
-            </div>
-            <div className="row">
-                <p className="msg">{message}</p>
-            </div>
-            <div className="row">
-            <button>submit consultation</button>
-            <button onClick={() => cancel()}>cancel consultation</button>
+        <div className="appForm">
+        <h2>Doctor Registration Form</h2>
+        <img src={image} alt="not found" className="form-image" />
+        <form onSubmit={submit}>
+            <label htmlFor="date">Date:</label>
+            <input type="date" id="appointment-date" name="appointment-time" onChange={(e) => setValue2(e.target.value)} required />
+            
+            <label htmlFor="appointment-time">Appointment Time:</label>
+            <input type="time" id="appointment-time" name="appointment-time" onChange={(e) => setValue(extractTimeWithAMPM(e.target.value))} required />
+            <p style={{color: color}} className="msg">{message}</p>
+            <div className="button-container">
+                <button className="submit">submit consultation</button>
+                <button className="cancel" onClick={() => cancel()}>cancel consultation</button>
             </div>
         </form>
+        </div>
     )
 }
 

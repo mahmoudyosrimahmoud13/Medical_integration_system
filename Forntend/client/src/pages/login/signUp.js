@@ -8,8 +8,6 @@ import FetchHook from "../../components/login/fetchHook";
 const SignUp = () => {
     const [selectedGovernorate, setSelectedGovernorate] = useState('');
 
-
-
     const governorates = FetchHook(`http://localhost:5225/Adress/GetGovernorate`);
 
     const areas = FetchHook(`http://localhost:5225/Adress/GetAreas?GovermentKey=${selectedGovernorate}`);
@@ -72,11 +70,8 @@ const SignUp = () => {
 
                 const errorData = await res.json();
                 if (!res.ok) {
-                    // if(errorData.isLogin === "false"){
                         sp.style.visibility = "visible";
                         throw new Error("Must fill inputs");
-                    // }
-                    
                 }
                 else if(res.ok){
                     if(errorData.isLogin === false){

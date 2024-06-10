@@ -44,18 +44,24 @@ const ShowAllNotifications = () => {
                         sLS.setItem('usertoken', JSON.stringify(updatedToken));
                         setText('your request to become part of our medical staff. accepted');
                         setSrc(icon);
+                        sLS.setItem(`apply${convertToken.email}`, true);
                     }
-                    else if(doctorData.error === true){
-                        if(doctorData.message === 'Your Request Has Not Yet been Reviewed'){
+                    // else if(doctorData.error === true){
+                        else if(doctorData.message === 'Your Request Has Not Yet been Reviewed'){
                             setNotifications(false);
+                            sLS.setItem(`apply${convertToken.email}`, false);
                         }
                         else{
-                            setText(doctorData.message);
-                            setNotifications(true);
-                            setSrc(icon2);
-                            sLS.setItem('error', false);
+                            if(sLS.getItem(`apply${convertToken.email}`) === true){
+                                setText(doctorData.message);
+                                setNotifications(true);
+                                setSrc(icon2);
+                                sLS.setItem(`error${convertToken.email}`, false);
+                            }
+                            setNotifications(false);
+                            
                         }
-                    }
+                    // }
                     // setNotifications(false);
                 }
             }
@@ -66,7 +72,7 @@ const ShowAllNotifications = () => {
     
     useEffect(() => {
         getDoctorAccept();
-        const check = sLS.getItem('error');
+        const check = sLS.getItem(`error${convertToken.email}`);
         const err = JSON.parse(check);
         if(err === false){
             setOpacity(.5);

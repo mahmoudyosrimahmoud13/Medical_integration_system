@@ -2,7 +2,7 @@ import doctorImage from '../../photos/istockphoto-1494673298-612x612-removebg-pr
 import femaleImage from '../../photos/Doctor-dp-Girl-doctor-removebg-preview.png';
 import { useState, useEffect } from 'react';
 import Charts from '../../components/Doctor/charts';
-import Calendar from '../../components/Doctor/calendar';
+import CalendarSh from '../../components/Doctor/calendar';
 import Navbar from '../../components/Doctor/navbar';
 import Reports from '../../components/Doctor/roports';
 import sLS from 'react-secure-storage';
@@ -17,7 +17,6 @@ const Doctor = () => {
     const [specialites, setSpecialites] = useState('');
     const urlUser = `http://localhost:5225/Auth/GetUser?Email=${convertToken.email}`;
     
-
 
     const urlSpecialites = `http://localhost:5225/Hospital/Doctor/GetDoctorSpecialtie`;
 
@@ -63,9 +62,63 @@ const Doctor = () => {
                 throw new Error('no data');  
             }
     };
+    const [allAppointments, setAllAppointments] = useState([]);
+    const [todayAppointments, setTodayAppointments] = useState([]);
+
+    const fetchAllEvents = async () => {
+        try {
+            const response = await fetch('http://localhost:5225/Hospital/Doctor/BookedAppointments', {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${convertToken.token}`
+                },
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch events');
+            }
+            const data = await response.json();
+            setAllAppointments(data);
+            filterTodayAppointments(data);
+        } catch (error) {
+            console.error('Error fetching events:', error);
+        }
+    };
+
+    const filterTodayAppointments = (appointments) => {
+        const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+        const filteredAppointments = appointments.filter(appointment => appointment.dayName === today);
+        setTodayAppointments(filteredAppointments);
+    };
+
+    const [patients, setPatients] = useState('');
+    const getNumberPatients = async () => {
+        try {
+            const response = await fetch('http://localhost:5225/Hospital/Doctor/BookedAppointments', {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${convertToken.token}`
+                },
+            });
+            if (!response.ok) {
+                throw new Error("No appointments");
+            }
+            const data = await response.json();
+            setPatients(data.length);
+            if (data.length < 1) {
+                setPatients('0');
+            }
+        } catch (error) {
+            console.error('Error fetching patient data:', error);
+        }
+    };
+
+
+    
     useEffect(() => {
         getUserData();
         getDoctorDB();
+        fetchAllEvents();
+        getNumberPatients();
     }, [urlSpecialites, urlUser]);
 
 
@@ -90,7 +143,7 @@ const Doctor = () => {
                         <div className='middle'>
                         <div className='middleL'>
                             <div className='reports'>
-                                <Reports />
+                                <Reports getNumberPatients={getNumberPatients} patients={patients} />
                             </div>
                             <div className='charts'>
                                 <Charts />
@@ -104,13 +157,13 @@ const Doctor = () => {
                     </div>
                     <div className='right'>
                         <div className='appointments'>
-                            <p>your appointments</p>
+                            <p className='p'>Your monthly schedule</p>
                             <div className='calendar'>
-                            <Calendar />
+                            <CalendarSh appointments={allAppointments} fetchEvents={fetchAllEvents} />
                             </div>
                         </div>
                         <div className='booked'>
-                            <BookedAppointments />
+                            <BookedAppointments appointments={todayAppointments} />
                         </div>
                     </div>
                 </div>

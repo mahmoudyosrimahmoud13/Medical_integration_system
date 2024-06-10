@@ -4,7 +4,7 @@ import sLS from 'react-secure-storage';
 import PatientAppointments from '../components/Patient/appointments';
 import { useNavigate } from 'react-router-dom';
 import Notifications from '../components/notifications';
-
+import Prescriptions from '../components/Patient/prescriptions';
 
 const Settings = () => {
     const userToken = sLS.getItem('usertoken');
@@ -14,6 +14,7 @@ const Settings = () => {
 
     const [user, setData] = useState('');
     const [imgSrc, setSelectedImage] = useState('');
+    const [checkRole, setCheckRole] = useState('');
 
     const url = `http://localhost:5225/Auth/GetUser?Email=${convertToken.email}`;
     const getUserData = async () => {
@@ -67,14 +68,47 @@ const Settings = () => {
     
     const logout = () => {
         sLS.removeItem('usertoken');
+        sLS.removeItem(`rating-${convertToken.email}`);
         navigate('/login');
+    };
+
+
+    const getDoctorAccept = async () => {
+        try {
+            const res = await fetch('http://localhost:5225/Hospital/Doctor/CheackRoleDoctor', {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${convertToken.token}`
+                },
+            });
+            const doctorData = await res.json();
+
+            if (!res.ok) {
+                setCheckRole(doctorData.message);
+            } 
+            else if (res.ok) {
+                if (doctorData.message === 'Accept') {
+                }
+                else if (doctorData.error === true) {
+                    if (doctorData.message === 'Your Request Has Not Yet been Reviewed') {
+                    } 
+                    else {
+                    }
+                }
+            }
+        } catch (error) {
+            throw new Error('no data');
+        }
     };
     useEffect(() => {
         getUserData();
         if(imgSrc){
             handleImageUpload();
         }
+        getDoctorAccept();
     }, [url, imgSrc]);
+
+
     return(
         <div className="profile">
             <Notifications />
@@ -118,13 +152,13 @@ const Settings = () => {
                         <div className="text">Logout</div>
                     </button>
                         </div>
-                        
                     </div>
-                    
                 </div>
-                <div className='rightPatientProfile'>
+                {checkRole === 'You did it Before' ? null :
+                (<div className='rightPatientProfile'>
                     <PatientAppointments />
-                </div>
+                    <Prescriptions />
+                </div>)}
             </section>
         </div>
     )

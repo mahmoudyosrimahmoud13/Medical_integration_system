@@ -32,7 +32,7 @@ const SelectArea = ({ onGetAreaId }) => {
 
     return(
         <select id="area" name="area" className="selectSearch" defaultValue="" onChange={handleAreaChange}>
-            <option value="" disabled>Search by area</option>
+            <option value="" disabled>Select the area</option>
             {areas.map(area => (
                 <option key={area.id} value={area.id}>{area.key}</option>
             ))}

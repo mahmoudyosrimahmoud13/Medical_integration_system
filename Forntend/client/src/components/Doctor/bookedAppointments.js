@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import sLS from 'react-secure-storage';
 import icon2 from '../../photos/next.png';
 import { Link } from "react-router-dom";
-// import Prescription from "../../pages/Doctor/prescriptionForm";
 
 const BookedAppointments = ({ appointments }) => {
     const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
     const [usersData, setUsersData] = useState({});
+    const [currentPage, setCurrentPage] = useState(0);
+    const appointmentsPerPage = 1;
 
     const getUserData = async (email) => {
         try {
@@ -33,30 +34,46 @@ const BookedAppointments = ({ appointments }) => {
         });
     }, [appointments]);
 
-    // const prescriptionForm = document.querySelector('.prescriptionForm');
+    // Sort appointments based on 'from' time
+    const sortedAppointments = [...appointments].sort((a, b) => {
+        return a.from.localeCompare(b.from);
+    });
 
-    // const openPrescriptionForm = () => {
-    //     prescriptionForm.style.display = 'flex';
-    // };
+    const handlePageClick = (index) => {
+        setCurrentPage(index);
+    };
+
+    const offset = currentPage * appointmentsPerPage;
+    const currentAppointments = sortedAppointments.slice(offset, offset + appointmentsPerPage);
 
     return (
         <>
             <h3>Today's Appointments</h3>
-            {appointments.length > 0 ? (
-                appointments.map(appointment => {
-                    const user = usersData[appointment.email];
-                    return (
-                        <div key={appointment.email} className="bACard">
-                            {user && <img src={`http://localhost:5225/Image/User/${user.img}`} alt="User" />}
-                            <div className="appointInfo">
-                                <h1>{appointment.patientName}</h1>
-                                <p>{appointment.from} - {appointment.to}</p>
+            {sortedAppointments.length > 0 ? (
+                <>
+                    {currentAppointments.map(appointment => {
+                        const user = usersData[appointment.email];
+                        return (
+                            <div key={appointment.email} className="bACard">
+                                {user && <img src={`http://localhost:5225/Image/User/${user.img}`} alt="User" />}
+                                <div className="appointInfo">
+                                    <h1>{appointment.patientName}</h1>
+                                    <p>{appointment.from} - {appointment.to}</p>
+                                </div>
+                                <Link to={`/prescription/${appointment.email}`} className="writeP">Start Session</Link>
                             </div>
-                            <Link to={`/prescription/${appointment.email}`} className="writeP">Start Session</Link>
-                            {/* <Prescription patientEmail={appointment.email} name={appointment.patientName} /> */}
-                        </div>
-                    );
-                })
+                        );
+                    })}
+                    <div className="pagination">
+                        {Array.from({ length: Math.ceil(sortedAppointments.length / appointmentsPerPage) }, (_, index) => (
+                            <span
+                                key={index}
+                                className={`dot ${currentPage === index ? 'active' : ''}`}
+                                onClick={() => handlePageClick(index)}
+                            ></span>
+                        ))}
+                    </div>
+                </>
             ) : (
                 <p className="null">No appointments for today</p>
             )}

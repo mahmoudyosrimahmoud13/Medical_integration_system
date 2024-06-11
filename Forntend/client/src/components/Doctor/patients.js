@@ -5,7 +5,7 @@ import Notifications from "../notifications";
 import Navbar from "./navbar";
 
 
-const AllBookedAppointments = () => {
+const Patients = () => {
     const [appointments, setAppointments] = useState([]);
 
     const [usersData, setUsersData] = useState({});
@@ -62,7 +62,7 @@ const AllBookedAppointments = () => {
             <div className="page">
             <Notifications />
             <div className="content">
-            <h1>all appointments</h1>
+            <h1>all patients</h1>
             {appointments.map(appointment => {
                 const user = usersData[appointment.email];
                 return (
@@ -73,13 +73,12 @@ const AllBookedAppointments = () => {
                             <h1 className="upd">{appointment.patientName}</h1>
                             <p>{appointment.dayName} {appointment.from} - {appointment.to}</p>
                         </div>
-                        <Link to={`/prescription/${appointment.email}`} className="viewPatient">start session</Link>
+                        <Link to={`/profile/${appointment.email}`} className="viewPatient">view</Link>
                     </div>
                     </>
                     )
             })}
             </div>
-            
             </div>
             
         </div>
@@ -87,4 +86,4 @@ const AllBookedAppointments = () => {
     )
 }
 
-export default AllBookedAppointments;
+export default Patients;

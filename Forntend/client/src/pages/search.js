@@ -66,7 +66,6 @@ const Search = () => {
         setSelectedDoctorId(doctorId);
         let af = document.querySelector('.appForm');
         let blur = document.querySelector('.search');
-
         af.style.display = 'flex';
         blur.style.filter = 'blur(5px)';
     }
@@ -94,6 +93,7 @@ const Search = () => {
                                     <div key={index} className='datesInf'>
                                         <p>{date.dayName}</p>
                                         <p>{date.from}</p>
+                                        <p>:</p>
                                         <p>{date.to}</p>
                                     </div>
                                     ))}

@@ -5,13 +5,15 @@ import PatientAppointments from '../components/Patient/appointments';
 import { useNavigate } from 'react-router-dom';
 import Notifications from '../components/notifications';
 import Prescriptions from '../components/Patient/prescriptions';
+import searchIcon from '../photos/search.png';
+import joinIcon from '../photos/joinUser.png';
+import { Link } from 'react-router-dom';
 
 const Settings = () => {
     const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
     const navigate = useNavigate();
-    // const [notifications, setNotifications] = useState(false);
-
+    console.log(convertToken.roles);
     const [user, setData] = useState('');
     const [imgSrc, setSelectedImage] = useState('');
     const [checkRole, setCheckRole] = useState('');
@@ -69,7 +71,7 @@ const Settings = () => {
     const logout = () => {
         sLS.removeItem('usertoken');
         sLS.removeItem(`rating-${convertToken.email}`);
-        navigate('/login');
+        navigate('/');
     };
 
 
@@ -100,6 +102,7 @@ const Settings = () => {
             throw new Error('no data');
         }
     };
+    console.log(convertToken);
     useEffect(() => {
         getUserData();
         if(imgSrc){
@@ -160,6 +163,13 @@ const Settings = () => {
                     <Prescriptions />
                 </div>)}
             </section>
+            <div className="social-media">
+                <ul>
+                    <li><Link to={'/search'}>Search For Doctors <img src={searchIcon} alt='not found' /></Link></li>
+                    <li><Link to={'/be-doctor'}>Join Our Team Now. <img src={joinIcon} alt='not found' /></Link></li>
+
+                </ul>
+            </div>
         </div>
     )
 }

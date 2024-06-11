@@ -42,11 +42,9 @@ const ShowAllDatesDoctor =  () => {
         if (hour12 === 0) hour12 = 12;
 
         return `${hour12.toString().padStart(2, '0')}:${minute} ${period}`;
-
     };
-
     const updateDate = async () => {
-        const data = { dayName: getDayName(selectedDay), from: getTimeString(startTime), to: (endTime) };
+        const data = { dayName: getDayName(selectedDay), from: getTimeString(startTime), to: getTimeString(endTime) };
         if (!selectedDay || !startTime || !endTime) {
             return setAddDiv2('Please add your Appointments');
         }
@@ -159,7 +157,7 @@ const ShowAllDatesDoctor =  () => {
     const updatePrompt = document.querySelector('.updateDates');
 
     const showPrompt = () => {
-        prompt.style.display = 'block';
+        prompt.style.display = 'flex';
     }
 
     const hidePrompt = () => {
@@ -167,7 +165,7 @@ const ShowAllDatesDoctor =  () => {
     }
 
     const showUPrompt = () => {
-        updatePrompt.style.display = 'block';
+        updatePrompt.style.display = 'flex';
     }
 
     const hideUPrompt = () => {
@@ -196,7 +194,7 @@ const ShowAllDatesDoctor =  () => {
         <div className="dates">
             <p className="lbl">add new appointment</p>
             <div className="add_date">
-                <label for="date">Day:</label>
+                <label htmlFor="date">Day:</label>
                 <input type="date" id="date" name="date" required onChange={(e) => setSelectedDay(e.target.value)} />
             </div>
             <div className="form-group-time">
@@ -234,7 +232,7 @@ const ShowAllDatesDoctor =  () => {
         <div className="updateDates">
         <p className="lbl">update old appointment</p>
         <div className="add_date">
-                <label for="date">Day:</label>
+                <label htmlFor="date">Day:</label>
                 <input type="date" id="date" name="date" required onChange={(e) => setSelectedDay(e.target.value)} />
             </div>
             <div className="form-group-time">

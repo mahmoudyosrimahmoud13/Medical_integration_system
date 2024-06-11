@@ -755,38 +755,7 @@
   width: 50px;
   border-radius: 10px;
 }
-/* .certificate{
-  margin-top: 10px;
-  display: flex;
-  position: relative;
-}
-.forminput .file{
-    width: 50px;
-    cursor: pointer;
-    padding: 15px;
-    opacity: 0;
-    top: 0;
-    left: 7%;
-    position: absolute;
-}
-.selectedCert{
-  background-color: white;
-  width: 200px;
-  padding: 5px;
-  border-radius: 10px;
-  margin-left: 10px;
-  color: black;
-  display: flex;
-  column-gap: 5px;
-  flex-wrap: wrap;
-  align-items: center;
-  flex-direction: row;
-}
-.selectedCert img{
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
-} */
+
 .forminput .file{
   width: 250px;
   outline: none;
@@ -799,7 +768,7 @@
   border: none;
   padding: 10px 20px;
   border-radius: 10px;
-  color: midnightblue;
+  color: #143F6B;
   cursor: pointer;
   transition: .2s ease-in-out;
   background-color: rgba(173, 216, 230, 0.329);
@@ -849,7 +818,7 @@
 }
 .apply::before {
   content: "";
-  background: midnightblue;
+  background: #143F6B;
   width: 120%;
   left: -10%;
   transform: skew(30deg);
@@ -928,7 +897,7 @@
   flex-direction: row;
   min-height: 100vh;
 }
-.doctor .navbar{
+.navbar{
   height: 100%;
   width: 20%;
   background-color: rgba(173, 216, 230, 0.329);
@@ -946,7 +915,7 @@
   position: absolute;
   right: 0;
 }
-.doctor .page .header{
+.header{
   width: 100%;
   height: 5%;
   display: flex;
@@ -1062,7 +1031,7 @@
   right: 10px;
   top: 50%;
   transform: translateY(-100%);
-  transform: translateX(-100%);
+  transform: translateX(-90%);
   z-index: 4;
 }
 
@@ -1112,7 +1081,7 @@
   background-color: darkred;
   color: white;
   border: none;
-  padding: 3px 5px;
+  padding: 5px 5px;
   cursor: pointer;
   border-radius: 10px;
   transition: .2s ease-in-out all;
@@ -1134,6 +1103,7 @@
   font-size: 1rem;
 }
 .bACard{
+  column-gap: 5%;
   width: 100%;
   background-color: #87cfeb60;
   padding: 20px 15px;
@@ -1141,9 +1111,9 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
   transition: all ease-in-out .3s;
   cursor: pointer;
+  position: relative;
 }
 .bACard:hover{
   transform: translateX(-1%);
@@ -1157,6 +1127,7 @@
   font-weight: 500;
   text-align: left;
   color: #143F6B;
+  text-transform: capitalize;
 }
 .bACard .appointInfo p{
   color: rgba(128, 128, 128, 0.749);
@@ -1199,6 +1170,36 @@
 .showAllAppointments .viewAllIcon{
   width: 20px;
 }
+
+
+
+/* BookedAppointments.css */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  margin: 0 5px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.dot:hover {
+  background-color: #143F6B;
+}
+
+.active {
+  background-color: #87CEEB;
+}
+
 .middle{
   display: flex;
   width: 100%;
@@ -1315,7 +1316,6 @@
   width: 100%;
   justify-content: space-between;
   column-gap: 2%;
-  /* justify-content: left; */
 }
 .form-group-time input{
   width: 200px;
@@ -1629,7 +1629,7 @@
   width: 25px;
   height: 25px;
 }
-.navbar .links .link:nth-child(1){
+/* .navbar .links .link:nth-child(1){
   background-color: #fff;
 
 }
@@ -1642,7 +1642,22 @@
   width: 3px;
   height: 45px;
   border-radius: 5px;
+} */
+.navbar .links .link.active {
+  background-color: #fff;
 }
+
+.navbar .links .link.active:before {
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 0;
+  background-color: #87CEEB;
+  width: 3px;
+  height: 45px;
+  border-radius: 5px;
+}
+
 
 
 
@@ -1743,6 +1758,7 @@
 }
 .home section .cards .card img{
   width: 250px;
+  border-radius: 10px;
   /* height: 250px; */
 }
 
@@ -2079,10 +2095,26 @@
   align-items: center;
   position: relative;
 }
-.prescriptionForm h1{
+.prescriptionForm .logoPr{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10%;
+  padding: 10px;
+  justify-content: center;
+  position: relative;
+  margin-top: 1%;
+}
+.prescriptionForm .logoPr img{
+  width: 250px;
+  position: absolute;
+  left: 3%;
+}
+.prescriptionForm .logoPr h1{
   color: #143F6B;
-  margin-bottom: 5%;
   text-transform: capitalize;
+  font-size: 2rem;
 }
 .prescriptionForm .return{
   display: none;
@@ -2292,18 +2324,34 @@
 .allBookedAppointments{
   width: 100%;
   min-height: 100vh;
+  /* flex-direction: column; */
+  /* align-items: center; */
+  /* padding: 3%; */
+  display: flex;
+  flex-direction: row;
+}
+.allBookedAppointments .page{
+  width: 80%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 3%;
+  position: absolute;
+  right: 0;
+}
+.allBookedAppointments .page .content{
+  height: 95%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  column-gap: 3%;
 }
 .allBookedAppointments h1{
   color: #143F6B;
   text-transform: capitalize;
-  margin-bottom: 1%;
+  margin-bottom: 2%;
+  text-align: left;
 }
 .allBookedAppointments div{
-  width: 70%;
   margin-bottom: 1%;
 }
 .allBookedAppointments div .appointInfo{
@@ -2371,6 +2419,8 @@
   transition: .2s all ease-in-out;
   cursor: pointer;
   text-decoration: none;
+  position: absolute;
+  right: 5%;
 }
 .allBookedAppointments .viewPatient:hover{
   background-color: white;
@@ -2386,6 +2436,11 @@
   display: flex;
   flex-direction: column;
   /* background-color: whitesmoke; */
+}
+.notificationsPage h1{
+  color: #143F6B;
+  text-transform: capitalize;
+  margin-bottom: 2%;
 }
 .notificationsPage .up{
   width: 100%;
@@ -2415,16 +2470,24 @@
   text-transform: capitalize;
   color: #143F6B;
   background-color: #87cfeb60;
+  position: relative;
+  transition: .2s ease-in-out all;
+}
+.notificationsPage .down .notification:hover{
+  background-color: #ccc;
 }
 .notificationsPage .down p{
   text-transform: capitalize;
   color: #143F6B;
   font-weight: 500;
   font-size: 1.1rem;
+  letter-spacing: 1px;
 }
-.notificationsPage .cong{
+.notificationsPage .icon{
   width: 50px;
-  margin-right: 2%;
+  position: absolute;
+  left: 10%;
+  /* margin-right: 2%; */
 }
 
 /*  */
@@ -2436,6 +2499,7 @@
 .viewPP{
   padding: 20px;
   text-transform: capitalize;
+  color: #87CEEB;
 }
 .viewPP .profile-container {
   width: 100%;
@@ -2755,4 +2819,142 @@
   text-transform: capitalize;
   font-weight: 500;
   letter-spacing: 1px;
+}
+
+
+
+/* admin accept doctors applicants */
+
+.acceptDoctors{
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  row-gap: 10%;
+  align-items: center;
+  padding: 3%;
+}
+.acceptDoctors h1{
+  color: #143F6B;
+  text-transform: capitalize;
+  width: 100%;
+  margin-bottom: 5%;
+}
+.acceptDoctors .acceptDoctor{
+  height: 100px;
+  width: 80%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #87cfeb60;
+  margin-bottom: 3%;
+  display: flex;
+  flex-direction: row;
+  column-gap: 4%;
+  align-items: center;
+  position: relative;
+}
+.acceptDoctor img{
+  width: 70px;
+  border-radius: 50%;
+}
+.acceptDoctor p{
+  color: #143F6B;
+}
+.acceptDoctor span{
+  text-transform: capitalize;
+  font-weight: 500;
+}
+.acceptDoctor .capital{
+  text-transform: capitalize;
+  text-align: left;
+}
+.acceptDoctor .btnsAR{
+  display: flex;
+  flex-direction: row;
+  column-gap: 10%;
+  position: absolute;
+  right: 3%;
+}
+.acceptDoctor button{
+  border-radius: 10px;
+  color: #fff;
+  text-transform: capitalize;
+  padding: 10px;
+  border: none;
+  outline: none;
+  transition: ease-in-out .2s all;
+  cursor: pointer;
+  font-weight: 500;
+}
+.acceptDoctor button:nth-child(1){
+  background-color: #143F6B;
+}
+.acceptDoctor button:nth-child(1):hover{
+  background-color: #fff;
+  color: #143F6B;
+}
+.acceptDoctor button:nth-child(2){
+  background-color: darkred;
+}
+.acceptDoctor button:nth-child(2):hover{
+  background-color: #fff;
+  color: darkred;
+}
+.acceptDoctor .name-email{
+  display: flex;
+  flex-direction: column;
+  row-gap: 10%;
+  height: 100%;
+  justify-content: center;
+}
+
+
+/*  */
+
+
+
+.social-media {
+  z-index: 999;
+  position: absolute;
+  left: 11%;
+  top: 0;
+}
+.social-media ul {
+  padding: 5px;
+  transform: translate(-410px, 0);
+  display: flex;
+  flex-direction: column;
+}
+.social-media ul li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  text-align: left;
+  padding: 10px;
+  border-radius: 0 30px 30px 0;
+  transition: all 1.2s ease;
+}
+.social-media a {
+  font-family: 'Permanent Marker', cursive;
+  text-decoration: none;
+  font-size: 22px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.social-media a:hover{
+  opacity: .7;
+  color: #143F6B;
+}
+.social-media ul li a img {
+  margin-left: 5px;
+  padding: 10px;
+  width: 50px;
+  transform: rotate(0deg);
+}
+.social-media ul li:hover {
+  transform: translate(225px, 0);
 }

@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
 import sLS from 'react-secure-storage';
-import '@mobiscroll/react/dist/css/mobiscroll.min.css';
-import { Datepicker, setOptions } from '@mobiscroll/react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-
-setOptions({
-    theme: 'ios',
-    themeVariant: 'light'
-});
+import logo from '../../photos/logo1.png';
 
 
 
@@ -20,12 +14,14 @@ const Prescription = () => {
     const [drugs, setResults] = useState([]);
     const [selectedDrugs, setSelectedDrugs] = useState([]);
     const [repentances, setRepentances] = useState([]);
-    const [msg, setmsg] = useState('');
     const [color, setColor] = useState('red');
     const { email } = useParams();
     const [persistent, setPersistent] = useState();
     const [cured, setCured] = useState();
 
+
+    const [msg, setmsg] = useState('');
+    const [interact, setInteract] = useState('');
 
     const nv = useNavigate();
     const handleInputChange = (e) => {
@@ -47,11 +43,44 @@ const Prescription = () => {
         }
     };
 
+
+    const interaction = document.querySelector('.interaction');
+
+    const checkInteraction = async (selectedDrugIds) => {
+        try {
+            const res = await fetch(`http://localhost:5225/Hospital/Doctor/MedicalSession/CheackDrugsInteraction?PaientEmail=${email}`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${convertToken.token}`
+                },
+                body: JSON.stringify(selectedDrugIds)
+            });
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error('Failed to fetch drug interactions');
+            }
+            else if(res.ok){
+                if(data.impact === true){
+                    setInteract(data.interactionResult[0] + ' !');
+                    interaction.style.display = 'block';
+                }
+                else{
+                    setInteract('');
+                    interaction.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error checking drug interactions:', error);
+        }
+    };
     const handleDrugSelection = (e) => {
         const selectedDrug = drugs.find(drug => drug.id === e.target.value);
         if (selectedDrug && !selectedDrugs.some(drug => drug.drugId === selectedDrug.id)) {
             setSelectedDrugs([...selectedDrugs, { drugId: selectedDrug.id, note: '', repeatCount: '', start: '', end: '' }]);
         }
+        const selectedDrugIds = [...selectedDrugs, { drugId: selectedDrug.id }].map(drug => drug.drugId);
+        checkInteraction(selectedDrugIds);
     };
 
     const handleNoteChange = (index, value) => {
@@ -66,10 +95,16 @@ const Prescription = () => {
         setSelectedDrugs(updatedDrugs);
     };
 
-    const handleDateTimeChange = (index, selectedValues) => {
+    
+    const handleStartChange = (index, value) => {
         const updatedDrugs = [...selectedDrugs];
-        updatedDrugs[index].start = selectedValues[0];
-        updatedDrugs[index].end = selectedValues[1];
+        updatedDrugs[index].start = value;
+        setSelectedDrugs(updatedDrugs);
+    };
+
+    const handleEndChange = (index, value) => {
+        const updatedDrugs = [...selectedDrugs];
+        updatedDrugs[index].end = value;
         setSelectedDrugs(updatedDrugs);
     };
 
@@ -119,7 +154,7 @@ const Prescription = () => {
                         notif.style.animation= 'fade-in 3s linear';
                         prog.style.animation = 'progress 2.5s 0.3s linear';
                         setTimeout(() => {
-                            nv('/');
+                            nv('/doctor');
                         }, 3000);
                     } else if (m === 'Added Before' || m === 'The Patient Must Make A Pre-Bookin') {
                         setmsg('this session has been completed before');
@@ -161,7 +196,11 @@ const Prescription = () => {
     }, []);
     return (
         <form className="prescriptionForm" onSubmit={submit}>
-            <h1>starting {usersData}'<span style={{textTransform: 'lowercase'}}>s</span> sission</h1>
+            <div className="logoPr">
+                <img src={logo} alt="not found" />
+                <h1>starting {usersData}'<span style={{textTransform: 'lowercase'}}>s</span> sission</h1>
+            </div>
+            
             <div className="rowPrForm">
                 <input
                     type="text"
@@ -177,6 +216,7 @@ const Prescription = () => {
                     ))}
                 </select>
             </div>
+            <p className="interaction" style={{color: 'red', letterSpacing: '2px', marginBottom: '5%', fontSize: '1rem', fontWeight: 500, display: 'none'}}>{interact}</p>
             {selectedDrugs.map((drug, index) => (
                 <div key={index} className="rowPrForm">
                     <h3>Drug {index + 1}: </h3>
@@ -189,16 +229,15 @@ const Prescription = () => {
                             onChange={(e) => handleNoteChange(index, e.target.value)}
                         />
                     </div>
-                    <div className="labelInput">
-                        <label>Duration of treatment</label>
-                        <Datepicker
-                            controls={['calendar', 'time']}
-                            select="range"
-                            labelStyle="stacked"
-                            inputStyle="outline"
-                            placeholder="Please Add your Dates..."
-                            onChange={(event, inst) => handleDateTimeChange(index, inst.getVal())}
-                        />
+                    <div className="labelInput" style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+                        <div style={{display: 'flex', flexDirection: 'column', width: '50%', alignItems: 'center'}}>
+                            <label>Starting of treatment</label>
+                            <input style={{width: '300px'}} type="datetime-local" value={selectedDrugs[index].start} onChange={(e) => handleStartChange(index, e.target.value)} />
+                        </div>
+                        <div style={{display: 'flex', flexDirection: 'column', width: '50%', alignItems: 'center'}}>
+                        <label>Ending of treatment</label>
+                        <input style={{width: '300px'}} type="datetime-local" value={selectedDrugs[index].end} onChange={(e) => handleEndChange(index, e.target.value)} />
+                        </div>
                     </div>
                     <div className="labelInputRadio">
                         <label className="radioL">Repeat</label>

@@ -6,6 +6,8 @@ import { useState } from 'react';
 import SuccessfullyMsg from '../../components/success';
 import LazyLoad from 'react-lazyload';
 import sLS from 'react-secure-storage';
+import { useNavigate } from 'react-router-dom';
+
 
 const BeDoctor = () => {
     const [areaClinicId, setValue] = useState('');
@@ -21,6 +23,9 @@ const BeDoctor = () => {
     let notif = document.getElementById('notif');
     let notifText = document.querySelector('.notifText');
     let prog = document.getElementById('prog');
+
+
+    const navigate = useNavigate();
 
     const userToken = sLS.getItem('usertoken');
     const convertToken = JSON.parse(userToken);
@@ -66,6 +71,7 @@ const BeDoctor = () => {
                         notif.style.animation = 'fade-in 3s linear';
                         prog.style.animation = 'progress 2.5s 0.3s linear';
                         setErrorMsg(null);
+                        navigate('/settings');
                     }
                 }
             } catch (error) {

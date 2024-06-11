@@ -47,7 +47,7 @@ const PatientForm = ({ doctorId, doctorDates }) => {
                         }, 1000);
                     }
                     else if(m === 'Choose The Appropriate Day' || m === 'Choose The Appropriate Time'){
-                        setMessage('! that appointment is not available')
+                        setMessage('! this appointment is not available')
                     }
                     else{
                         setMessage('! ' + m);
@@ -79,8 +79,8 @@ const PatientForm = ({ doctorId, doctorDates }) => {
             <input type="time" id="appointment-time" name="appointment-time" onChange={(e) => setValue(extractTimeWithAMPM(e.target.value))} required />
             <p style={{color: color}} className="msg">{message}</p>
             <div className="button-container">
-                <button className="submit">submit consultation</button>
-                <button className="cancel" onClick={() => cancel()}>cancel consultation</button>
+                <button className="submit">Submit Consultation</button>
+                <button className="cancel" onClick={() => cancel()}>Cancel Consultation</button>
             </div>
         </form>
         </div>

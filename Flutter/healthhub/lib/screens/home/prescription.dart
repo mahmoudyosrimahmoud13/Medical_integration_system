@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthhub/cubit/get_prescriptions/get_prescriptions_cubit.dart';
+import 'package:healthhub/screens/home/notifications.dart';
 import 'package:healthhub/screens/loading_screen.dart';
 import 'package:healthhub/widgets/custom_loading.dart';
+import 'package:healthhub/helpers/helper_methods.dart';
 
 import 'package:healthhub/widgets/prescription_card.dart';
 import 'package:intl/intl.dart';
@@ -88,7 +90,9 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                               .withAlpha(150),
                         ),
                         child: IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              navigateTo(toPage: Notifications());
+                            },
                             icon: Icon(
                               Icons.notifications,
                               color: Theme.of(context).colorScheme.onPrimary,
@@ -148,15 +152,6 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
           ))
         ],
       )),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        shape: CircleBorder(),
-        child: Icon(
-          Icons.add,
-          color: Theme.of(context).colorScheme.onPrimary,
-        ),
-        onPressed: () {},
-      ),
     );
   }
 }

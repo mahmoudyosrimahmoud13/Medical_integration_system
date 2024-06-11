@@ -48,7 +48,10 @@ class PrescriptionCard extends StatelessWidget {
             ],
           ),
           onTap: () {
-            navigateTo(toPage: PrescriptionDetails());
+            navigateTo(
+                toPage: PrescriptionDetails(
+              index: index,
+            ));
           },
         ),
       ),

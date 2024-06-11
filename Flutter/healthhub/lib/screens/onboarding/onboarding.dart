@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/screens/authentication/login.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -51,16 +53,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         dotWidth: 7,
                         expansionFactor: 4)),
                 SizedBox(
-                  height: 60,
-                  width: 60,
                   child: ElevatedButton(
                       style: ElevatedButton.styleFrom(elevation: 0),
                       onPressed: () {
+                        print(pageController.page);
+                        if (pageController.page == 3) {
+                          navigateTo(toPage: LoginScreen(), replace: true);
+                        }
+
                         pageController.nextPage(
                             duration: const Duration(milliseconds: 500),
                             curve: Curves.ease);
                       },
-                      child: const Icon(Icons.navigate_next_rounded)),
+                      child: Icon(Icons.navigate_next_rounded)),
                 ),
               ],
             ),
@@ -73,7 +78,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
 final List<OnboardingItem> onboard = [
   const OnboardingItem(
-    imagePath: 'assets/logo/logo.svg',
+    imagePath: 'assets/logo/colored_logo.svg',
     title: 'Health hub',
     subTitle: 'Your all in one health app.',
   ),

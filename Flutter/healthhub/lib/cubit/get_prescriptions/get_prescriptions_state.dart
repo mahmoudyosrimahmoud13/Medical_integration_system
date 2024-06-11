@@ -10,10 +10,12 @@ final class GetPrescriptionsLoading extends GetPrescriptionsState {}
 final class GetPrescriptionsSuccess extends GetPrescriptionsState {
   final List data;
   List cards = [];
-  int index = 0;
+  List drugs = [];
 
   GetPrescriptionsSuccess({required this.data}) {
     print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+    int index = -1;
+
     if (data.isNotEmpty) {
       cards = data.map((e) {
         index++;

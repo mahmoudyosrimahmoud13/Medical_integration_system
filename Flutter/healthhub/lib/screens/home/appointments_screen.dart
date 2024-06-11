@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:healthhub/cubit/get_appointments/get_appointments_cubit.dart';
+import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/screens/home/notifications.dart';
 import 'package:healthhub/screens/loading_screen.dart';
 import 'package:healthhub/widgets/appointment_card.dart';
 import 'package:healthhub/widgets/custom_loading.dart';
@@ -90,7 +92,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     .withAlpha(150),
                               ),
                               child: IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    navigateTo(toPage: Notifications());
+                                  },
                                   icon: Icon(
                                     Icons.notifications,
                                     color:

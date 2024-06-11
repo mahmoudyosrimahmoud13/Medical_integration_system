@@ -15,6 +15,7 @@ import 'package:healthhub/cubit/specialities/specialities_cubit.dart';
 import 'package:healthhub/helpers/helper_methods.dart';
 import 'package:healthhub/screens/authentication/login.dart';
 import 'package:healthhub/constants/themes.dart';
+import 'package:healthhub/screens/onboarding/onboarding.dart';
 
 void main() {
   runApp(const MainApp());
@@ -69,7 +70,7 @@ class MainApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: mainTheme,
         // darkTheme: darkTheme,
-        home: const LoginScreen(),
+        home: const OnboardingScreen(),
       ),
     );
   }

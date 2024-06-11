@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:healthhub/cubit/search/search_cubit.dart';
+import 'package:healthhub/helpers/helper_methods.dart';
+import 'package:healthhub/screens/home/notifications.dart';
 import 'package:healthhub/widgets/custom_loading.dart';
 import 'package:healthhub/widgets/fillter_modal.dart';
 import 'package:healthhub/widgets/generic_texfield.dart';
@@ -112,7 +114,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                 .withAlpha(150),
                           ),
                           child: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                navigateTo(toPage: Notifications());
+                              },
                               icon: Icon(
                                 Icons.notifications,
                                 color: Theme.of(context).colorScheme.onPrimary,

@@ -3,18 +3,21 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 
 class DrugCard extends StatelessWidget {
-  const DrugCard(
-      {super.key,
-      required this.drugName,
-      required this.repeate,
-      required this.instructions,
-      required this.startDate,
-      required this.endDate});
+  const DrugCard({
+    super.key,
+    required this.drugName,
+    required this.repeat,
+    required this.repeatCount,
+    required this.note,
+    required this.startdate,
+    required this.enddate,
+  });
   final String drugName;
-  final String repeate;
-  final String instructions;
-  final DateTime startDate;
-  final DateTime endDate;
+  final String repeat;
+  final String repeatCount;
+  final String note;
+  final String startdate;
+  final String enddate;
 
   @override
   Widget build(BuildContext context) {
@@ -31,16 +34,12 @@ class DrugCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Drug name: ' + drugName,
-              style: TextTheme,
-            ),
-            Text('Rpeate: ' + repeate, style: TextTheme),
-            Text('Instructions: ' + instructions, style: TextTheme),
-            Text('Start date: ' + DateFormat.yMEd().format(startDate),
-                style: TextTheme),
-            Text('End date: ' + DateFormat.yMEd().format(endDate),
-                style: TextTheme),
+            Text('Drug name: ' + drugName, style: TextTheme),
+            Text('Rpeate: ' + repeat, style: TextTheme),
+            Text('Rpeate count: ' + repeatCount, style: TextTheme),
+            Text('Note: ' + note, style: TextTheme),
+            Text('Start date: ' + startdate, style: TextTheme),
+            Text('End date: ' + enddate, style: TextTheme),
             SizedBox(
               height: 15,
             )

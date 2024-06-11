@@ -103,9 +103,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         textEditingController: _emailController,
                         textInputType: TextInputType.emailAddress,
                         validator: (value) {
-                          if (!_isEmail(value!)) {
-                            return 'Enter a correct email.';
-                          }
+                          // if (!_isEmail(value!)) {
+                          //   return 'Enter a correct email.';
+                          // }
                         },
                       ),
                       const SizedBox(

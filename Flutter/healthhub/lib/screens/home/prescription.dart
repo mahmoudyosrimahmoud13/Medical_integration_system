@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:healthhub/cubit/get_prescriptions/get_prescriptions_cubit.dart';
+import 'package:healthhub/screens/loading_screen.dart';
+import 'package:healthhub/widgets/custom_loading.dart';
 
 import 'package:healthhub/widgets/prescription_card.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +19,7 @@ class PrescriptionScreen extends StatefulWidget {
 class _PrescriptionScreenState extends State<PrescriptionScreen> {
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<GetPrescriptionsCubit>(context).get();
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
@@ -127,18 +132,17 @@ class _PrescriptionScreenState extends State<PrescriptionScreen> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-                PrescriptionCard(
-                    dKey: ValueKey(''),
-                    image:
-                        'assets/placeholders/pngtree-male-doctor-avatar-icon-illustration-png-image_8537702.png',
-                    doctorName: 'Sara',
-                    date: DateTime.now(),
-                    note: 'Al-zhaimer notes',
-                    drugs: [
-                      'Thiosulfuric acid',
-                      'Vorapaxar',
-                      'Lanthanum carbonate'
-                    ])
+                BlocBuilder<GetPrescriptionsCubit, GetPrescriptionsState>(
+                  builder: (context, state) {
+                    if (state is GetPrescriptionsSuccess) {
+                      return Column(
+                        children: [...state.cards],
+                      );
+                    } else {
+                      return const CustomLoading();
+                    }
+                  },
+                )
               ],
             ),
           ))

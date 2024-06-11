@@ -6,6 +6,7 @@ import 'package:healthhub/cubit/authentication/authentication_cubit.dart';
 import 'package:healthhub/cubit/booking/booking_cubit.dart';
 import 'package:healthhub/cubit/get_appointments/get_appointments_cubit.dart';
 import 'package:healthhub/cubit/get_doctor/get_doctor_cubit.dart';
+import 'package:healthhub/cubit/get_prescriptions/get_prescriptions_cubit.dart';
 import 'package:healthhub/cubit/get_user_data/get_user_data_cubit.dart';
 import 'package:healthhub/cubit/governrate/governrates_cubit.dart';
 import 'package:healthhub/cubit/register/register_cubit.dart';
@@ -58,6 +59,9 @@ class MainApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => GetAppointmentsCubit(),
+        ),
+        BlocProvider(
+          create: (context) => GetPrescriptionsCubit(),
         ),
       ],
       child: MaterialApp(

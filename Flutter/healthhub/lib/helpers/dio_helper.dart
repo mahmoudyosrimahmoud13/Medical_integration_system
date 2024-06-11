@@ -51,7 +51,6 @@ class DioHelper {
       'Accept': 'application/json',
       'Authorization': 'Bearer ${CacheHelper.getData(key: 'token')}',
     };
-    print(CacheHelper.getData(key: 'token'));
     try {
       var response = await _dio.delete(endPoint, data: data);
       return ResponseData(isSuccess: true, response: response);

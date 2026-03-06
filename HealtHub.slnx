@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="HealtHub.Application/HealtHub.Application.csproj" />
+    <Project Path="src/HealtHub.Domain/HealtHub.Domain.csproj" />
+    <Project Path="src/HealtHub.Infrastructure/HealtHub.Infrastructure.csproj" />
+    <Project Path="src/HealtHub.PL.API/HealtHub.PL.API.csproj" />
+  </Folder>
+</Solution>

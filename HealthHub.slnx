@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HealthHub.API/HealthHub.API.csproj" />
+    <Project Path="src/HealthHub.Application/HealthHub.Application.csproj" />
+    <Project Path="src/HealthHub.Domain/HealthHub.Domain.csproj" />
+    <Project Path="src/HealthHub.Infrastructure/HealthHub.Infrastructure.csproj" />
+    <Project Path="src/HealthHub.Share/HealthHub.Share.csproj" />
+  </Folder>
+  <Folder Name="/src/UI/">
+    <Project Path="src/UI/HealthHub.PL.Share/HealthHub.PL.Share.csproj" />
+    <Project Path="src/UI/HealthHub.PL.Web/HealthHub.PL.Web.csproj" />
+  </Folder>
+  <Folder Name="/test/" />
+</Solution>

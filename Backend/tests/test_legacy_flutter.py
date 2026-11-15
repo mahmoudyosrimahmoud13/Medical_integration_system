@@ -80,12 +80,19 @@ async def test_search_details_book_list_cancel(client, refs):
     detail = (await client.get("/Hospital/Doctor/GetDoctor", params={"Id": doc["id"]})).json()
     assert detail["departmentName"] == "Cardiology" and detail["collegeName"] and len(detail["dates"]) == 6
 
+    # the demo data books some of the doctor's hours, so take the first free one
     day = next_weekday("Monday")
-    booked = await client.post(
-        "/Hospital/Patient/PushDateDoctor", params={"DoctorId": doc["id"]},
-        json={"from": "10:00 AM", "day": f"{day.isoformat()}T00:00:00.000"}, headers=h,
-    )
-    assert booked.json() == "Save."
+    slot = None
+    for hour in ["09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM"]:
+        booked = await client.post(
+            "/Hospital/Patient/PushDateDoctor", params={"DoctorId": doc["id"]},
+            json={"from": hour, "day": f"{day.isoformat()}T00:00:00.000"}, headers=h,
+        )
+        if booked.json() == "Save.":
+            slot = hour
+            break
+        assert booked.json() == "this date was Previously Selected", booked.text
+    assert slot, "no free hour found on Monday"
 
     # same doctor again -> rejected
     again = await client.post(
@@ -105,7 +112,7 @@ async def test_search_details_book_list_cancel(client, refs):
     # slot already taken by the first patient
     taken = await client.post(
         "/Hospital/Patient/PushDateDoctor", params={"DoctorId": doc["id"]},
-        json={"from": "10:30 AM", "day": day.isoformat()}, headers=h2,
+        json={"from": slot.replace(":00", ":30"), "day": day.isoformat()}, headers=h2,
     )
     assert taken.json() == "this date was Previously Selected"
     # outside working hours
@@ -118,7 +125,8 @@ async def test_search_details_book_list_cancel(client, refs):
     dates = (await client.get("/Hospital/Patient/GetPatientDates", headers=h)).json()
     assert len(dates) == 1
     d = dates[0]
-    assert d["from"] == "10:00 AM" and d["to"] == "11:00 AM" and d["dayName"] == "Monday"
+    hours = ["09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM", "05:00 PM"]
+    assert d["from"] == slot and d["to"] == hours[hours.index(slot) + 1] and d["dayName"] == "Monday"
     assert {"paientDateId", "doctorName", "doctorSpecialty", "areaName", "governorateName", "date"} <= d.keys()
 
     cancelled = await client.delete("/Hospital/Patient/CancelBookedDate", params={"PaintDateid": d["paientDateId"]}, headers=h)

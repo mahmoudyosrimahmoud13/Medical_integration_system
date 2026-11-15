@@ -1,6 +1,6 @@
 # What is not done yet
 
-Saved on 15 Nov 2026, when work stopped. In order of priority.
+Updated 15 Nov 2026. In order of priority. (Richer demo data is done.)
 
 ## 1. Android app: medicine reminders
 - Build them from the patient's current prescriptions. Let the patient pick the times and get a phone alert, even when the app is closed. Add a "taken" button.
@@ -13,16 +13,9 @@ Saved on 15 Nov 2026, when work stopped. In order of priority.
 - Add a "Server address" field on the login screen, saved on the phone, so a Cloudflare tunnel link can be pasted in without rebuilding the app.
 - Today the address is fixed at build time (`--dart-define=API_BASE_URL=...`), so build with the tunnel address for now.
 
-## 4. Richer demo data
-- Started, not finished, and left out of this version on purpose:
-  - 8 more doctors in Mansoura, Tanta, Zagazig, Assiut, Hurghada and Ismailia
-  - 2 more hospitals and 3 more pharmacies
-  - 20 more patients
-  - a customer support account (`support@healthhub.local`)
-  - doctor, hospital and pharmacy applications waiting for the admin
-  - more chats and notifications
-  - a fixed history for Sara Ali (on warfarin, so the interaction check finds something)
-- Place: `Backend/app/demo.py`. After it lands, list the new accounts in the README and in the `run.sh` summary box. (The box already mentions `support@`, which doesn't exist yet.)
+## 4. Clay design
+- A light clay style is now on the patient home screen, the onboarding pictures and the empty states. Staff screens stay flat.
+- Still to do: use it for the medicine reminders screen once that exists, and check it on a real phone in dark mode.
 
 ## 5. Web app
 - Show where an interaction answer came from ("DrugBank" or "model estimate"), and add a "check with a pharmacist" line.

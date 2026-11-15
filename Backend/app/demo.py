@@ -2,9 +2,10 @@
 
     python -m app.seed --demo       runs seed_reference + seed_admin + this module
 
-Creates (only if missing): 165 Egyptian-market products, 12 doctors, 3 hospitals, 6 pharmacies with stock,
-20 patients, past and upcoming appointments, medical sessions with prescriptions, reviews, notifications
-and a few conversations. All demo passwords are <Role>@12345 (e.g. Doctor@12345).
+Creates (only if missing): 165 Egyptian-market products, 20 doctors in 9 governorates, 5 hospitals,
+9 pharmacies with stock, 35 patients, a customer support account, applications waiting for the admin,
+past and upcoming appointments, medical records with prescriptions, reviews, notifications and
+conversations between every kind of user. All demo passwords are <Role>@12345 (e.g. Doctor@12345).
 """
 
 import csv
@@ -28,6 +29,8 @@ from app.models import (
     Hospital,
     HospitalDoctor,
     MedicalSession,
+    Notification,
+    NotificationType,
     Pharmacy,
     PharmacyDrug,
     Prescription,
@@ -58,12 +61,33 @@ DOCTORS = [
     ("Heba Mahmoud", "heba.mahmoud@healthhub.local", "Endocrinology", "Cairo", "Maadi", "Cairo University", 400, False, "Endocrinologist. Thyroid, diabetes and hormones."),
     ("Amr Lotfy", "amr.lotfy@healthhub.local", "Gastroenterology", "Giza", "Mohandessin", "Cairo University", 450, True, "Gastroenterology and endoscopy. Liver and IBS clinic."),
     ("Salma Youssef", "salma.youssef@healthhub.local", "General practice", "Cairo", "Shubra", "Ain Shams University", 200, False, "Family doctor. First stop for the whole family."),
+    ("Mostafa Gaber", "mostafa.gaber@healthhub.local", "Urology", "Dakahlia", "Mansoura", "Mansoura University", 350, True, "Urologist. Kidney stones and prostate clinic."),
+    ("Ranya Hegazy", "ranya.hegazy@healthhub.local", "Nephrology", "Dakahlia", "Mansoura", "Mansoura University", 400, False, "Nephrologist. Chronic kidney disease and dialysis follow-up."),
+    ("Ibrahim Soliman", "ibrahim.soliman@healthhub.local", "Otorhinolaryngology", "Gharbiya", "Tanta", "Tanta University", 300, True, "ENT surgeon. Sinus, tonsils and hearing problems."),
+    ("Asmaa Rashad", "asmaa.rashad@healthhub.local", "Respiratory medicine", "Sharkia", "Zagazig", "Zagazig University", 300, False, "Chest physician. Asthma, COPD and sleep apnoea."),
+    ("Hany Abdallah", "hany.abdallah@healthhub.local", "Rheumatology", "Assiut", "Assiut", "Assiut University", 300, True, "Rheumatologist. Arthritis, lupus and gout."),
+    ("Marwa Saeed", "marwa.saeed@healthhub.local", "Dental, oral and maxillo-facial surgery", "Cairo", "Mokattam", "Cairo University", 250, False, "Dentist. Fillings, root canals and children's dentistry."),
+    ("Walid Hamed", "walid.hamed@healthhub.local", "Physical medicine and rehabilitation", "Red Sea", "Hurghada", "Ain Shams University", 300, True, "Physiotherapy and rehabilitation after injuries and surgery."),
+    ("Noha Fawzy", "noha.fawzy@healthhub.local", "Obstetrics and gynaecology", "Ismailia", "Ismailia", "Suez Canal University", 350, False, "Gynaecologist. Pregnancy follow-up and fertility."),
+]
+
+# doctors who applied and wait for the admin's decision (Admin > Requests)
+PENDING_DOCTORS = [
+    ("Adham Shawky", "adham.shawky@healthhub.local", "Cardiology", "Luxor", "Luxor", "Assiut University", 300, True, "Cardiology specialist, 6 years in Luxor."),
+    ("Shaimaa Lotfi", "shaimaa.lotfi@healthhub.local", "Dermatology", "Port Said", "Port Fouad", "Suez Canal University", 250, False, "Dermatologist. Hair loss and skin allergies."),
 ]
 
 HOSPITALS = [
     ("Dar El Shifa Hospital", "hospital@healthhub.local", "Cairo", "Nasr City", "1 Ramses St.", "0221234567", "General hospital with 24/7 emergency, ICU and surgery.", [(0, "Cardiology"), (3, "Paediatrics"), (6, "Neurology"), (9, "Endocrinology")]),
     ("Nile Medical Center", "nile.medical@healthhub.local", "Giza", "Dokki", "22 Tahrir St.", "0233456789", "Multi-specialty day clinics and imaging.", [(2, "Orthopaedics"), (10, "Gastroenterology"), (1, "Dermatology")]),
     ("Alexandria Care Hospital", "alex.care@healthhub.local", "Alexandria", "Smouha", "15 Fawzy Moaz St.", "0345678901", "Teaching hospital on the north coast.", [(4, "Internal medicine"), (8, "Ophthalmology")]),
+    ("Delta Kidney Center", "delta.kidney@healthhub.local", "Dakahlia", "Mansoura", "3 Gomhoria St.", "0502223344", "Urology, nephrology and dialysis for the Delta.", [(12, "Urology"), (13, "Nephrology"), (15, "Chest")]),
+    ("Upper Egypt Medical Center", "upper.egypt@healthhub.local", "Assiut", "Assiut", "10 Nile Corniche", "0882334455", "Day clinics, X-ray and physiotherapy.", [(16, "Rheumatology"), (14, "ENT"), (18, "Rehabilitation")]),
+]
+
+# a hospital and a pharmacy that applied and wait for the admin (Admin > Requests)
+PENDING_HOSPITALS = [
+    ("Red Sea Family Clinic", "redsea.clinic@healthhub.local", "Red Sea", "Hurghada", "Sheraton Rd.", "0653445566", "Family clinic for residents and visitors."),
 ]
 
 PHARMACIES = [
@@ -73,13 +97,37 @@ PHARMACIES = [
     ("19011 Pharmacy, Dokki", "19011.dokki@healthhub.local", "Giza", "Dokki", "7 Mossadak St.", "19011"),
     ("Roshdy Pharmacy, Smouha", "roshdy.smouha@healthhub.local", "Alexandria", "Smouha", "40 Victor Emmanuel Sq.", "0334201122"),
     ("Misr Pharmacy, Zamalek", "misr.zamalek@healthhub.local", "Cairo", "Zamalek", "9 Brazil St.", "0227351199"),
+    ("Al Shifa Pharmacy, Mansoura", "shifa.mansoura@healthhub.local", "Dakahlia", "Mansoura", "18 El Gaish St.", "0502115566"),
+    ("Tanta Central Pharmacy", "tanta.central@healthhub.local", "Gharbiya", "Tanta", "2 El Bahr St.", "0403332211"),
+    ("Nile Pharmacy, Assiut", "nile.assiut@healthhub.local", "Assiut", "Assiut", "25 Yousry Ragheb St.", "0882445566"),
 ]
+
+PENDING_PHARMACIES = [
+    ("Hurghada Marina Pharmacy", "marina.pharmacy@healthhub.local", "Red Sea", "Hurghada", "Marina Blvd.", "0653556677"),
+]
+
+SUPPORT = ("Mai Salah", "support@healthhub.local", "Support@12345")
 
 PATIENT_NAMES = [
     ("Sara Ali", False), ("Mohamed Farouk", True), ("Laila Hamdy", False), ("Youssef Kamal", True), ("Nadia Salem", False),
     ("Karim Mansour", True), ("Rania Gamal", False), ("Hossam Fathy", True), ("Mariam Zaki", False), ("Ali Sherif", True),
     ("Aya Magdy", False), ("Sherif Ragab", True), ("Hana Tawfik", False), ("Mostafa Ezzat", True), ("Farida Nasser", False),
     ("Ziad Hesham", True), ("Nourhan Adly", False), ("Bassem Wagdy", True), ("Reem Anwar", False), ("Hassan Mourad", True),
+    ("Eman Saber", False), ("Ahmed Shaker", True), ("Doaa Fekry", False), ("Islam Hamdi", True), ("Yara Osama", False),
+    ("Tamer Helmy", True), ("Ghada Ashraf", False), ("Khaled Ezz", True), ("Salma Hatem", False), ("Omar Nagy", True),
+    ("Habiba Wael", False), ("Adel Rizk", True), ("Malak Yehia", False), ("Seif Emad", True), ("Rehab Kamel", False),
+]
+
+PATIENT_PLACES = [("Cairo", "Maadi"), ("Cairo", "Nasr City"), ("Cairo", "New Heliopolis"), ("Giza", "Dokki"), ("Alexandria", "Smouha"),
+                  ("Cairo", "New Cairo"), ("Dakahlia", "Mansoura"), ("Gharbiya", "Tanta"), ("Sharkia", "Zagazig"), ("Assiut", "Assiut")]
+
+# Sara Ali (patient@healthhub.local) always has the same history, so the demo always shows the same things:
+# blood pressure, diabetes and atrial fibrillation, on warfarin (the interaction check has something to find).
+MAIN_PATIENT_HISTORY = [
+    # condition, doctor index, days ago, [(ingredient, repeat, note)]
+    ("Hypertension", 0, 120, [("bisoprolol", "daily", "before breakfast"), ("amlodipine", "daily", "at night")]),
+    ("Type 2 diabetes", 9, 60, [("metformin", "every 12 hours", "after food")]),
+    ("Atrial fibrillation", 0, 30, [("warfarin", "daily", "same time every evening, avoid aspirin")]),
 ]
 
 # condition -> (specialty that treats it, ingredients typically prescribed)
@@ -118,6 +166,22 @@ CHATS = [
     ("hospital", 0, 0, "Cardiology schedule", [
         ("h", "Dr. Ahmed, the cardiology clinic moves to the 3rd floor from next week."),
         ("d", "Noted, thank you. Please tell reception to redirect my patients."),
+    ]),
+    ("pharmacy", 0, 0, "Warfarin refill", [
+        ("p", "Hi, I need Marevan 5 mg again. Do you have it?"),
+        ("ph", "Yes, 3 boxes left. Please bring your prescription code from the app."),
+        ("p", "Great, I'll come after work."),
+    ]),
+    # two doctors at the same hospital (Dar El Shifa)
+    ("colleague", 0, 9, "Shared patient", [
+        ("a", "Dr. Heba, Sara Ali's HbA1c came back at 7.9. Should we add something to metformin?"),
+        ("b", "I'll see her next week and consider empagliflozin. Thanks for the heads up."),
+    ]),
+    # customer support helping a patient
+    ("support", 3, 0, "Uploading a CT scan", [
+        ("p", "The upload keeps failing for my CT scan file."),
+        ("s", "Hi Youssef, files must be under 10 MB. Try exporting the scan as JPG, or send it in two parts."),
+        ("p", "That worked, thank you!"),
     ]),
 ]
 
@@ -250,12 +314,40 @@ async def seed_demo(db: AsyncSession) -> None:
                 db.add(PharmacyDrug(pharmacy_id=ph.id, drug_id=p.drug_id, quantity=qty, price=Decimal(str(round(float(p.price_egp) * rng.uniform(.95, 1.1), 2)))))
     await db.flush()
 
+    # ---- applications waiting for the admin
+    for i, (name, email, spec, gov, area_name, college, price, male, summary) in enumerate(PENDING_DOCTORS):
+        area = await _area(db, gov, area_name)
+        user = await _user(db, email=email, password="Doctor@12345", name=name, roles=[Role.PATIENT], area=area,
+                           phone=f"0100{1500000 + i:07d}", national_id=_nid(150 + i, date(1988, 4, 4 + i)), male=male, birth=date(1988, 4, 4 + i))
+        if await db.scalar(select(Doctor).where(Doctor.user_id == user.id)) is None:
+            db.add(Doctor(user_id=user.id, specialty_id=(await _specialty(db, spec)).id, area_id=area.id, college_name=college,
+                          summary_career=summary, address_description=f"{rng.randint(2, 60)} {area_name} St.", accepted=False,
+                          price_session=Decimal(price), graduation_year=date(2014, 6, 1)))
+    for i, (hname, email, gov, area_name, address, phone, desc) in enumerate(PENDING_HOSPITALS):
+        area = await _area(db, gov, area_name)
+        owner = await _user(db, email=email, password="Hospital@12345", name=f"{hname} Manager", roles=[Role.PATIENT], area=area,
+                            phone=f"0150{2500000 + i:07d}", national_id=_nid(250 + i, date(1979, 2, 2 + i)), male=False, birth=date(1979, 2, 2 + i))
+        if await db.scalar(select(Hospital).where(Hospital.owner_id == owner.id)) is None:
+            db.add(Hospital(owner_id=owner.id, name=hname, area_id=area.id, address_description=address, phone=phone, description=desc, accepted=False))
+    for i, (pname, email, gov, area_name, address, phone) in enumerate(PENDING_PHARMACIES):
+        area = await _area(db, gov, area_name)
+        owner = await _user(db, email=email, password="Pharmacy@12345", name=f"{pname} Owner", roles=[Role.PATIENT], area=area,
+                            phone=f"0120{3500000 + i:07d}", national_id=_nid(350 + i, date(1990, 9, 9 + i)), male=True, birth=date(1990, 9, 9 + i))
+        if await db.scalar(select(Pharmacy).where(Pharmacy.owner_id == owner.id)) is None:
+            db.add(Pharmacy(owner_id=owner.id, name=pname, area_id=area.id, address_description=address, phone=phone, accepted=False))
+
+    # ---- customer support
+    sname, semail, spass = SUPPORT
+    support = await _user(db, email=semail, password=spass, name=sname, roles=[Role.CUSTOMER_SERVICE], area=await _area(db, "Cairo", "Maadi"),
+                          phone="01009999999", national_id=_nid(999, date(1994, 1, 15)), male=False, birth=date(1994, 1, 15))
+    await db.flush()
+
     # ---- patients
     patients: list[User] = []
     for i, (name, _) in enumerate(PATIENT_NAMES):
         male = PATIENT_NAMES[i][1]
         email = "patient@healthhub.local" if i == 0 else f"{name.lower().replace(' ', '.')}@healthhub.local"
-        gov, area_name = rng.choice([("Cairo", "Maadi"), ("Cairo", "Nasr City"), ("Cairo", "New Heliopolis"), ("Giza", "Dokki"), ("Alexandria", "Smouha"), ("Cairo", "New Cairo")])
+        gov, area_name = rng.choice(PATIENT_PLACES)
         birth = date(1950 + rng.randint(0, 55), rng.randint(1, 12), rng.randint(1, 28))
         patients.append(await _user(db, email=email, password="Patient@12345", name=name, roles=[Role.PATIENT], area=await _area(db, gov, area_name),
                                     phone=f"0111{4000000 + i:07d}", national_id=_nid(400 + i, birth), male=male, birth=birth))
@@ -272,7 +364,19 @@ async def seed_demo(db: AsyncSession) -> None:
     doctors_by_spec = {}
     for d in doctors:
         doctors_by_spec.setdefault(d.specialty.name, []).append(d)
-    for p in patients:
+    for main_cond, doc_i, days_ago, meds in MAIN_PATIENT_HISTORY:
+        p, doctor, when = patients[0], doctors[doc_i], now - timedelta(days=days_ago)
+        db.add(Disease(patient_id=p.id, name=main_cond, persistent=True, cured=False, responsible_doctor_id=doctor.id))
+        session = MedicalSession(doctor_id=doctor.id, patient_id=p.id, session_date=when, disease_name=main_cond, notes="Follow up every 3 months.")
+        db.add(session)
+        await db.flush()
+        for ing, repeat, note in meds:
+            drug = drugs_by_name.get(ing)
+            if drug:
+                db.add(Prescription(session_id=session.id, drug_id=drug.id, repeat=repeat, repeat_count=1, note=note,
+                                    start_date=when.date(), end_date=when.date() + timedelta(days=3650)))
+        db.add(Appointment(patient_id=p.id, doctor_id=doctor.id, day=when.date(), time_from=time(10), status="done"))
+    for p in patients[1:]:
         for cond in rng.sample(list(CONDITIONS), k=rng.choice([1, 2, 2, 3])):
             spec, ingredients = CONDITIONS[cond]
             doctor = rng.choice(doctors_by_spec.get(spec) or doctors)
@@ -335,6 +439,10 @@ async def seed_demo(db: AsyncSession) -> None:
                 await db.commit()
         elif kind == "pharmacy":
             me, other = patients[a], pharmacies[b].owner
+        elif kind == "colleague":
+            me, other = doctors[a].user, doctors[b].user
+        elif kind == "support":
+            me, other = support, patients[a]  # support can write to anyone
         else:
             me, other = hospitals[a].owner, doctors[b].user
         try:
@@ -345,12 +453,25 @@ async def seed_demo(db: AsyncSession) -> None:
             continue
         t = now - timedelta(days=2)
         for who, text in lines:
-            sender = me if who in ("p", "h") else other
+            sender = (other if who == "p" else me) if kind == "support" else (me if who in ("p", "h", "a") else other)
             t += timedelta(minutes=rng.randint(2, 40))
             db.add(ChatMessage(conversation_id=conv.id, sender_id=sender.id, text=text, sent_at=t, read_at=t if sender.id != me.id else None))
         conv.last_message_at = t
     await db.commit()
 
+    # ---- notifications, so the bell is not empty
+    sara, main_doctor = patients[0], doctors[0]
+    for type_, text in [
+        (NotificationType.APPOINTMENT_REMINDER, "Reminder: you have a visit with Dr. Ahmed Hassan soon."),
+        (NotificationType.NEW_PRESCRIPTION, "Dr. Ahmed Hassan added Warfarin to your prescriptions."),
+        (NotificationType.NEW_MESSAGE, "New message from El Nour Pharmacy."),
+    ]:
+        db.add(Notification(user_id=sara.id, type=type_, message=text, created_at=now - timedelta(hours=rng.randint(1, 48))))
+    db.add(Notification(user_id=main_doctor.user_id, type=NotificationType.DOCTOR_SELECTED_DATE, message="Sara Ali booked a visit with you.", created_at=now - timedelta(hours=5)))
+    db.add(Notification(user_id=main_doctor.user_id, type=NotificationType.NEW_MESSAGE, message="New message from Dr. Heba Mahmoud.", created_at=now - timedelta(hours=2)))
+    await db.commit()
+
     print(f"Demo data ready: {products} products, {len(doctors)} doctors, {len(HOSPITALS)} hospitals, {len(PHARMACIES)} pharmacies, {len(patients)} patients, "
-          "appointments, records, reviews and conversations")
-    print("Demo logins (password = Role@12345): doctor@, patient@, pharmacy@, hospital@healthhub.local, plus the others listed in app/demo.py")
+          f"1 support account, {len(PENDING_DOCTORS) + len(PENDING_HOSPITALS) + len(PENDING_PHARMACIES)} applications for the admin, "
+          "appointments, records, reviews, notifications and conversations")
+    print("Demo logins (password = Role@12345): patient@, doctor@, pharmacy@, hospital@, support@ (Support@12345), admin@healthhub.local")

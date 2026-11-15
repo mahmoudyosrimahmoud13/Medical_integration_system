@@ -45,7 +45,12 @@ The password is the role followed by `@12345`.
 | Doctor   | doctor@healthhub.local    | Doctor@12345    |
 | Pharmacy | pharmacy@healthhub.local  | Pharmacy@12345  |
 | Hospital | hospital@healthhub.local  | Hospital@12345  |
+| Support  | support@healthhub.local   | Support@12345   |
 | Admin    | admin@healthhub.local     | Admin@12345     |
+
+The demo has 20 doctors in 9 governorates, 5 hospitals, 9 pharmacies with real Egyptian medicines,
+35 patients, appointments, records, chats and notifications, plus 2 doctors, a hospital and a
+pharmacy waiting for the admin to accept them. `./run.sh accounts` lists every login.
 
 ## Put it on the internet without a server (Cloudflare Tunnel)
 

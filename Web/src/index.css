@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+@font-face { font-family: 'Instrument Sans'; font-weight: 400; src: url('/fonts/instrument-sans-latin-400-normal.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Instrument Sans'; font-weight: 500; src: url('/fonts/instrument-sans-latin-500-normal.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Instrument Sans'; font-weight: 600; src: url('/fonts/instrument-sans-latin-600-normal.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Instrument Sans'; font-weight: 700; src: url('/fonts/instrument-sans-latin-700-normal.woff2') format('woff2'); font-display: swap; }
+
+@theme {
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+
+  --color-navy: #1b1f3b;
+  --color-navy-700: #2a2f5c;
+  --color-navy-600: #353b8c;
+  --color-indigo: #4f5bea;
+  --color-indigo-100: #e6e8fd;
+  --color-amber: #ffc53d;
+  --color-amber-100: #fff3d1;
+  --color-mint: #2bd4a4;
+  --color-mint-100: #dcf8ef;
+  --color-paper: #f7f8fc;
+  --color-ink: #1b1f3b;
+  --color-muted: #6b7087;
+  --color-line: #e5e7f0;
+  --color-danger: #e5484d;
+  --color-danger-100: #fde4e5;
+
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(27 31 59 / 0.04), 0 8px 24px -12px rgb(27 31 59 / 0.12);
+
+  --animate-rise: rise 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-pop: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-shimmer: shimmer 1.3s linear infinite;
+
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(0.7); } to { opacity: 1; transform: scale(1); } }
+  @keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+}
+
+html { color-scheme: light; }
+body { @apply bg-paper text-ink font-sans antialiased; }
+
+/* Staggered entrance: give children .rise and a --i index */
+.rise { animation: var(--animate-rise); animation-delay: calc(var(--i, 0) * 45ms); }
+.pop { animation: var(--animate-pop); }
+.skeleton {
+  @apply rounded-xl bg-line;
+  background-image: linear-gradient(90deg, var(--color-line) 25%, #f3f4f9 50%, var(--color-line) 75%);
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* Cards shrink a touch while pressed */
+.pressable { @apply transition-transform duration-150 active:scale-[0.98]; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rise, .pop, .skeleton, .pressable { animation: none !important; transition: none !important; }
+}
+
+.hero { background: linear-gradient(135deg, var(--color-navy) 0%, var(--color-navy-600) 100%); }
+.card { @apply rounded-card border border-line bg-white shadow-card; }
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50; }
+.btn-primary { @apply btn bg-indigo text-white hover:bg-navy-600; }
+.btn-amber { @apply btn bg-amber text-navy hover:bg-[#f5b61e]; }
+.btn-ghost { @apply btn border border-line bg-white text-ink hover:bg-paper; }
+.btn-danger { @apply btn bg-danger-100 text-danger hover:bg-[#fbd0d2]; }
+.input { @apply w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm text-ink outline-none transition placeholder:text-muted focus:border-indigo focus:ring-2 focus:ring-indigo/20; }
+.input option { @apply text-ink; }
+.label { @apply mb-1 block text-sm font-medium text-ink; }
+.badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold; }
+:focus-visible { @apply outline-2 outline-offset-2 outline-indigo; }

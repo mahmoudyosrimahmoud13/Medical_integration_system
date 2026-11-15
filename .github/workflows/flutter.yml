@@ -55,11 +55,11 @@ jobs:
           cache: true
       - name: Generate platform folders and apply the HealthHub identity
         run: |
-          flutter create . --project-name healthhub --org com.healthhub --platforms=android
+          flutter create . --project-name healthhub --org com.healthhub --platforms=android,ios,web   # the icon tool also writes iOS and web icons
           dart run tool/patch_platforms.dart
           flutter pub get
           dart run flutter_launcher_icons
-      - run: flutter build apk --release --dart-define=API_BASE_URL=${{ github.event.inputs.api_base_url || 'https://api.healthhub.example.com' }}
+      - run: flutter build apk --release --dart-define=API_BASE_URL=${{ github.event.inputs.api_base_url || vars.API_BASE_URL || 'https://api.healthhub.example.com' }}
       - uses: actions/upload-artifact@v4
         with:
           name: healthhub-android-apk
@@ -76,12 +76,46 @@ jobs:
           channel: stable
           cache: true
       - run: |
-          flutter create . --project-name healthhub --org com.healthhub --platforms=web
+          flutter create . --project-name healthhub --org com.healthhub --platforms=android,ios,web   # the icon tool also writes Android and iOS icons
           dart run tool/patch_platforms.dart
           flutter pub get
           dart run flutter_launcher_icons
-      - run: flutter build web --release --dart-define=API_BASE_URL=${{ github.event.inputs.api_base_url || 'https://api.healthhub.example.com' }}
+      - run: flutter build web --release --dart-define=API_BASE_URL=${{ github.event.inputs.api_base_url || vars.API_BASE_URL || 'https://api.healthhub.example.com' }}
       - uses: actions/upload-artifact@v4
         with:
           name: healthhub-web
           path: Flutter/healthhub/build/web
+
+  # A version tag (git tag v2.0.1 && git push origin v2.0.1) publishes a GitHub Release
+  # with the Android app and the Flutter web build attached.
+  release:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [android, web]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: healthhub-android-apk
+          path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: healthhub-web
+          path: release/web
+      - name: Name the files after the version
+        run: |
+          cd release
+          mv app-release.apk "HealthHub-${{ github.ref_name }}.apk"
+          (cd web && zip -qr "../HealthHub-web-${{ github.ref_name }}.zip" .)
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: HealthHub ${{ github.ref_name }}
+          files: |
+            release/HealthHub-${{ github.ref_name }}.apk
+            release/HealthHub-web-${{ github.ref_name }}.zip
+          generate_release_notes: true

@@ -36,11 +36,12 @@ show_help() { cat <<EOF
 
   DATA
     ./run.sh --keep              continue with the data you have, without asking
-    ./run.sh --reset-demo        delete ALL data, then load the demo hospital, doctors, pharmacies and patients
+    ./run.sh --reset-demo        delete ALL data, then load the demo (60 doctors in every governorate, 14 hospitals,
+                                 30 pharmacies, 150 patients with a year of visits, chats in English and Arabic)
     ./run.sh --reset-empty       delete ALL data, then start empty (only the admin account)
                                  a backup is saved first; add --yes to skip the "type wipe" question
     ./run.sh demo                add the demo data to what you have now (nothing is deleted)
-    ./run.sh accounts            list every demo login with its password (doctors, hospitals, pharmacies, patients)
+    ./run.sh accounts            demo logins with their passwords, 12 per group (./run.sh accounts all: every one)
     ./run.sh backup [name]       save the database and uploaded files to one file now
     ./run.sh backups             list the saved backups
     ./run.sh restore <name|latest>   replace everything with a backup (asks first)
@@ -125,9 +126,10 @@ confirm_wipe() {
 # Every demo login with its password, grouped by role. Real accounts are listed without a password.
 accounts() {
   [ -f "$DB_FILE" ] || { warn "No database yet. Start HealthHub once: ./run.sh"; return 0; }
-  python3 - "$DB_FILE" <<'PY'
+  python3 - "$DB_FILE" "${1:-}" <<'PY'
 import sqlite3, sys
 db = sqlite3.connect(sys.argv[1])
+show_all = len(sys.argv) > 2 and sys.argv[2] == "all"
 def rows(sql):
     return db.execute(sql).fetchall()
 groups = [
@@ -148,9 +150,11 @@ for title, _, pw, sql in groups:
     if not data:
         continue
     print(f"\n  {title} ({len(data)})")
-    for email, name, where in data:
+    for email, name, where in (data if show_all else data[:12]):
         demo = email.endswith("@healthhub.local")
         print(f"    {email:<38} {pw if demo else '(own password)':<16} {name}{' (' + where + ')' if where else ''}")
+    if not show_all and len(data) > 12:
+        print(f"    ... and {len(data) - 12} more (see them all: ./run.sh accounts all)")
 print("\n  Every demo password is the role + @12345. Log in on the website or in the Android app.")
 PY
 }
@@ -295,7 +299,8 @@ setup_backend() {
     echo "  Loading demo data…"
     (cd "$ROOT/Backend" && "$BPY" -m app.seed --demo | tail -n 3)
   else
-    (cd "$ROOT/Backend" && "$BPY" -m app.seed >/dev/null)
+    # with demo data already there, this also adds anything newer versions of the demo brought (nothing is deleted)
+    (cd "$ROOT/Backend" && "$BPY" -m app.seed --demo-if-loaded | grep -E "^Extra demo data ready" || true)
   fi
   ok "Data ready ($(user_count) accounts$(has_demo && echo ', with demo data'))"
 }
@@ -594,8 +599,7 @@ case "$CMD" in
 
   demo)
     [ -x "$BPY" ] || fail "Run ./run.sh once first to set things up."
-    has_demo && { ok "Demo data is already loaded"; exit 0; }
-    say "Adding the demo data (nothing is deleted)"
+    say "Adding the demo data, or whatever part of it is missing (nothing is deleted)"
     (cd "$ROOT/Backend" && "$BPY" -m alembic upgrade head >/dev/null && "$BPY" -m app.seed --demo | tail -n 3)
     accounts ;;
 
@@ -605,7 +609,7 @@ case "$CMD" in
       *) echo "  Start with a tunnel: ./run.sh --tunnel     Forget your own tunnel: ./run.sh tunnel off" ;;
     esac ;;
 
-  accounts) say "Accounts"; accounts ;;
+  accounts) say "Accounts"; accounts "${ARGS[0]:-}" ;;
 
   app)
     command -v flutter >/dev/null || fail "Flutter is missing. Install it from https://docs.flutter.dev/get-started/install, then run ./run.sh app again."

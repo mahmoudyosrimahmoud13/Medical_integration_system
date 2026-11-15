@@ -118,16 +118,26 @@ def ensure_default_avatar() -> None:
         shutil.copy(BASE_DIR / "app" / "static" / "default.png", target)
 
 
-async def main(demo: bool) -> None:
+async def main(demo: bool, demo_if_loaded: bool = False) -> None:
     ensure_default_avatar()
     async with SessionLocal() as db:
         await seed_reference(db)
         await seed_admin(db)
+        if demo_if_loaded and not demo:
+            # Continuing with existing data: if it is demo data, add whatever newer versions of the demo
+            # brought. Real data (no demo accounts) is left alone.
+            from sqlalchemy import select
+
+            from app.models import User
+
+            demo = await db.scalar(select(User.id).where(User.email == "doctor@healthhub.local")) is not None
         if demo:
             await seed_demo(db)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--demo", action="store_true", help="also create a demo doctor and patient")
-    asyncio.run(main(parser.parse_args().demo))
+    parser.add_argument("--demo", action="store_true", help="also load the demo data (only adds what is missing)")
+    parser.add_argument("--demo-if-loaded", action="store_true", help="add new demo data only if the demo is already loaded")
+    args = parser.parse_args()
+    asyncio.run(main(args.demo, args.demo_if_loaded))

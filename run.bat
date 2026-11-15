@@ -55,7 +55,8 @@ set FIRST=0
 if not exist Backend\healthhub.db set FIRST=1
 pushd Backend
 .venv\Scripts\python.exe -m alembic upgrade head
-set SEEDARGS=
+REM continuing with demo data: also add anything newer versions of the demo brought (nothing is deleted)
+set SEEDARGS=--demo-if-loaded
 if "%RESET%"=="demo" set SEEDARGS=--demo
 REM a brand new install gets the demo data, unless --reset-empty was chosen
 if "%FIRST%"=="1" if not "%RESET%"=="empty" set SEEDARGS=--demo

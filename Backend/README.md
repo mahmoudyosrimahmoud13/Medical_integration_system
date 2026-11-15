@@ -25,10 +25,16 @@ You need Python 3.11 or newer. Docker is only needed for the `docker` option.
 
 ### Demo data (created by `dev`, `reset`, and `seed --demo`)
 
-The demo database is meant to look like a real deployment: 12 doctors across 12 specialties in Cairo,
-Giza and Alexandria with weekly schedules, 3 hospitals with departments, 6 pharmacies (El Nour, El Ezaby,
-Seif, 19011, Roshdy, Misr) with stock, 20 patients with conditions, past visits, prescriptions, reviews,
-upcoming appointments and a few conversations. See `app/demo.py` for the full list.
+The demo database is meant to look like a real deployment, in two layers that only ever add:
+
+- `app/demo.py`, the base: 20 doctors in 9 governorates, 5 hospitals, 9 pharmacies, 35 patients and the
+  main demo accounts (doctor@, patient@, ...), which always have the same history.
+- `app/demo_more.py`, on top: 40 more doctors so all 27 governorates are covered, 9 hospitals, 21
+  pharmacies, 115 patients (some children), a year of visits with follow-ups and readings, cancelled and
+  upcoming bookings, reviews and chats in English and Egyptian Arabic, and notifications.
+
+`python -m app.seed --demo-if-loaded` adds the newest demo data only if a demo is already loaded (run.sh
+does this when you continue with your data). Demo accounts share one password per role: `Role@12345`.
 
 The product catalogue (`seed_data/egypt_products.csv`) holds 165 branded medicines sold in Egypt
 (Panadol, Cataflam, Augmentin, Glucophage, Concor, Lipitor, Amaryl, Zithromax, Flagyl, ...) with

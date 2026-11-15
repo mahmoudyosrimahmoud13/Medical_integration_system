@@ -6,6 +6,9 @@ Creates (only if missing): 165 Egyptian-market products, 20 doctors in 9 governo
 9 pharmacies with stock, 35 patients, a customer support account, applications waiting for the admin,
 past and upcoming appointments, medical records with prescriptions, reviews, notifications and
 conversations between every kind of user. All demo passwords are <Role>@12345 (e.g. Doctor@12345).
+
+app/demo_more.py then adds a bigger layer on top (60 doctors in all 27 governorates, 14 hospitals,
+30 pharmacies, 150 patients, a year of visits, chats in English and Arabic). Both only add, never delete.
 """
 
 import csv
@@ -204,12 +207,22 @@ async def _specialty(db: AsyncSession, name: str) -> Specialty:
     return row
 
 
+_hashes: dict[str, str] = {}
+
+
+def _hash(password: str) -> str:
+    """Demo accounts share one password per role, so each one is hashed once (hashing is slow on purpose)."""
+    if password not in _hashes:
+        _hashes[password] = hash_password(password)
+    return _hashes[password]
+
+
 async def _user(db: AsyncSession, *, email: str, password: str, name: str, roles: list[Role], area: Area | None, phone: str, national_id: str, male: bool, birth: date) -> User:
     user = await db.scalar(select(User).where(User.email == email))
     if user:
         return user
     user = User(
-        email=email, username=email.split("@")[0], password_hash=hash_password(password), name=name, phone=phone,
+        email=email, username=email.split("@")[0], password_hash=_hash(password), name=name, phone=phone,
         national_id=national_id, birth_date=birth, gender_male=male, area_id=area.id if area else None,
         email_confirmed=True, roles=[UserRole(role=r) for r in roles],
     )
@@ -244,10 +257,18 @@ async def seed_products(db: AsyncSession) -> int:
 
 
 async def seed_demo(db: AsyncSession) -> None:
+    """The base demo (if missing), then the extra demo from app/demo_more.py (if missing). Only adds."""
+    from app.demo_more import seed_demo_more
+
     products = await seed_products(db)
     if await db.scalar(select(func.count()).select_from(Doctor)) and await db.scalar(select(func.count()).select_from(Appointment)):
-        print("Demo data already present, skipping")
-        return
+        print("Base demo data already present")
+    else:
+        await _seed_base(db, products)
+    await seed_demo_more(db)
+
+
+async def _seed_base(db: AsyncSession, products: int) -> None:
 
     now = datetime.now(timezone.utc)
     today = date.today()

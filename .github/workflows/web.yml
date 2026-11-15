@@ -2,6 +2,8 @@ name: Web (React)
 
 on:
   push:
+    branches: ["**"]   # every branch push runs the checks for the folders it changed
+    tags: ["v*"]       # a version tag (git tag v2.0.1) runs every check, whatever changed
     paths: ["Web/**", ".github/workflows/web.yml"]
   pull_request:
     paths: ["Web/**", ".github/workflows/web.yml"]

@@ -2,6 +2,8 @@ name: AI (drug interactions)
 
 on:
   push:
+    branches: ["**"]   # every branch push runs the checks for the folders it changed
+    tags: ["v*"]       # a version tag (git tag v2.0.1) runs every check, whatever changed
     paths: ["AI/**", ".github/workflows/ai.yml"]
   pull_request:
     paths: ["AI/**", ".github/workflows/ai.yml"]

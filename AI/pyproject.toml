@@ -7,4 +7,6 @@ select = ["E9", "F", "I", "B"]
 ignore = ["B905"]
 
 [tool.pytest.ini_options]
+# so tests can import ddi_service when run with plain `pytest` (as GitHub Actions does)
+pythonpath = ["."]
 filterwarnings = ["ignore::UserWarning", "ignore::DeprecationWarning"]

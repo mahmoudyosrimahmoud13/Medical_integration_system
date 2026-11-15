@@ -5,6 +5,7 @@ import '../../../core/storage/token_storage.dart';
 import '../../../core/utils/json.dart';
 import '../../catalog/data/catalog_repository_impl.dart';
 import '../domain/auth.dart';
+import '../../../core/i18n/i18n.dart';
 
 User userFromJson(Map<String, dynamic> j) => User(
       id: str(j['id']),

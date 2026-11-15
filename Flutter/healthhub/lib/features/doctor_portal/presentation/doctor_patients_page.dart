@@ -10,6 +10,7 @@ import '../../../core/widgets/common.dart';
 import '../../records/domain/records.dart';
 import '../../records/presentation/record_view.dart';
 import 'write_session_page.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Look up a patient by email, read the record, and write a new visit.
 class DoctorPatientsPage extends StatefulWidget {
@@ -34,7 +35,7 @@ class _DoctorPatientsPageState extends State<DoctorPatientsPage> {
   Future<void> _lookup([String? email]) async {
     final value = (email ?? _email.text).trim();
     if (Validators.email(value) != null) {
-      showSnack(context, 'Enter the patient\'s email', error: true);
+      showSnack(context, tr('Enter the patient\'s email'), error: true);
       return;
     }
     if (email != null) _email.text = email;
@@ -50,7 +51,7 @@ class _DoctorPatientsPageState extends State<DoctorPatientsPage> {
       if (mounted) {
         setState(() {
           _record = null;
-          _error = e.isNotFound ? 'No patient with this email.' : e.message;
+          _error = e.isNotFound ? tr('No patient with this email.') : e.message;
         });
       }
     } finally {
@@ -64,8 +65,8 @@ class _DoctorPatientsPageState extends State<DoctorPatientsPage> {
     return Scaffold(
       body: Column(children: [
         GradientHeader(
-          subtitle: 'Patients',
-          title: 'Medical records',
+          subtitle: tr('Patients'),
+          title: tr('Medical records'),
           bottom: TextField(
             controller: _email,
             keyboardType: TextInputType.emailAddress,
@@ -88,7 +89,7 @@ class _DoctorPatientsPageState extends State<DoctorPatientsPage> {
                 : _error != null
                     ? ErrorView(key: const ValueKey('e'), message: _error!)
                     : record == null
-                        ? const EmptyView(key: ValueKey('empty'), title: 'Find a patient', message: 'Enter the email the patient registered with to open their record.')
+                        ? EmptyView(key: ValueKey('empty'), title: tr('Find a patient'), message: tr('Enter the email the patient registered with to open their record.'))
                         : RecordView(
                             key: ValueKey(record.patient.id),
                             record: record,
@@ -99,7 +100,7 @@ class _DoctorPatientsPageState extends State<DoctorPatientsPage> {
                                 Expanded(
                                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                     Text(record.patient.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
-                                    Text([record.patient.gender, if (record.patient.age != null) '${record.patient.age} years', if (record.patient.phone != null) record.patient.phone!].join(' · ')),
+                                    Text([tr(record.patient.gender), if (record.patient.age != null) tr('{n} years', {'n': record.patient.age}), if (record.patient.phone != null) record.patient.phone!].join(' · ')),
                                   ]),
                                 ),
                               ]),
@@ -116,7 +117,7 @@ class _DoctorPatientsPageState extends State<DoctorPatientsPage> {
                 if (written == true) _lookup(record.patient.email);
               },
               icon: const Icon(Icons.edit_note_rounded),
-              label: const Text('New visit'),
+              label: Text(tr('New visit')),
             ).popIn(),
     );
   }

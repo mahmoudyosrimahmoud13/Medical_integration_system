@@ -37,7 +37,7 @@ export interface ApplicationStatus { status: 'none' | 'pending' | 'rejected' | '
 export interface Person { id: string; name: string; image_url: string | null }
 export interface Appointment {
   id: string; day: string; day_name: string; time_from: string; time_to: string; status: string;
-  doctor?: (Person & { specialty: string; area: string; governorate: string; phone: string | null }) | null;
+  doctor?: (Person & { specialty: string; area: string; governorate: string; area_ar?: string | null; governorate_ar?: string | null; phone: string | null }) | null;
   patient?: (Person & { email: string; phone: string | null; gender: string; age: number | null }) | null;
 }
 export interface BookedSlot { day: string; day_name: string; time_from: string; time_to: string }

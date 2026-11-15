@@ -1,6 +1,7 @@
 import '../../../core/network/api_client.dart';
 import '../../../core/utils/json.dart';
 import '../domain/doctors.dart';
+import '../../../core/i18n/i18n.dart';
 
 ScheduleDay scheduleFromJson(Map<String, dynamic> j) =>
     ScheduleDay(day: str(j['day_name']), from: str(j['time_from']), to: str(j['time_to']));
@@ -9,8 +10,8 @@ DoctorSummary doctorSummaryFromJson(Map<String, dynamic> j) => DoctorSummary(
       id: str(j['id']),
       name: str(j['name']),
       specialty: str(map(j['specialty'])['name']),
-      area: str(map(j['area'])['key']),
-      governorate: str(map(j['governorate'])['key']),
+      area: rememberPlace(j['area']),
+      governorate: rememberPlace(j['governorate']),
       imageUrl: strOrNull(j['image_url']),
       phone: strOrNull(j['phone']),
       address: str(j['address_description']),

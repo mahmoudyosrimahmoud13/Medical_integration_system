@@ -10,6 +10,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../../catalog/presentation/pickers.dart';
 import '../../records/domain/records.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Diagnosis + prescriptions for one visit, with an AI interaction check before saving.
 class WriteSessionPage extends StatefulWidget {
@@ -73,11 +74,11 @@ class _WriteSessionPageState extends State<WriteSessionPage> {
       final go = await showDialog<bool>(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('Interaction found'),
-          content: const Text('The check flagged a possible interaction. Save this prescription anyway?'),
+          title: Text(tr('Interaction found')),
+          content: Text(tr('The check flagged a possible interaction. Save this prescription anyway?')),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Review')),
-            FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Save anyway')),
+            TextButton(onPressed: () => Navigator.pop(context, false), child: Text(tr('Review'))),
+            FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(tr('Save anyway'))),
           ],
         ),
       );
@@ -95,7 +96,7 @@ class _WriteSessionPageState extends State<WriteSessionPage> {
             prescriptions: _lines,
           ));
       if (!mounted) return;
-      showSnack(context, 'Visit saved. The patient was notified.');
+      showSnack(context, tr('Visit saved. The patient was notified.'));
       Navigator.of(context).pop(true);
     } on ApiException catch (e) {
       if (mounted) showSnack(context, e.message, error: true);
@@ -109,7 +110,7 @@ class _WriteSessionPageState extends State<WriteSessionPage> {
     final t = Theme.of(context).textTheme;
     final report = _report;
     return Scaffold(
-      appBar: AppBar(title: Text('New visit: ${widget.record.patient.firstName}')),
+      appBar: AppBar(title: Text(tr('New visit: {name}', {'name': widget.record.patient.firstName}))),
       body: Form(
         key: _form,
         child: ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 120), children: [
@@ -117,21 +118,21 @@ class _WriteSessionPageState extends State<WriteSessionPage> {
             AppCard(
               color: AppColors.warning.withValues(alpha: .1),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                const Text('Currently taking', style: TextStyle(fontWeight: FontWeight.w800)),
+                Text(tr('Currently taking'), style: TextStyle(fontWeight: FontWeight.w800)),
                 const SizedBox(height: 4),
                 Text(widget.record.currentPrescriptions.map((p) => p.drugName).join(', ')),
               ]),
             ).entrance(0),
           const SectionTitle('Diagnosis'),
-          TextFormField(controller: _disease, decoration: const InputDecoration(labelText: 'Condition', prefixIcon: Icon(Icons.coronavirus_outlined)), validator: (v) => v == null || v.trim().length < 2 ? 'Enter the condition' : null).entrance(1),
+          TextFormField(controller: _disease, decoration: InputDecoration(labelText: tr('Condition'), prefixIcon: Icon(Icons.coronavirus_outlined)), validator: (v) => v == null || v.trim().length < 2 ? tr('Enter the condition') : null).entrance(1),
           const SizedBox(height: 12),
-          TextFormField(controller: _notes, maxLines: 3, decoration: const InputDecoration(labelText: 'Visit notes', alignLabelWithHint: true)).entrance(2),
+          TextFormField(controller: _notes, maxLines: 3, decoration: InputDecoration(labelText: tr('Visit notes'), alignLabelWithHint: true)).entrance(2),
           Row(children: [
-            Expanded(child: SwitchListTile(title: const Text('Chronic'), value: _chronic, onChanged: (v) => setState(() => _chronic = v), contentPadding: EdgeInsets.zero)),
-            Expanded(child: SwitchListTile(title: const Text('Cured'), value: _cured, onChanged: (v) => setState(() => _cured = v), contentPadding: EdgeInsets.zero)),
+            Expanded(child: SwitchListTile(title: Text(tr('Chronic')), value: _chronic, onChanged: (v) => setState(() => _chronic = v), contentPadding: EdgeInsets.zero)),
+            Expanded(child: SwitchListTile(title: Text(tr('Cured')), value: _cured, onChanged: (v) => setState(() => _cured = v), contentPadding: EdgeInsets.zero)),
           ]).entrance(3),
           const SectionTitle('Prescription'),
-          DrugSearchField(label: 'Add a drug', onPicked: (d) => _addLine(d.id, d.name)).entrance(4),
+          DrugSearchField(label: tr('Add a drug'), onPicked: (d) => _addLine(d.id, d.name)).entrance(4),
           const SizedBox(height: 12),
           AnimatedSize(
             duration: const Duration(milliseconds: 300),
@@ -148,8 +149,8 @@ class _WriteSessionPageState extends State<WriteSessionPage> {
                       _report = null;
                     }),
                     background: Container(
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: 20),
+                      alignment: AlignmentDirectional.centerEnd,
+                      padding: const EdgeInsetsDirectional.only(end: 20),
                       decoration: BoxDecoration(color: AppColors.danger, borderRadius: BorderRadius.circular(16)),
                       child: const Icon(Icons.delete_outline, color: Colors.white),
                     ),
@@ -163,7 +164,7 @@ class _WriteSessionPageState extends State<WriteSessionPage> {
                             Text([
                               if (_lines[i].repeat != null) _lines[i].repeat!,
                               '${_lines[i].repeatCount}x',
-                              if (_lines[i].endDate != null) 'until ${DateFormat.MMMd().format(_lines[i].endDate!)}',
+                              if (_lines[i].endDate != null) tr('until {date}', {'date': DateFormat.MMMd(AppSettings.dateLocale).format(_lines[i].endDate!)}),
                             ].join(' · '), style: t.bodySmall),
                           ]),
                         ),
@@ -178,7 +179,7 @@ class _WriteSessionPageState extends State<WriteSessionPage> {
             OutlinedButton.icon(
               onPressed: _checking ? null : _check,
               icon: _checking ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.science_outlined),
-              label: const Text('Check interactions'),
+              label: Text(tr('Check interactions')),
             ),
             const SizedBox(height: 12),
             AnimatedSwitcher(
@@ -190,7 +191,7 @@ class _WriteSessionPageState extends State<WriteSessionPage> {
       ),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.all(16),
-        child: PrimaryButton(label: 'Save visit', icon: Icons.check, busy: _saving, onPressed: _save),
+        child: PrimaryButton(label: tr('Save visit'), icon: Icons.check, busy: _saving, onPressed: _save),
       ),
     );
   }
@@ -219,7 +220,7 @@ class _ReportCard extends StatelessWidget {
         const SizedBox(height: 8),
         for (final p in report.pairs.where((p) => p.interacts != false))
           Padding(padding: const EdgeInsets.only(top: 4), child: Text('${p.drugA} + ${p.drugB}: ${p.description}')),
-        if (report.available && !report.impact) const Text('Checked against each other and the patient\'s current medicines.'),
+        if (report.available && !report.impact) Text(tr('Checked against each other and the patient\'s current medicines.')),
       ]),
     );
   }
@@ -256,24 +257,24 @@ class _LineSheetState extends State<_LineSheet> {
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
           initialValue: _repeat,
-          decoration: const InputDecoration(labelText: 'How often'),
-          items: const [
-            DropdownMenuItem(value: 'daily', child: Text('Once a day')),
-            DropdownMenuItem(value: 'every 12 hours', child: Text('Every 12 hours')),
-            DropdownMenuItem(value: 'every 8 hours', child: Text('Every 8 hours')),
-            DropdownMenuItem(value: 'weekly', child: Text('Once a week')),
-            DropdownMenuItem(value: 'when needed', child: Text('When needed')),
+          decoration: InputDecoration(labelText: tr('How often')),
+          items: [
+            DropdownMenuItem(value: 'daily', child: Text(tr('Once a day'))),
+            DropdownMenuItem(value: 'every 12 hours', child: Text(tr('Every 12 hours'))),
+            DropdownMenuItem(value: 'every 8 hours', child: Text(tr('Every 8 hours'))),
+            DropdownMenuItem(value: 'weekly', child: Text(tr('Once a week'))),
+            DropdownMenuItem(value: 'when needed', child: Text(tr('When needed'))),
           ],
           onChanged: (v) => setState(() => _repeat = v!),
         ),
         const SizedBox(height: 12),
         Row(children: [
-          Expanded(child: _Stepper(label: 'Per dose', value: _count, onChanged: (v) => setState(() => _count = v))),
+          Expanded(child: _Stepper(label: tr('Per dose'), value: _count, onChanged: (v) => setState(() => _count = v))),
           const SizedBox(width: 12),
-          Expanded(child: _Stepper(label: 'Days', value: _days, step: 1, max: 365, onChanged: (v) => setState(() => _days = v))),
+          Expanded(child: _Stepper(label: tr('Days'), value: _days, step: 1, max: 365, onChanged: (v) => setState(() => _days = v))),
         ]),
         const SizedBox(height: 12),
-        TextField(controller: _note, decoration: const InputDecoration(labelText: 'Note, e.g. after food')),
+        TextField(controller: _note, decoration: InputDecoration(labelText: tr('Note, e.g. after food'))),
         const SizedBox(height: 20),
         FilledButton(
           onPressed: () => Navigator.pop(
@@ -288,7 +289,7 @@ class _LineSheetState extends State<_LineSheet> {
               endDate: DateTime.now().add(Duration(days: _days)),
             ),
           ),
-          child: const Text('Add to prescription'),
+          child: Text(tr('Add to prescription')),
         ),
       ]),
     );

@@ -12,6 +12,7 @@ import '../../doctor_portal/presentation/doctor_apply_page.dart';
 import '../../records/presentation/record_view.dart';
 import '../domain/pharmacy.dart';
 import 'facility_apply_form.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Pharmacy counter: enter a patient's share code to see what to dispense.
 /// When opened from the profile by someone without a pharmacy, it shows the application form.
@@ -27,7 +28,7 @@ class PharmacyHomePage extends StatelessWidget {
       child: Builder(builder: (context) {
         final cubit = context.watch<LoadCubit<(ApplicationStatus, Pharmacy?)>>();
         return Scaffold(
-          appBar: standalone ? AppBar(title: const Text('Register a pharmacy')) : null,
+          appBar: standalone ? AppBar(title: Text(tr('Register a pharmacy'))) : null,
           body: AsyncBody<(ApplicationStatus, Pharmacy?)>(
             state: cubit.state,
             onRetry: cubit.load,
@@ -106,7 +107,7 @@ class _CounterState extends State<_Counter> {
     return Column(children: [
       GradientHeader(
         subtitle: widget.pharmacy.name,
-        title: 'Counter',
+        title: tr('Counter'),
         bottom: TextField(
           controller: _code,
           textCapitalization: TextCapitalization.characters,
@@ -114,7 +115,7 @@ class _CounterState extends State<_Counter> {
           onSubmitted: (_) => _lookup(),
           style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: 4),
           decoration: InputDecoration(
-            hintText: 'PATIENT CODE',
+            hintText: tr('PATIENT CODE'),
             hintStyle: const TextStyle(letterSpacing: 2, fontSize: 16, fontWeight: FontWeight.w500),
             prefixIcon: const Icon(Icons.qr_code_2_rounded),
             suffixIcon: IconButton(onPressed: _lookup, icon: const Icon(Icons.arrow_forward)),
@@ -131,18 +132,18 @@ class _CounterState extends State<_Counter> {
               : _error != null
                   ? ErrorView(key: const ValueKey('e'), message: _error!)
                   : result == null
-                      ? const EmptyView(
+                      ? EmptyView(
                           key: ValueKey('empty'),
-                          title: 'Ask the patient for their code',
-                          message: 'Patients make a 6-character code in the HealthHub app. It shows their current prescriptions for 30 minutes.',
+                          title: tr('Ask the patient for their code'),
+                          message: tr('Patients make a 6-character code in the HealthHub app. It shows their current prescriptions for 30 minutes.'),
                         )
                       : ListView(
                           key: ValueKey(result),
                           padding: const EdgeInsets.all(16),
                           children: [
-                            Text('Prescriptions for ${result.patientName}', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)).animate().fadeIn(),
+                            Text(tr('Prescriptions for {name}', {'name': result.patientName}), style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)).animate().fadeIn(),
                             const SizedBox(height: 12),
-                            if (result.prescriptions.isEmpty) const AppCard(child: Text('This patient has no active prescriptions.')),
+                            if (result.prescriptions.isEmpty) AppCard(child: Text(tr('This patient has no active prescriptions.'))),
                             for (var i = 0; i < result.prescriptions.length; i++)
                               Padding(padding: const EdgeInsets.only(bottom: 10), child: PrescriptionTile(result.prescriptions[i]).entrance(i)),
                           ],

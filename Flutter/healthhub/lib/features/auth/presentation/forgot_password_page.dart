@@ -7,6 +7,7 @@ import '../../../core/di.dart';
 import '../../../core/network/api_exception.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/common.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Two steps: send a reset code to the email, then enter the code and a new password.
 class ForgotPasswordPage extends StatefulWidget {
@@ -41,11 +42,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         await auth.forgotPassword(_email.text);
         if (!mounted) return;
         setState(() => _codeSent = true);
-        showSnack(context, 'If this email is registered, a code is on its way.');
+        showSnack(context, tr('If this email is registered, a code is on its way.'));
       } else {
         await auth.resetPassword(_code.text, _password.text);
         if (!mounted) return;
-        showSnack(context, 'Password changed. Log in with your new password.');
+        showSnack(context, tr('Password changed. Log in with your new password.'));
         Navigator.of(context).pop();
       }
     } on ApiException catch (e) {
@@ -58,7 +59,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reset password')),
+      appBar: AppBar(title: Text(tr('Reset password'))),
       body: Form(
         key: _form,
         child: ListView(padding: const EdgeInsets.all(24), children: [
@@ -74,29 +75,29 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     TextFormField(
                       controller: _email,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
+                      decoration: InputDecoration(labelText: tr('Email'), prefixIcon: Icon(Icons.email_outlined)),
                       validator: Validators.email,
                     ),
                   ])
                 : Column(key: const ValueKey('code'), children: [
-                    Text('We sent a code to ${_email.text}. Paste it below and choose a new password.'),
+                    Text(tr('We sent a code to {email}. Paste it below and choose a new password.', {'email': _email.text})),
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _code,
-                      decoration: const InputDecoration(labelText: 'Reset code', prefixIcon: Icon(Icons.key_outlined)),
+                      decoration: InputDecoration(labelText: tr('Reset code'), prefixIcon: Icon(Icons.key_outlined)),
                       validator: (v) => Validators.required(v, 'The code'),
                     ),
                     const SizedBox(height: 14),
                     TextFormField(
                       controller: _password,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'New password', prefixIcon: Icon(Icons.lock_outline)),
+                      decoration: InputDecoration(labelText: tr('New password'), prefixIcon: Icon(Icons.lock_outline)),
                       validator: Validators.password,
                     ),
                   ]),
           ),
           const SizedBox(height: 24),
-          PrimaryButton(label: _codeSent ? 'Change password' : 'Send code', busy: _busy, onPressed: _submit),
+          PrimaryButton(label: _codeSent ? tr('Change password') : tr('Send code'), busy: _busy, onPressed: _submit),
         ]),
       ),
     );

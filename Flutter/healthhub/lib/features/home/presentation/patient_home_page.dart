@@ -7,6 +7,7 @@ import '../../../core/navigation/app_route.dart';
 import '../../../core/state/load_cubit.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/animations.dart';
+import '../../../core/widgets/clay.dart';
 import '../../../core/widgets/common.dart';
 import '../../appointments/domain/appointments.dart';
 import '../../appointments/presentation/appointments_page.dart';
@@ -17,6 +18,7 @@ import '../../hospital/presentation/hospitals_page.dart';
 import '../../notifications/presentation/notifications_page.dart';
 import '../../pharmacy/presentation/find_pharmacy_page.dart';
 import '../../records/presentation/records_page.dart';
+import '../../../core/i18n/i18n.dart';
 
 class PatientHomePage extends StatelessWidget {
   const PatientHomePage({super.key});
@@ -44,7 +46,7 @@ class _PatientHomeView extends StatelessWidget {
     final specs = context.watch<LoadCubit<List<Specialty>>>().state.data ?? const <Specialty>[];
     final next = (appts.state.data ?? const <Appointment>[]).firstOrNull;
     final hour = DateTime.now().hour;
-    final greeting = hour < 12 ? 'Good morning' : (hour < 18 ? 'Good afternoon' : 'Good evening');
+    final greeting = hour < 12 ? tr('Good morning') : (hour < 18 ? tr('Good afternoon') : tr('Good evening'));
 
     return Scaffold(
       body: RefreshIndicator(
@@ -69,7 +71,7 @@ class _PatientHomeView extends StatelessWidget {
                   child: Row(children: [
                     Icon(Icons.search, color: Theme.of(context).colorScheme.outline),
                     const SizedBox(width: 10),
-                    Text('Search doctors, specialties...', style: TextStyle(color: Theme.of(context).colorScheme.outline)),
+                    Text(tr('Search doctors, specialties...'), style: TextStyle(color: Theme.of(context).colorScheme.outline)),
                   ]),
                 ),
               ),
@@ -89,14 +91,16 @@ class _PatientHomeView extends StatelessWidget {
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.45,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 1.25,
+                // a little room so the soft clay shadows are not cut off at the edges
+                padding: const EdgeInsets.only(bottom: 8),
                 children: [
-                  _Action(icon: Icons.medical_services_rounded, label: 'Book a doctor', gradient: AppColors.heroGradient, onTap: () => context.push(const FindDoctorsPage(showBack: true))).entrance(1),
-                  _Action(icon: Icons.local_pharmacy_rounded, label: 'Find a medicine', gradient: AppColors.mintGradient, onTap: () => context.push(const FindPharmacyPage())).entrance(2),
-                  _Action(icon: Icons.local_hospital_rounded, label: 'Hospitals', color: AppColors.warning, onTap: () => context.push(const HospitalsPage())).entrance(3),
-                  _Action(icon: Icons.qr_code_2_rounded, label: 'Share prescriptions', color: AppColors.danger, onTap: () => showShareCodeSheet(context)).entrance(4),
+                  _Action(icon: Icons.medical_services_rounded, label: tr('Book a doctor'), tint: Clay.lilac, color: AppColors.primary, onTap: () => context.push(const FindDoctorsPage(showBack: true))).entrance(1),
+                  _Action(icon: Icons.local_pharmacy_rounded, label: tr('Find a medicine'), tint: Clay.mint, color: const Color(0xFF12A383), onTap: () => context.push(const FindPharmacyPage())).entrance(2),
+                  _Action(icon: Icons.local_hospital_rounded, label: tr('Hospitals'), tint: Clay.butter, color: const Color(0xFFC98A00), onTap: () => context.push(const HospitalsPage())).entrance(3),
+                  _Action(icon: Icons.qr_code_2_rounded, label: tr('Share prescriptions'), tint: Clay.blush, color: AppColors.danger, onTap: () => showShareCodeSheet(context)).entrance(4),
                 ],
               ),
               if (specs.isNotEmpty) ...[
@@ -131,18 +135,19 @@ class _NextVisit extends StatelessWidget {
   Widget build(BuildContext context) {
     final d = appointment.doctor;
     final days = appointment.day.difference(DateUtils.dateOnly(DateTime.now())).inDays;
-    final when = days == 0 ? 'Today' : (days == 1 ? 'Tomorrow' : DateFormat.MMMEd().format(appointment.day));
-    return AppCard(
+    final when = days == 0 ? tr('Today') : (days == 1 ? tr('Tomorrow') : DateFormat.MMMEd(AppSettings.dateLocale).format(appointment.day));
+    return ClayCard(
       onTap: () => context.push(const AppointmentsPage()),
-      color: AppColors.accent.withValues(alpha: .12),
+      tint: Clay.mint,
+      padding: const EdgeInsets.all(16),
       child: Row(children: [
         Avatar(name: d?.name ?? '', url: d?.imageUrl, radius: 26),
         const SizedBox(width: 12),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Next visit · $when at ${appointment.from}', style: const TextStyle(fontWeight: FontWeight.w800)),
-            if (d != null) Text('Dr. ${d.name}, ${d.specialty}'),
-            if (d != null) Text('${d.area}, ${d.governorate}', style: Theme.of(context).textTheme.bodySmall),
+            Text(tr('Next visit · {date} at {time}', {'date': when, 'time': clock(appointment.from)}), style: const TextStyle(fontWeight: FontWeight.w800)),
+            if (d != null) Text('${tr('Dr. {name}', {'name': d.name})}${tr(', ')}${tr(d.specialty)}'),
+            if (d != null) Text('${place(d.area)}${tr(', ')}${place(d.governorate)}', style: Theme.of(context).textTheme.bodySmall),
           ]),
         ),
         const Icon(Icons.chevron_right),
@@ -152,31 +157,33 @@ class _NextVisit extends StatelessWidget {
 }
 
 class _Action extends StatelessWidget {
-  const _Action({required this.icon, required this.label, required this.onTap, this.gradient, this.color});
+  const _Action({required this.icon, required this.label, required this.onTap, required this.tint, required this.color});
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  final Gradient? gradient;
-  final Color? color;
+  final Color tint; // the pastel clay colour of the card
+  final Color color; // the icon colour
 
   @override
   Widget build(BuildContext context) {
-    final onColor = gradient != null ? Colors.white : Theme.of(context).colorScheme.onSurface;
-    return Pressable(
+    return ClayCard(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: gradient,
-          color: gradient == null ? color!.withValues(alpha: .14) : null,
-          borderRadius: BorderRadius.circular(20),
+      tint: tint,
+      padding: const EdgeInsets.all(16),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        ClayBubble(icon: icon, color: color, size: 50),
+        Text(
+          label,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : AppColors.navy,
+            fontWeight: FontWeight.w800,
+            fontSize: 15,
+          ),
         ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Icon(icon, color: gradient != null ? Colors.white : color, size: 30),
-          Text(label, style: TextStyle(color: onColor, fontWeight: FontWeight.w700, fontSize: 15)),
-        ]),
-      ),
+      ]),
     );
   }
 }

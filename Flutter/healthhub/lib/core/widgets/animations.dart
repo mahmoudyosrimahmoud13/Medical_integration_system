@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../core/i18n/i18n.dart';
 
 /// Staggered entrance for list items: each item fades and slides in a little after the one before.
 extension EntranceX on Widget {
@@ -161,7 +162,7 @@ class AppLogo extends StatelessWidget {
         white ? 'assets/logo/logo_mark_white.svg' : 'assets/logo/logo_mark.svg',
         width: size,
         height: size,
-        semanticsLabel: 'HealthHub',
+        semanticsLabel: tr('HealthHub'),
       );
 }
 
@@ -178,7 +179,7 @@ class AppWordmark extends StatelessWidget {
     return Row(mainAxisSize: MainAxisSize.min, children: [
       AppLogo(size: size, white: onDark),
       SizedBox(width: size * .28),
-      Text('HealthHub', style: TextStyle(color: color, fontSize: size * .62, fontWeight: FontWeight.w800, letterSpacing: -1)),
+      Text(tr('HealthHub'), style: TextStyle(color: color, fontSize: size * .62, fontWeight: FontWeight.w800, letterSpacing: -1)),
     ]);
   }
 }

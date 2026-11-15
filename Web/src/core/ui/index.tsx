@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { tr } from '../i18n/i18n';
 
 /* ------------------------------------------------------------------ logo */
 
@@ -10,7 +11,7 @@ export function Wordmark({ size = 32, onDark = false }: { size?: number; onDark?
   return (
     <span className="inline-flex items-center gap-2.5">
       <Logo size={size} />
-      <span className={`font-bold tracking-tight ${onDark ? 'text-white' : 'text-navy'}`} style={{ fontSize: size * 0.62 }}>HealthHub</span>
+      <span className={`font-bold tracking-tight ${onDark ? 'text-white' : 'text-navy dark:text-ink'}`} style={{ fontSize: size * 0.62 }}>HealthHub</span>
     </span>
   );
 }
@@ -61,7 +62,7 @@ export function Card({ children, className = '', onClick, index }: { children: R
   const cls = `card ${onClick ? 'pressable cursor-pointer hover:border-indigo/40' : ''} ${index !== undefined ? 'rise' : ''} ${className}`;
   const style = index !== undefined ? ({ ['--i' as string]: index } as React.CSSProperties) : undefined;
   return onClick ? (
-    <button type="button" onClick={onClick} className={`${cls} w-full text-left`} style={style}>{children}</button>
+    <button type="button" onClick={onClick} className={`${cls} w-full text-start`} style={style}>{children}</button>
   ) : (
     <div className={cls} style={style}>{children}</div>
   );
@@ -89,12 +90,12 @@ export function Field({ label, error, children, hint }: { label: string; error?:
 
 export function Badge({ status }: { status: string }) {
   const map: Record<string, [string, string]> = {
-    accepted: ['bg-mint-100 text-[#0e8c6a]', 'Accepted'],
-    pending: ['bg-amber-100 text-[#8a5b00]', 'Under review'],
-    rejected: ['bg-danger-100 text-danger', 'Rejected'],
-    booked: ['bg-indigo-100 text-indigo', 'Booked'],
-    cancelled: ['bg-danger-100 text-danger', 'Cancelled'],
-    done: ['bg-line text-muted', 'Done'],
+    accepted: ['bg-mint-100 text-[#0e8c6a] dark:text-mint', tr('Accepted')],
+    pending: ['bg-amber-100 text-[#8a5b00] dark:text-amber', tr('Under review')],
+    rejected: ['bg-danger-100 text-danger', tr('Rejected')],
+    booked: ['bg-indigo-100 text-indigo', tr('Booked')],
+    cancelled: ['bg-danger-100 text-danger', tr('Cancelled')],
+    done: ['bg-line text-muted', tr('Done')],
   };
   const [cls, label] = map[status] ?? ['bg-line text-muted', status];
   return <span className={`badge ${cls}`}>{label}</span>;
@@ -102,13 +103,13 @@ export function Badge({ status }: { status: string }) {
 
 export function Stars({ value, count, size = 14 }: { value: number; count?: number; size?: number }) {
   return (
-    <span className="inline-flex items-center gap-0.5 text-amber" aria-label={`${value} out of 5`}>
+    <span className="inline-flex items-center gap-0.5 text-amber" aria-label={tr('{value} out of 5', { value })}>
       {[1, 2, 3, 4, 5].map((i) => (
         <svg key={i} width={size} height={size} viewBox="0 0 24 24" fill={value >= i - 0.25 ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.8} aria-hidden>
           <path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6L2.5 9.4l6.6-.8z" />
         </svg>
       ))}
-      {count !== undefined && <span className="ml-1 text-xs text-muted">({count})</span>}
+      {count !== undefined && <span className="ms-1 text-xs text-muted">({count})</span>}
     </span>
   );
 }
@@ -119,7 +120,7 @@ export function Skeleton({ className = 'h-4 w-full' }: { className?: string }) {
 
 export function SkeletonList({ count = 4 }: { count?: number }) {
   return (
-    <div className="space-y-3" aria-busy="true" aria-label="Loading">
+    <div className="space-y-3" aria-busy="true" aria-label={tr('Loading')}>
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="card flex items-center gap-4 p-4">
           <Skeleton className="size-12 rounded-full" />
@@ -133,7 +134,7 @@ export function SkeletonList({ count = 4 }: { count?: number }) {
 export function Empty({ title, text, action }: { title: string; text?: string; action?: ReactNode }) {
   return (
     <div className="rise flex flex-col items-center gap-3 py-16 text-center">
-      <img src="/empty.svg" alt="" width={140} height={140} className="opacity-90" />
+      <div className="clay mb-2 rounded-full p-6"><img src="/empty.svg" alt="" width={110} height={110} className="opacity-90" /></div>
       <h3 className="text-lg font-bold">{title}</h3>
       {text && <p className="max-w-sm text-sm text-muted">{text}</p>}
       {action}
@@ -144,9 +145,9 @@ export function Empty({ title, text, action }: { title: string; text?: string; a
 export function ErrorBox({ message, onRetry }: { message: string; onRetry?: () => void }) {
   return (
     <div role="alert" className="rise rounded-xl border border-danger/30 bg-danger-100 p-4 text-sm text-danger">
-      <p className="font-semibold">Something went wrong</p>
-      <p>{message}</p>
-      {onRetry && <button type="button" onClick={onRetry} className="mt-2 font-semibold underline">Try again</button>}
+      <p className="font-semibold">{tr('Something went wrong')}</p>
+      <p>{tr(message)}</p>
+      {onRetry && <button type="button" onClick={onRetry} className="mt-2 font-semibold underline">{tr('Try again')}</button>}
     </div>
   );
 }
@@ -212,10 +213,10 @@ export function Modal({ open, onClose, title, children }: { open: boolean; onClo
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-40 flex items-end justify-center bg-navy/40 p-0 backdrop-blur-[2px] sm:items-center sm:p-4" onClick={onClose}>
-      <div role="dialog" aria-modal="true" aria-label={title} className="pop max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl" onClick={(e) => e.stopPropagation()}>
+      <div role="dialog" aria-modal="true" aria-label={title} className="pop max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-surface p-6 shadow-2xl sm:rounded-3xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">{title}</h2>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-full p-2 hover:bg-paper">✕</button>
+          <button type="button" onClick={onClose} aria-label={tr('Close')} className="rounded-full p-2 hover:bg-surface-2">✕</button>
         </div>
         {children}
       </div>

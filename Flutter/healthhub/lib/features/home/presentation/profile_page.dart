@@ -14,6 +14,7 @@ import '../../doctor_portal/presentation/doctor_apply_page.dart';
 import '../../hospital/presentation/hospital_home_page.dart';
 import '../../notifications/presentation/notifications_page.dart';
 import '../../pharmacy/presentation/pharmacy_home_page.dart';
+import '../../../core/i18n/i18n.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -25,7 +26,7 @@ class ProfilePage extends StatelessWidget {
     if (file == null) return;
     try {
       session.updateUser(await auth.changePhoto(await file.readAsBytes(), file.name));
-      if (context.mounted) showSnack(context, 'Photo updated');
+      if (context.mounted) showSnack(context, tr('Photo updated'));
     } on ApiException catch (e) {
       if (context.mounted) showSnack(context, e.message, error: true);
     }
@@ -65,7 +66,7 @@ class ProfilePage extends StatelessWidget {
             Text(user.name, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800)),
             Text(user.email, style: const TextStyle(color: Colors.white70)),
             if (user.area != null)
-              Text('${user.area!.name}, ${user.governorate?.name ?? ''}', style: const TextStyle(color: Colors.white70)),
+              Text('${place(user.area!.name, user.area!.nameAr)}${tr(', ')}${place(user.governorate?.name, user.governorate?.nameAr)}', style: const TextStyle(color: Colors.white70)),
           ]),
         ),
         Padding(
@@ -76,20 +77,52 @@ class ProfilePage extends StatelessWidget {
               Wrap(spacing: 8, children: [
                 for (final w in workspaces)
                   ChoiceChip(
-                    label: Text(w.label),
+                    label: Text(tr(w.label)),
                     selected: state.workspace == w,
                     onSelected: (_) => context.read<SessionCubit>().switchWorkspace(w),
                   ),
               ]).entrance(0),
             ],
+            const SectionTitle('Appearance'),
+            AppCard(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(tr('Theme'), style: t.labelLarge),
+                const SizedBox(height: 8),
+                ValueListenableBuilder<ThemeMode>(
+                  valueListenable: AppSettings.themeMode,
+                  builder: (context, mode, _) => SegmentedButton<ThemeMode>(
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment(value: ThemeMode.light, icon: const Icon(Icons.light_mode_outlined), label: Text(tr('Light'))),
+                      ButtonSegment(value: ThemeMode.system, icon: const Icon(Icons.brightness_auto_outlined), label: Text(tr('Auto'))),
+                      ButtonSegment(value: ThemeMode.dark, icon: const Icon(Icons.dark_mode_outlined), label: Text(tr('Dark'))),
+                    ],
+                    selected: {mode},
+                    onSelectionChanged: (s) => AppSettings.setThemeMode(s.first),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(tr('Language'), style: t.labelLarge),
+                const SizedBox(height: 8),
+                SegmentedButton<String>(
+                  showSelectedIcon: false,
+                  segments: const [
+                    ButtonSegment(value: 'en', label: Text('English')),
+                    ButtonSegment(value: 'ar', label: Text('العربية')),
+                  ],
+                  selected: {AppSettings.lang.value},
+                  onSelectionChanged: (s) => AppSettings.setLang(s.first),
+                ),
+              ]),
+            ).entrance(1),
             const SectionTitle('Account'),
             AppCard(
               padding: EdgeInsets.zero,
               child: Column(children: [
-                _Row(icon: Icons.notifications_none_rounded, label: 'Notifications', onTap: () => context.push(const NotificationsPage())),
-                if (!user.hasRole('Doctor')) _Row(icon: Icons.medical_information_outlined, label: 'Join as a doctor', onTap: () => context.push(const DoctorApplyPage())),
-                if (!user.hasRole('Pharmacy')) _Row(icon: Icons.local_pharmacy_outlined, label: 'Register a pharmacy', onTap: () => context.push(const PharmacyHomePage(standalone: true))),
-                if (!user.hasRole('Hospital')) _Row(icon: Icons.local_hospital_outlined, label: 'Register a hospital', onTap: () => context.push(const HospitalHomePage(standalone: true))),
+                _Row(icon: Icons.notifications_none_rounded, label: tr('Notifications'), onTap: () => context.push(const NotificationsPage())),
+                if (!user.hasRole('Doctor')) _Row(icon: Icons.medical_information_outlined, label: tr('Join as a doctor'), onTap: () => context.push(const DoctorApplyPage())),
+                if (!user.hasRole('Pharmacy')) _Row(icon: Icons.local_pharmacy_outlined, label: tr('Register a pharmacy'), onTap: () => context.push(const PharmacyHomePage(standalone: true))),
+                if (!user.hasRole('Hospital')) _Row(icon: Icons.local_hospital_outlined, label: tr('Register a hospital'), onTap: () => context.push(const HospitalHomePage(standalone: true))),
               ]),
             ).entrance(1),
             const SizedBox(height: 16),
@@ -97,13 +130,13 @@ class ProfilePage extends StatelessWidget {
               padding: EdgeInsets.zero,
               child: _Row(
                 icon: Icons.logout_rounded,
-                label: 'Log out',
+                label: tr('Log out'),
                 color: AppColors.danger,
                 onTap: () => context.read<SessionCubit>().logout(),
               ),
             ).entrance(2),
             const SizedBox(height: 24),
-            Center(child: Opacity(opacity: .6, child: Column(children: [const AppWordmark(size: 24), const SizedBox(height: 4), Text('Version 2.0', style: t.bodySmall)]))),
+            Center(child: Opacity(opacity: .6, child: Column(children: [const AppWordmark(size: 24), const SizedBox(height: 4), Text(tr('Version 2.0'), style: t.bodySmall)]))),
           ]),
         ),
       ]),

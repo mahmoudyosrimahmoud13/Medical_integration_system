@@ -10,6 +10,7 @@ import '../../../core/widgets/common.dart';
 import '../../chat/presentation/new_message_page.dart';
 import '../../doctors/presentation/doctor_card.dart';
 import '../domain/hospital.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Patient side: browse hospitals and their departments.
 class HospitalsPage extends StatelessWidget {
@@ -22,12 +23,12 @@ class HospitalsPage extends StatelessWidget {
       child: Builder(builder: (context) {
         final cubit = context.watch<LoadCubit<List<Hospital>>>();
         return Scaffold(
-          appBar: AppBar(title: const Text('Hospitals')),
+          appBar: AppBar(title: Text(tr('Hospitals'))),
           body: AsyncBody<List<Hospital>>(
             state: cubit.state,
             onRetry: cubit.load,
             isEmpty: (d) => d.isEmpty,
-            empty: const EmptyView(title: 'No hospitals yet', message: 'Hospitals appear here once they join HealthHub.'),
+            empty: EmptyView(title: tr('No hospitals yet'), message: tr('Hospitals appear here once they join HealthHub.')),
             builder: (items) => ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: items.length,
@@ -64,9 +65,9 @@ class HospitalCard extends StatelessWidget {
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(hospital.name, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-            Text('${hospital.area}, ${hospital.governorate}', style: t.bodySmall),
+            Text('${place(hospital.area)}${tr(', ')}${place(hospital.governorate)}', style: t.bodySmall),
             const SizedBox(height: 4),
-            Text('${hospital.doctors.length} doctor${hospital.doctors.length == 1 ? '' : 's'} · ${hospital.departments.length} department${hospital.departments.length == 1 ? '' : 's'}',
+            Text(tr('{d} doctors · {n} departments', {'d': hospital.doctors.length, 'n': hospital.departments.length}),
                 style: t.labelMedium?.copyWith(color: Theme.of(context).colorScheme.primary)),
           ]),
         ),
@@ -92,9 +93,9 @@ class HospitalDetailsPage extends StatelessWidget {
         actions: [
           if (hospital.ownerId.isNotEmpty)
             IconButton(
-              tooltip: 'Message the hospital',
+              tooltip: tr('Message the hospital'),
               icon: const Icon(Icons.chat_bubble_outline),
-              onPressed: () => NewMessagePage.open(context, userId: hospital.ownerId, subject: 'Question about ${hospital.name}'),
+              onPressed: () => NewMessagePage.open(context, userId: hospital.ownerId, subject: tr('Question about {name}', {'name': hospital.name})),
             ),
         ],
       ),
@@ -121,7 +122,7 @@ class HospitalDetailsPage extends StatelessWidget {
           ]),
         ).entrance(i++),
         if (departments.isEmpty)
-          const Padding(padding: EdgeInsets.only(top: 24), child: Text('No doctors listed yet.'))
+          Padding(padding: EdgeInsets.only(top: 24), child: Text(tr('No doctors listed yet.')))
         else
           for (final entry in departments.entries) ...[
             SectionTitle(entry.key),

@@ -4,6 +4,7 @@ import '../../../core/navigation/app_route.dart';
 import '../../../core/widgets/common.dart';
 import '../domain/doctors.dart';
 import 'doctor_details_page.dart';
+import '../../../core/i18n/i18n.dart';
 
 class RatingStars extends StatelessWidget {
   const RatingStars(this.value, {super.key, this.size = 16, this.count});
@@ -48,20 +49,20 @@ class DoctorCard extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('Dr. ${doctor.name}', style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
             const SizedBox(height: 2),
-            Text(doctor.specialty, style: t.bodyMedium?.copyWith(color: scheme.primary, fontWeight: FontWeight.w600)),
+            Text(tr(doctor.specialty), style: t.bodyMedium?.copyWith(color: scheme.primary, fontWeight: FontWeight.w600)),
             const SizedBox(height: 6),
             Row(children: [
               RatingStars(doctor.ratingStars, size: 15, count: doctor.reviewCount),
               const Spacer(),
               if (doctor.price > 0)
-                Text('${doctor.price.toStringAsFixed(0)} EGP', style: t.labelLarge?.copyWith(fontWeight: FontWeight.w700)),
+                Text(tr('{n} EGP', {'n': doctor.price.toStringAsFixed(0)}), style: t.labelLarge?.copyWith(fontWeight: FontWeight.w700)),
             ]),
             const SizedBox(height: 4),
             Row(children: [
               Icon(Icons.location_on_outlined, size: 14, color: scheme.outline),
               const SizedBox(width: 2),
               Expanded(
-                child: Text('${doctor.area}, ${doctor.governorate}', style: t.bodySmall, overflow: TextOverflow.ellipsis),
+                child: Text('${place(doctor.area)}${tr(', ')}${place(doctor.governorate)}', style: t.bodySmall, overflow: TextOverflow.ellipsis),
               ),
             ]),
           ]),

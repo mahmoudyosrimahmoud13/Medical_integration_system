@@ -11,6 +11,7 @@ import '../../../core/widgets/common.dart';
 import 'forgot_password_page.dart';
 import 'register_page.dart';
 import 'session_cubit.dart';
+import '../../../core/i18n/i18n.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -66,11 +67,11 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 12),
                   const PulsingLogo(size: 76).animate().fadeIn().scaleXY(begin: .6, end: 1, curve: Curves.easeOutBack),
                   const SizedBox(height: 12),
-                  const Text('Welcome back', style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800))
+                  Text(tr('Welcome back'), style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800))
                       .animate()
                       .fadeIn(delay: 120.ms)
                       .slideY(begin: .3, end: 0),
-                  const Text('Log in to continue to HealthHub', style: TextStyle(color: Colors.white70))
+                  Text(tr('Log in to continue to HealthHub'), style: TextStyle(color: Colors.white70))
                       .animate()
                       .fadeIn(delay: 200.ms),
                   const SizedBox(height: 28),
@@ -86,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
                             autofillHints: const [AutofillHints.email],
-                            decoration: const InputDecoration(labelText: 'Email or username', prefixIcon: Icon(Icons.alternate_email)),
+                            decoration: InputDecoration(labelText: tr('Email or username'), prefixIcon: Icon(Icons.alternate_email)),
                             validator: (v) => Validators.required(v, 'Email or username'),
                           ),
                           const SizedBox(height: 14),
@@ -97,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                             onFieldSubmitted: (_) => _submit(),
                             autofillHints: const [AutofillHints.password],
                             decoration: InputDecoration(
-                              labelText: 'Password',
+                              labelText: tr('Password'),
                               prefixIcon: const Icon(Icons.lock_outline),
                               suffixIcon: IconButton(
                                 icon: AnimatedSwitcher(
@@ -110,10 +111,10 @@ class _LoginPageState extends State<LoginPage> {
                             validator: Validators.loginPassword,
                           ),
                           Align(
-                            alignment: Alignment.centerRight,
+                            alignment: AlignmentDirectional.centerEnd,
                             child: TextButton(
                               onPressed: () => context.push(const ForgotPasswordPage()),
-                              child: const Text('Forgot password?'),
+                              child: Text(tr('Forgot password?')),
                             ),
                           ),
                           AnimatedSize(
@@ -134,7 +135,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ]),
                                   ).animate().shakeX(hz: 4, amount: 4, duration: 400.ms),
                           ),
-                          PrimaryButton(key: const Key('login-submit'), label: 'Log in', busy: _busy, onPressed: _submit),
+                          PrimaryButton(key: const Key('login-submit'), label: tr('Log in'), busy: _busy, onPressed: _submit),
                         ]),
                       ),
                     ),
@@ -142,10 +143,25 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 16),
                   // Wrap, not Row: on narrow phones or with large text the link moves to its own line.
                   Wrap(alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
-                    Text('New to HealthHub?', style: t.bodyMedium),
-                    TextButton(onPressed: () => context.push(const RegisterPage()), child: const Text('Create an account')),
+                    Text(tr('New to HealthHub?'), style: t.bodyMedium),
+                    TextButton(onPressed: () => context.push(const RegisterPage()), child: Text(tr('Create an account'))),
                   ]).animate().fadeIn(delay: 400.ms),
                 ]),
+              ),
+            ),
+          ),
+        ),
+        // Language switch, top corner (the other language's name, in that language)
+        SafeArea(
+          child: Align(
+            alignment: AlignmentDirectional.topEnd,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: TextButton.icon(
+                key: const Key('language-switch'),
+                onPressed: () => AppSettings.setLang(AppSettings.isArabic ? 'en' : 'ar'),
+                icon: const Icon(Icons.language, color: Colors.white),
+                label: Text(AppSettings.isArabic ? 'English' : 'العربية', style: const TextStyle(color: Colors.white)),
               ),
             ),
           ),

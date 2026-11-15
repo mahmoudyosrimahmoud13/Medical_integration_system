@@ -7,12 +7,13 @@ import '../../doctor_portal/domain/doctor_portal.dart';
 import '../../doctors/data/doctor_repository_impl.dart';
 import '../../pharmacy/domain/pharmacy.dart';
 import '../domain/hospital.dart';
+import '../../../core/i18n/i18n.dart';
 
 Hospital hospitalFromJson(Map<String, dynamic> j) => Hospital(
       id: str(j['id']),
       name: str(j['name']),
-      area: str(map(j['area'])['key']),
-      governorate: str(map(j['governorate'])['key']),
+      area: rememberPlace(j['area']),
+      governorate: rememberPlace(j['governorate']),
       description: str(j['description']),
       address: str(j['address_description']),
       phone: strOrNull(j['phone']),

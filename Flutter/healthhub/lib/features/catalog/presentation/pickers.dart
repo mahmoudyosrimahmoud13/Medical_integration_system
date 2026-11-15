@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/di.dart';
 import '../domain/catalog.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Governorate + area dropdowns. Picking a governorate loads its areas.
 class AreaPicker extends StatefulWidget {
@@ -65,12 +66,12 @@ class _AreaPickerState extends State<AreaPicker> {
       DropdownButtonFormField<String>(
         initialValue: _gov,
         isExpanded: true,
-        decoration: const InputDecoration(labelText: 'Governorate', prefixIcon: Icon(Icons.map_outlined)),
+        decoration: InputDecoration(labelText: tr('Governorate'), prefixIcon: Icon(Icons.map_outlined)),
         items: [
-          if (!widget.required) const DropdownMenuItem(value: null, child: Text('Any governorate')),
-          for (final g in _governorates) DropdownMenuItem(value: g.id, child: Text(g.name)),
+          if (!widget.required) DropdownMenuItem(value: null, child: Text(tr('Any governorate'))),
+          for (final g in _governorates) DropdownMenuItem(value: g.id, child: Text(place(g.name, g.nameAr))),
         ],
-        validator: (v) => widget.required && v == null ? 'Pick your governorate' : null,
+        validator: (v) => widget.required && v == null ? tr('Pick your governorate') : null,
         onChanged: (v) {
           setState(() {
             _gov = v;
@@ -87,15 +88,15 @@ class _AreaPickerState extends State<AreaPicker> {
         initialValue: _area,
         isExpanded: true,
         decoration: InputDecoration(
-          labelText: 'Area',
+          labelText: tr('Area'),
           prefixIcon: const Icon(Icons.location_on_outlined),
           suffixIcon: _loadingAreas ? const Padding(padding: EdgeInsets.all(14), child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))) : null,
         ),
         items: [
-          if (!widget.required) const DropdownMenuItem(value: null, child: Text('Any area')),
-          for (final a in _areas) DropdownMenuItem(value: a.id, child: Text(a.name)),
+          if (!widget.required) DropdownMenuItem(value: null, child: Text(tr('Any area'))),
+          for (final a in _areas) DropdownMenuItem(value: a.id, child: Text(place(a.name, a.nameAr))),
         ],
-        validator: (v) => widget.required && v == null ? 'Pick your area' : null,
+        validator: (v) => widget.required && v == null ? tr('Pick your area') : null,
         onChanged: _gov == null
             ? null
             : (v) {
@@ -136,12 +137,12 @@ class _SpecialtyPickerState extends State<SpecialtyPicker> {
       key: ValueKey('${widget.value}-${_items.length}'),
       initialValue: _items.any((s) => s.id == widget.value) ? widget.value : null,
       isExpanded: true,
-      decoration: const InputDecoration(labelText: 'Specialty', prefixIcon: Icon(Icons.medical_services_outlined)),
+      decoration: InputDecoration(labelText: tr('Specialty'), prefixIcon: Icon(Icons.medical_services_outlined)),
       items: [
-        if (!widget.required) const DropdownMenuItem(value: null, child: Text('All specialties')),
-        for (final s in _items) DropdownMenuItem(value: s.id, child: Text(s.name)),
+        if (!widget.required) DropdownMenuItem(value: null, child: Text(tr('All specialties'))),
+        for (final s in _items) DropdownMenuItem(value: s.id, child: Text(tr(s.name))),
       ],
-      validator: (v) => widget.required && v == null ? 'Pick a specialty' : null,
+      validator: (v) => widget.required && v == null ? tr('Pick a specialty') : null,
       onChanged: widget.onChanged,
     );
   }
@@ -253,7 +254,7 @@ class _ProductSearchFieldState extends State<ProductSearchField> {
                     dense: true,
                     title: Text(p.title, style: const TextStyle(fontWeight: FontWeight.w700)),
                     subtitle: Text('${p.activeIngredient} · ${p.manufacturer}'),
-                    trailing: Text(p.price > 0 ? '${p.price.toStringAsFixed(0)} EGP' : ''),
+                    trailing: Text(p.price > 0 ? tr('{n} EGP', {'n': p.price.toStringAsFixed(0)}) : ''),
                     onTap: () => onSelected(p),
                   ),
               ],

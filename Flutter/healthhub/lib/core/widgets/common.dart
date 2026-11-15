@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../state/load_cubit.dart';
 import '../theme/app_theme.dart';
 import 'animations.dart';
+import 'clay.dart';
+import '../../core/i18n/i18n.dart';
 
 void showSnack(BuildContext context, String message, {bool error = false}) {
   final messenger = ScaffoldMessenger.of(context);
@@ -17,7 +19,7 @@ void showSnack(BuildContext context, String message, {bool error = false}) {
     content: Row(children: [
       Icon(error ? Icons.error_outline : Icons.check_circle_outline, color: Colors.white),
       const SizedBox(width: 10),
-      Expanded(child: Text(message)),
+      Expanded(child: Text(tr(message))),
     ]),
   ));
 }
@@ -42,7 +44,7 @@ class PrimaryButton extends StatelessWidget {
             ? const SizedBox(key: ValueKey('busy'), height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2.4))
             : Row(key: const ValueKey('label'), mainAxisSize: MainAxisSize.min, children: [
                 if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
-                Text(label),
+                Text(tr(label)),
               ]),
       ),
     );
@@ -65,17 +67,22 @@ class EmptyView extends StatelessWidget {
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          SvgPicture.asset(image, height: 170)
+          // the illustration rests on a soft clay disc
+          Container(
+            padding: const EdgeInsets.all(22),
+            decoration: Clay.decoration(context, Clay.cloud, radius: 999),
+            child: SvgPicture.asset(image, height: 140),
+          )
               .animate()
               .fadeIn(duration: 400.ms)
               .scaleXY(begin: .9, end: 1, duration: 500.ms, curve: Curves.easeOutBack),
           const SizedBox(height: 20),
-          Text(title, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700), textAlign: TextAlign.center)
+          Text(tr(title), style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700), textAlign: TextAlign.center)
               .animate()
               .fadeIn(delay: 150.ms),
           if (message != null) ...[
             const SizedBox(height: 8),
-            Text(message!, style: t.bodyMedium?.copyWith(color: t.bodySmall?.color), textAlign: TextAlign.center)
+            Text(tr(message!), style: t.bodyMedium?.copyWith(color: t.bodySmall?.color), textAlign: TextAlign.center)
                 .animate()
                 .fadeIn(delay: 250.ms),
           ],
@@ -96,11 +103,11 @@ class ErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyView(
       image: 'assets/images/no_results.svg',
-      title: 'Something went wrong',
+      title: tr('Something went wrong'),
       message: message,
       action: onRetry == null
           ? null
-          : OutlinedButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh), label: const Text('Try again')),
+          : OutlinedButton.icon(onPressed: onRetry, icon: const Icon(Icons.refresh), label: Text(tr('Try again'))),
     );
   }
 }
@@ -216,12 +223,12 @@ class GradientHeader extends StatelessWidget {
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               if (subtitle != null)
-                Text(subtitle!, style: const TextStyle(color: Colors.white70, fontSize: 14))
+                Text(tr(subtitle!), style: const TextStyle(color: Colors.white70, fontSize: 14))
                     .animate()
                     .fadeIn(duration: 300.ms)
                     .slideX(begin: -.1, end: 0),
               const SizedBox(height: 4),
-              Text(title, style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800))
+              Text(tr(title), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800))
                   .animate()
                   .fadeIn(delay: 80.ms, duration: 350.ms)
                   .slideX(begin: -.08, end: 0),
@@ -245,7 +252,7 @@ class SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(4, 20, 4, 10),
         child: Row(children: [
-          Expanded(child: Text(text, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700))),
+          Expanded(child: Text(tr(text), style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700))),
           if (action != null) action!,
         ]),
       );
@@ -269,7 +276,7 @@ class StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(color: color.withValues(alpha: .14), borderRadius: BorderRadius.circular(20)),
-      child: Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 12)),
+      child: Text(tr(label), style: TextStyle(color: color, fontWeight: FontWeight.w700, fontSize: 12)),
     );
   }
 }
@@ -320,7 +327,7 @@ class StatTile extends StatelessWidget {
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
         ),
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        Text(tr(label), style: Theme.of(context).textTheme.bodySmall),
       ]),
     );
   }

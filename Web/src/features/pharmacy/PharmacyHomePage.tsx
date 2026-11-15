@@ -7,6 +7,7 @@ import { Button, Card, Empty, ErrorBox, PageHeader, SkeletonList } from '../../c
 import { StatusCard } from '../doctorPortal/DoctorApplyPage';
 import { PrescriptionRow } from '../records/RecordView';
 import { FacilityForm } from './FacilityForm';
+import { tr } from '../../core/i18n/i18n';
 
 export function PharmacyHomePage() {
   const q = useQuery({ queryKey: ['pharmacy', 'mine'], queryFn: pharmacy.mine });
@@ -14,9 +15,9 @@ export function PharmacyHomePage() {
   if (q.isError) return <div className="p-6"><ErrorBox message={(q.error as Error).message} onRetry={() => q.refetch()} /></div>;
   const { status, access_token, pharmacy: mine } = q.data!;
   if (status === 'none' || status === 'rejected') {
-    return (<><PageHeader eyebrow="For pharmacies" title="Register your pharmacy" /><div className="mx-auto mt-6 max-w-2xl px-4 md:px-0"><FacilityForm kind="pharmacy" onSubmit={async (b) => { await pharmacy.apply(b); q.refetch(); }} /></div></>);
+    return (<><PageHeader eyebrow={tr('For pharmacies')} title={tr('Register your pharmacy')} /><div className="mx-auto mt-6 max-w-2xl px-4 md:px-0"><FacilityForm kind="pharmacy" onSubmit={async (b) => { await pharmacy.apply(b); q.refetch(); }} /></div></>);
   }
-  if (status !== 'accepted') return (<><PageHeader eyebrow="For pharmacies" title="Your pharmacy" /><div className="mt-6 px-4"><StatusCard status={status} kind="pharmacy" token={access_token} /></div></>);
+  if (status !== 'accepted') return (<><PageHeader eyebrow={tr('For pharmacies')} title={tr('Your pharmacy')} /><div className="mt-6 px-4"><StatusCard status={status} kind="pharmacy" token={access_token} /></div></>);
   return <Counter name={mine!.name} />;
 }
 
@@ -29,23 +30,23 @@ function Counter({ name }: { name: string }) {
     e.preventDefault();
     if (code.trim().length < 4) return;
     setBusy(true); setError('');
-    try { setResult(await pharmacy.byCode(code)); } catch (err) { setResult(null); setError(err instanceof ApiError ? err.message : 'Lookup failed'); } finally { setBusy(false); }
+    try { setResult(await pharmacy.byCode(code)); } catch (err) { setResult(null); setError(err instanceof ApiError ? tr(err.message) : tr('Lookup failed')); } finally { setBusy(false); }
   }
   return (
     <>
-      <PageHeader eyebrow={name} title="Counter">
+      <PageHeader eyebrow={name} title={tr('Counter')}>
         <form onSubmit={lookup} className="flex max-w-md gap-2">
-          <input className="input !text-xl !font-bold !tracking-[0.3em] uppercase" placeholder="PATIENT CODE" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} aria-label="Patient code" />
-          <Button type="submit" variant="amber" busy={busy}>Open</Button>
+          <input className="input !text-xl !font-bold !tracking-[0.3em] uppercase" placeholder={tr('PATIENT CODE')} value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} aria-label={tr('Patient code')} />
+          <Button type="submit" variant="amber" busy={busy}>{tr('Open')}</Button>
         </form>
       </PageHeader>
       <div className="mx-auto mt-6 max-w-3xl px-4 md:px-0">
         {error ? <ErrorBox message={error} /> : !result ? (
-          <Empty title="Ask the patient for their code" text="Patients make a 6-character code in the HealthHub app. It shows their current prescriptions for 30 minutes." />
+          <Empty title={tr('Ask the patient for their code')} text={tr('Patients make a 6-character code in the HealthHub app. It shows their current prescriptions for 30 minutes.')} />
         ) : (
           <>
-            <h2 className="rise mb-3 text-lg font-bold">Prescriptions for {result.patient_name}</h2>
-            {result.prescriptions.length === 0 && <Card className="p-4 text-sm text-muted">This patient has no active prescriptions.</Card>}
+            <h2 className="rise mb-3 text-lg font-bold">{tr('Prescriptions for {name}', { name: result.patient_name })}</h2>
+            {result.prescriptions.length === 0 && <Card className="p-4 text-sm text-muted">{tr('This patient has no active prescriptions.')}</Card>}
             <div className="space-y-3">{result.prescriptions.map((p, i) => <Card key={p.id} index={i} className="p-4"><PrescriptionRow p={p} /></Card>)}</div>
           </>
         )}

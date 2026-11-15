@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/di.dart';
 import 'core/theme/app_theme.dart';
@@ -8,6 +9,7 @@ import 'features/auth/presentation/onboarding_page.dart';
 import 'features/auth/presentation/session_cubit.dart';
 import 'features/auth/presentation/splash_page.dart';
 import 'features/home/presentation/home_shell.dart';
+import 'core/i18n/i18n.dart';
 
 /// Lets the network layer reach the session after the app is built.
 class UnauthorizedHook {
@@ -34,13 +36,30 @@ class HealthHubApp extends StatelessWidget {
           });
           return session;
         },
-        child: MaterialApp(
-          title: 'HealthHub',
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.light(),
-          darkTheme: AppTheme.dark(),
-          themeMode: ThemeMode.system,
-          home: const AppGate(),
+        // Language and theme come from AppSettings. A language change rebuilds the app from the top
+        // (the login stays), so every tr() call picks up the new language and the layout flips to
+        // right to left for Arabic.
+        child: ValueListenableBuilder<String>(
+          valueListenable: AppSettings.lang,
+          builder: (context, lang, _) => ValueListenableBuilder<ThemeMode>(
+            valueListenable: AppSettings.themeMode,
+            builder: (context, mode, _) => MaterialApp(
+              key: ValueKey(lang),
+              title: tr('HealthHub'),
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.light(),
+              darkTheme: AppTheme.dark(),
+              themeMode: mode,
+              locale: Locale(lang),
+              supportedLocales: const [Locale('en'), Locale('ar')],
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              home: const AppGate(),
+            ),
+          ),
         ),
       ),
     );

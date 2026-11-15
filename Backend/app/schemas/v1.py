@@ -321,6 +321,8 @@ class AppointmentDoctorOut(PersonOut):
     specialty: str
     area: str
     governorate: str
+    area_ar: str | None = None  # Arabic names, for apps shown in Arabic
+    governorate_ar: str | None = None
     phone: str | None
 
 
@@ -360,6 +362,8 @@ def build_appointment(a: Appointment, request: Request, *, with_doctor=True, wit
             specialty=d.specialty.name,
             area=d.area.key,
             governorate=d.area.governorate.key,
+            area_ar=d.area.name_ar,
+            governorate_ar=d.area.governorate.name_ar,
             phone=d.user.phone,
         )
     if with_patient:

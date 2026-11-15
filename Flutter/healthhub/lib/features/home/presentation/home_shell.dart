@@ -16,6 +16,7 @@ import '../../pharmacy/presentation/pharmacy_stock_page.dart';
 import '../../records/presentation/records_page.dart';
 import 'patient_home_page.dart';
 import 'profile_page.dart';
+import '../../../core/i18n/i18n.dart';
 
 class _Tab {
   const _Tab(this.label, this.icon, this.selectedIcon, this.page);
@@ -89,7 +90,7 @@ class _HomeShellState extends State<HomeShell> {
         selectedIndex: index,
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: [
-          for (final t in tabs) NavigationDestination(icon: Icon(t.icon), selectedIcon: Icon(t.selectedIcon), label: t.label),
+          for (final t in tabs) NavigationDestination(icon: Icon(t.icon), selectedIcon: Icon(t.selectedIcon), label: tr(t.label)),
         ],
       ),
     );

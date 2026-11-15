@@ -9,6 +9,7 @@ import type { ApplicationStatus } from '../../core/api/types';
 import { useAuthStore } from '../../core/auth/store';
 import { Button, Card, ErrorBox, Field, PageHeader, SkeletonList, useToast } from '../../core/ui';
 import { AreaPicker, SpecialtySelect } from '../catalog/pickers';
+import { tr } from '../../core/i18n/i18n';
 
 /** "Under review" / "Approved" card shared by doctor, pharmacy and hospital applications. */
 export function StatusCard({ status, kind, token }: { status: ApplicationStatus['status']; kind: string; token?: string | null }) {
@@ -24,9 +25,9 @@ export function StatusCard({ status, kind, token }: { status: ApplicationStatus[
   return (
     <Card className="mx-auto max-w-md p-8 text-center">
       <div className={`pop mx-auto flex size-24 items-center justify-center rounded-full text-4xl ${accepted ? 'bg-mint text-white' : 'bg-amber-100 text-[#8a5b00]'}`}>{accepted ? '✓' : '⏳'}</div>
-      <h2 className="rise mt-5 text-2xl font-bold">{accepted ? 'You are approved' : 'Under review'}</h2>
-      <p className="rise mt-2 text-sm text-muted">{accepted ? `Your ${kind} workspace is ready.` : `Our team checks every ${kind} request. You'll get a notification when it is reviewed.`}</p>
-      {accepted && <Button className="mt-6" onClick={openWorkspace}>Open my workspace</Button>}
+      <h2 className="rise mt-5 text-2xl font-bold">{accepted ? tr('You are approved') : tr('Under review')}</h2>
+      <p className="rise mt-2 text-sm text-muted">{accepted ? tr('Your {kind} workspace is ready.', { kind: tr(kind) }) : tr("Our team checks every {kind} request. You'll get a notification when it is reviewed.", { kind: tr(kind) })}</p>
+      {accepted && <Button className="mt-6" onClick={openWorkspace}>{tr('Open my workspace')}</Button>}
     </Card>
   );
 }
@@ -35,7 +36,7 @@ export function DoctorApplyPage() {
   const q = useQuery({ queryKey: ['doctor', 'status'], queryFn: doctorPortal.status });
   return (
     <>
-      <PageHeader eyebrow="For doctors" title="Join HealthHub as a doctor" />
+      <PageHeader eyebrow={tr('For doctors')} title={tr('Join HealthHub as a doctor')} />
       <div className="mx-auto mt-6 max-w-2xl px-4 md:px-0">
         {q.isLoading ? <SkeletonList count={2} /> : q.isError ? <ErrorBox message={(q.error as Error).message} onRetry={() => q.refetch()} /> :
           q.data!.status === 'none' || q.data!.status === 'rejected' ? <ApplyForm rejected={q.data!.status === 'rejected'} onDone={() => q.refetch()} /> : <StatusCard status={q.data!.status} kind="doctor" token={q.data!.access_token} />}
@@ -52,29 +53,29 @@ function ApplyForm({ rejected, onDone }: { rejected: boolean; onDone: () => void
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    if (!f.specialty_id || !f.area_id || f.college_name.trim().length < 3) return toast('Fill in specialty, area and medical school', true);
-    if (files.length === 0) return toast('Add at least one certificate', true);
+    if (!f.specialty_id || !f.area_id || f.college_name.trim().length < 3) return toast(tr('Fill in specialty, area and medical school'), true);
+    if (files.length === 0) return toast(tr('Add at least one certificate'), true);
     const form = new FormData();
     Object.entries(f).forEach(([k, val]) => val && form.append(k, k === 'graduation_year' ? `${val}-06-01` : val));
     files.forEach((file) => form.append('certificates', file));
     setBusy(true);
-    try { await doctorPortal.apply(form); toast('Request sent'); onDone(); }
-    catch (err) { toast(err instanceof ApiError ? err.message : 'Could not send', true); } finally { setBusy(false); }
+    try { await doctorPortal.apply(form); toast(tr('Request sent')); onDone(); }
+    catch (err) { toast(err instanceof ApiError ? tr(err.message) : tr('Could not send'), true); } finally { setBusy(false); }
   }
 
   return (
     <form onSubmit={submit} className="card space-y-4 p-6">
-      {rejected && <p className="rounded-xl bg-danger-100 p-3 text-sm text-danger">Your previous request was not approved. You can send a new one with updated details.</p>}
+      {rejected && <p className="rounded-xl bg-danger-100 p-3 text-sm text-danger">{tr('Your previous request was not approved. You can send a new one with updated details.')}</p>}
       <SpecialtySelect required value={f.specialty_id} onChange={(id) => setF({ ...f, specialty_id: id })} />
       <AreaPicker onChange={(_, a) => setF((x) => ({ ...x, area_id: a ?? '' }))} />
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Medical school"><input className="input" value={f.college_name} onChange={(e) => setF({ ...f, college_name: e.target.value })} /></Field>
-        <Field label="Graduation year"><input className="input" type="number" min={1960} max={new Date().getFullYear()} value={f.graduation_year} onChange={(e) => setF({ ...f, graduation_year: e.target.value })} /></Field>
+        <Field label={tr('Medical school')}><input className="input" value={f.college_name} onChange={(e) => setF({ ...f, college_name: e.target.value })} /></Field>
+        <Field label={tr('Graduation year')}><input className="input" type="number" min={1960} max={new Date().getFullYear()} value={f.graduation_year} onChange={(e) => setF({ ...f, graduation_year: e.target.value })} /></Field>
       </div>
-      <Field label="Clinic address"><input className="input" value={f.address_description} onChange={(e) => setF({ ...f, address_description: e.target.value })} /></Field>
-      <Field label="About you (shown to patients)"><textarea className="input" rows={3} value={f.summary_career} onChange={(e) => setF({ ...f, summary_career: e.target.value })} /></Field>
-      <Field label="Certificates (PDF or photo)"><input type="file" multiple accept=".pdf,image/*" className="input" onChange={(e) => setFiles(Array.from(e.target.files ?? []))} /></Field>
-      <Button type="submit" busy={busy} className="w-full">Send request</Button>
+      <Field label={tr('Clinic address')}><input className="input" value={f.address_description} onChange={(e) => setF({ ...f, address_description: e.target.value })} /></Field>
+      <Field label={tr('About you (shown to patients)')}><textarea className="input" rows={3} value={f.summary_career} onChange={(e) => setF({ ...f, summary_career: e.target.value })} /></Field>
+      <Field label={tr('Certificates (PDF or photo)')}><input type="file" multiple accept=".pdf,image/*" className="input" onChange={(e) => setFiles(Array.from(e.target.files ?? []))} /></Field>
+      <Button type="submit" busy={busy} className="w-full">{tr('Send request')}</Button>
     </form>
   );
 }

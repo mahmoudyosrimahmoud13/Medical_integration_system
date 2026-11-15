@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../admin_repository.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Admin: review doctor, pharmacy and hospital requests.
 class AdminPage extends StatelessWidget {
@@ -19,17 +20,17 @@ class AdminPage extends StatelessWidget {
       length: 3,
       child: Column(children: [
         GradientHeader(
-          subtitle: 'Admin',
-          title: 'Requests to review',
+          subtitle: tr('Admin'),
+          title: tr('Requests to review'),
           bottom: Container(
             decoration: BoxDecoration(color: Colors.white.withValues(alpha: .14), borderRadius: BorderRadius.circular(14)),
-            child: const TabBar(
+            child: TabBar(
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(14))),
               labelColor: AppColors.navy,
               unselectedLabelColor: Colors.white,
               dividerColor: Colors.transparent,
-              tabs: [Tab(text: 'Doctors'), Tab(text: 'Pharmacies'), Tab(text: 'Hospitals')],
+              tabs: [Tab(text: tr('Doctors')), Tab(text: tr('Pharmacies')), Tab(text: tr('Hospitals'))],
             ),
           ),
         ),
@@ -57,7 +58,7 @@ class _RequestList extends StatelessWidget {
           try {
             await context.read<Deps>().admin.review(r.kind, r.id, accept: accept);
             cubit.load();
-            if (context.mounted) showSnack(context, accept ? '${r.title} accepted' : '${r.title} rejected');
+            if (context.mounted) showSnack(context, tr(accept ? '{name} accepted' : '{name} rejected', {'name': r.title}));
           } on ApiException catch (e) {
             if (context.mounted) showSnack(context, e.message, error: true);
           }
@@ -67,7 +68,7 @@ class _RequestList extends StatelessWidget {
           state: cubit.state,
           onRetry: cubit.load,
           isEmpty: (d) => d.isEmpty,
-          empty: const EmptyView(title: 'Nothing to review', message: 'New requests show up here.'),
+          empty: EmptyView(title: tr('Nothing to review'), message: tr('New requests show up here.')),
           builder: (items) => RefreshIndicator(
             onRefresh: cubit.load,
             child: ListView.separated(
@@ -84,13 +85,13 @@ class _RequestList extends StatelessWidget {
                     if (r.files.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 8),
-                        child: Wrap(spacing: 6, children: [for (var k = 0; k < r.files.length; k++) Chip(avatar: const Icon(Icons.attach_file, size: 16), label: Text('Certificate ${k + 1}'))]),
+                        child: Wrap(spacing: 6, children: [for (var k = 0; k < r.files.length; k++) Chip(avatar: const Icon(Icons.attach_file, size: 16), label: Text(tr('Certificate {n}', {'n': k + 1})))]),
                       ),
                     const SizedBox(height: 12),
                     Row(children: [
-                      Expanded(child: OutlinedButton(onPressed: () => review(r, false), child: const Text('Reject'))),
+                      Expanded(child: OutlinedButton(onPressed: () => review(r, false), child: Text(tr('Reject')))),
                       const SizedBox(width: 10),
-                      Expanded(child: FilledButton(onPressed: () => review(r, true), child: const Text('Accept'))),
+                      Expanded(child: FilledButton(onPressed: () => review(r, true), child: Text(tr('Accept')))),
                     ]),
                   ]),
                 ).entrance(i);

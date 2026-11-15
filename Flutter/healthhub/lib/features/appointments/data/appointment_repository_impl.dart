@@ -1,6 +1,7 @@
 import '../../../core/network/api_client.dart';
 import '../../../core/utils/json.dart';
 import '../domain/appointments.dart';
+import '../../../core/i18n/i18n.dart';
 
 Appointment appointmentFromJson(Map<String, dynamic> j) {
   final d = j['doctor'] == null ? null : map(j['doctor']);
@@ -18,8 +19,8 @@ Appointment appointmentFromJson(Map<String, dynamic> j) {
             id: str(d['id']),
             name: str(d['name']),
             specialty: str(d['specialty']),
-            area: str(d['area']),
-            governorate: str(d['governorate']),
+            area: rememberPlace({'key': d['area'], 'name_ar': d['area_ar']}),
+            governorate: rememberPlace({'key': d['governorate'], 'name_ar': d['governorate_ar']}),
             imageUrl: strOrNull(d['image_url']),
             phone: strOrNull(d['phone']),
           ),

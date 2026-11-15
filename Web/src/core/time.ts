@@ -1,5 +1,7 @@
 /** Booking slot maths, same rules as the server and the mobile app. Pure functions, unit tested. */
 
+import { locale } from './i18n/i18n';
+
 export const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
 
 export const weekdayName = (d: Date) => WEEKDAYS[(d.getDay() + 6) % 7];
@@ -59,5 +61,5 @@ export function workingDays(dayNames: string[], count = 14, from = new Date()): 
 export const sameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 export const isoDay = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 export const fmtDate = (s: string | Date, opts: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric', year: 'numeric' }) =>
-  new Date(s).toLocaleDateString(undefined, opts);
-export const fmtTime = (s: string | Date) => new Date(s).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  new Date(s).toLocaleDateString(locale(), opts);
+export const fmtTime = (s: string | Date) => new Date(s).toLocaleTimeString(locale(), { hour: 'numeric', minute: '2-digit' });

@@ -12,6 +12,7 @@ import '../../../core/widgets/common.dart';
 import '../../auth/presentation/session_cubit.dart';
 import '../../catalog/presentation/pickers.dart';
 import '../domain/doctor_portal.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Shows the current application status, or the form to apply as a doctor.
 class DoctorApplyPage extends StatelessWidget {
@@ -24,7 +25,7 @@ class DoctorApplyPage extends StatelessWidget {
       child: Builder(builder: (context) {
         final cubit = context.watch<LoadCubit<ApplicationStatus>>();
         return Scaffold(
-          appBar: AppBar(title: const Text('Join as a doctor')),
+          appBar: AppBar(title: Text(tr('Join as a doctor'))),
           body: AsyncBody<ApplicationStatus>(
             state: cubit.state,
             onRetry: cubit.load,
@@ -61,14 +62,14 @@ class StatusCard extends StatelessWidget {
             child: Icon(accepted ? Icons.verified_rounded : Icons.hourglass_top_rounded, size: 48, color: accepted ? Colors.white : AppColors.warning),
           ).popIn(),
           const SizedBox(height: 20),
-          Text(accepted ? 'You are approved' : 'Under review', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800))
+          Text(accepted ? tr('You are approved') : tr('Under review'), style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800))
               .animate()
               .fadeIn(delay: 200.ms),
           const SizedBox(height: 8),
           Text(
             accepted
-                ? 'Your $kind workspace is ready. Switch to it from your profile.'
-                : 'Our team checks every $kind request. You will get a notification when it is reviewed.',
+                ? tr('Your {kind} workspace is ready. Switch to it from your profile.', {'kind': tr(kind)})
+                : tr('Our team checks every {kind} request. You will get a notification when it is reviewed.', {'kind': tr(kind)}),
             textAlign: TextAlign.center,
           ).animate().fadeIn(delay: 300.ms),
           if (accepted) ...[
@@ -80,7 +81,7 @@ class StatusCard extends StatelessWidget {
                 await session.refresh();
                 if (context.mounted) Navigator.of(context).popUntil((r) => r.isFirst);
               },
-              child: const Text('Open my workspace'),
+              child: Text(tr('Open my workspace')),
             ).animate().fadeIn(delay: 400.ms),
           ],
         ]),
@@ -131,7 +132,7 @@ class _ApplyFormState extends State<_ApplyForm> {
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
     if (_files.isEmpty) {
-      showSnack(context, 'Add at least one certificate', error: true);
+      showSnack(context, tr('Add at least one certificate'), error: true);
       return;
     }
     setState(() => _busy = true);
@@ -145,7 +146,7 @@ class _ApplyFormState extends State<_ApplyForm> {
             address: _address.text,
             certificates: _files,
           ));
-      if (mounted) showSnack(context, 'Request sent');
+      if (mounted) showSnack(context, tr('Request sent'));
       widget.onDone();
     } on ApiException catch (e) {
       if (mounted) showSnack(context, e.message, error: true);
@@ -160,11 +161,11 @@ class _ApplyFormState extends State<_ApplyForm> {
       if (widget.rejected)
         AppCard(
           color: AppColors.danger.withValues(alpha: .08),
-          child: const Text('Your previous request was not approved. You can send a new one with updated details.'),
+          child: Text(tr('Your previous request was not approved. You can send a new one with updated details.')),
         ),
       SpecialtyPicker(required: true, onChanged: (v) => _specialty = v),
       AreaPicker(onChanged: (_, a) => _area = a),
-      TextFormField(controller: _college, decoration: const InputDecoration(labelText: 'Medical school', prefixIcon: Icon(Icons.school_outlined)), validator: (v) => v == null || v.trim().length < 3 ? 'Enter your medical school' : null),
+      TextFormField(controller: _college, decoration: InputDecoration(labelText: tr('Medical school'), prefixIcon: Icon(Icons.school_outlined)), validator: (v) => v == null || v.trim().length < 3 ? tr('Enter your medical school') : null),
       InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () async {
@@ -172,19 +173,19 @@ class _ApplyFormState extends State<_ApplyForm> {
           if (d != null) setState(() => _graduation = d);
         },
         child: InputDecorator(
-          decoration: const InputDecoration(labelText: 'Graduation year', prefixIcon: Icon(Icons.event_outlined)),
-          child: Text(_graduation == null ? 'Tap to pick' : '${_graduation!.year}'),
+          decoration: InputDecoration(labelText: tr('Graduation year'), prefixIcon: Icon(Icons.event_outlined)),
+          child: Text(_graduation == null ? tr('Tap to pick') : '${_graduation!.year}'),
         ),
       ),
-      TextFormField(controller: _address, decoration: const InputDecoration(labelText: 'Clinic address', prefixIcon: Icon(Icons.place_outlined))),
-      TextFormField(controller: _summary, maxLines: 4, decoration: const InputDecoration(labelText: 'About you (shown to patients)', alignLabelWithHint: true)),
+      TextFormField(controller: _address, decoration: InputDecoration(labelText: tr('Clinic address'), prefixIcon: Icon(Icons.place_outlined))),
+      TextFormField(controller: _summary, maxLines: 4, decoration: InputDecoration(labelText: tr('About you (shown to patients)'), alignLabelWithHint: true)),
       AppCard(
         onTap: _pickFiles,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
             const Icon(Icons.upload_file_outlined),
             const SizedBox(width: 10),
-            Expanded(child: Text(_files.isEmpty ? 'Add certificates (PDF or photo)' : '${_files.length} file${_files.length == 1 ? '' : 's'} attached', style: const TextStyle(fontWeight: FontWeight.w600))),
+            Expanded(child: Text(_files.isEmpty ? tr('Add certificates (PDF or photo)') : (_files.length == 1 ? tr('1 file attached') : tr('{n} files attached', {'n': _files.length})), style: const TextStyle(fontWeight: FontWeight.w600))),
             const Icon(Icons.add),
           ]),
           if (_files.isNotEmpty) ...[
@@ -200,7 +201,7 @@ class _ApplyFormState extends State<_ApplyForm> {
       key: _form,
       child: ListView(padding: const EdgeInsets.fromLTRB(20, 8, 20, 32), children: [
         for (var i = 0; i < fields.length; i++) Padding(padding: const EdgeInsets.only(bottom: 14), child: fields[i].entrance(i)),
-        PrimaryButton(label: 'Send request', icon: Icons.send_rounded, busy: _busy, onPressed: _submit).entrance(fields.length),
+        PrimaryButton(label: tr('Send request'), icon: Icons.send_rounded, busy: _busy, onPressed: _submit).entrance(fields.length),
       ]),
     );
   }

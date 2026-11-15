@@ -8,6 +8,7 @@ import '../../catalog/presentation/pickers.dart';
 import '../domain/doctors.dart';
 import 'doctor_card.dart';
 import 'doctor_search_cubit.dart';
+import '../../../core/i18n/i18n.dart';
 
 class FindDoctorsPage extends StatelessWidget {
   const FindDoctorsPage({super.key, this.initialSpecialtyId, this.showBack = false});
@@ -68,8 +69,8 @@ class _FindDoctorsViewState extends State<_FindDoctorsView> {
     return Scaffold(
       body: Column(children: [
         GradientHeader(
-          subtitle: 'Find a doctor',
-          title: 'Who do you need today?',
+          subtitle: tr('Find a doctor'),
+          title: tr('Who do you need today?'),
           trailing: widget.showBack
               ? IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.white))
               : null,
@@ -79,7 +80,7 @@ class _FindDoctorsViewState extends State<_FindDoctorsView> {
                 onChanged: cubit.setName,
                 textInputAction: TextInputAction.search,
                 decoration: InputDecoration(
-                  hintText: 'Search by doctor name',
+                  hintText: tr('Search by doctor name'),
                   prefixIcon: const Icon(Icons.search),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
@@ -107,11 +108,11 @@ class _FindDoctorsViewState extends State<_FindDoctorsView> {
               } else if (s.error != null && s.items.isEmpty) {
                 child = ErrorView(key: const ValueKey('error'), message: s.error!, onRetry: cubit.search);
               } else if (s.items.isEmpty) {
-                child = const EmptyView(
+                child = EmptyView(
                   key: ValueKey('empty'),
                   image: 'assets/images/no_results.svg',
-                  title: 'No doctors found',
-                  message: 'Try another specialty or a wider area.',
+                  title: tr('No doctors found'),
+                  message: tr('Try another specialty or a wider area.'),
                 );
               } else {
                 child = RefreshIndicator(
@@ -124,7 +125,7 @@ class _FindDoctorsViewState extends State<_FindDoctorsView> {
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (_, i) {
                       if (i == 0) {
-                        return Text('${s.total} doctor${s.total == 1 ? '' : 's'} found',
+                        return Text(s.total == 1 ? tr('1 doctor found') : tr('{n} doctors found', {'n': s.total}),
                             style: Theme.of(context).textTheme.labelLarge);
                       }
                       final card = DoctorCard(doctor: s.items[i - 1]).entrance(i);
@@ -155,28 +156,28 @@ class _FilterSheet extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 0, 20, MediaQuery.viewInsetsOf(context).bottom + 24),
       child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text('Filters', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+        Text(tr('Filters'), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
         const SizedBox(height: 16),
         SpecialtyPicker(value: f.specialtyId, onChanged: cubit.setSpecialty),
         const SizedBox(height: 14),
         AreaPicker(required: false, initialGovernorateId: f.governorateId, onChanged: cubit.setLocation, dense: true),
         const SizedBox(height: 16),
-        Text('Sort by', style: Theme.of(context).textTheme.labelLarge),
+        Text(tr('Sort by'), style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: 8),
         BlocBuilder<DoctorSearchCubit, DoctorSearchState>(
           buildWhen: (a, b) => a.filter.sort != b.filter.sort,
           builder: (context, s) => SegmentedButton<DoctorSort>(
-            segments: const [
-              ButtonSegment(value: DoctorSort.none, label: Text('Name')),
-              ButtonSegment(value: DoctorSort.rate, label: Text('Top rated'), icon: Icon(Icons.star_outline)),
-              ButtonSegment(value: DoctorSort.join, label: Text('Experience')),
+            segments: [
+              ButtonSegment(value: DoctorSort.none, label: Text(tr('Name'))),
+              ButtonSegment(value: DoctorSort.rate, label: Text(tr('Top rated')), icon: Icon(Icons.star_outline)),
+              ButtonSegment(value: DoctorSort.join, label: Text(tr('Experience'))),
             ],
             selected: {s.filter.sort},
             onSelectionChanged: (v) => cubit.setSort(v.first),
           ),
         ),
         const SizedBox(height: 20),
-        FilledButton(onPressed: () => Navigator.pop(context), child: const Text('Show doctors')),
+        FilledButton(onPressed: () => Navigator.pop(context), child: Text(tr('Show doctors'))),
       ]),
     );
   }

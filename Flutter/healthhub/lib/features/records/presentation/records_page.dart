@@ -13,6 +13,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../domain/records.dart';
 import 'record_view.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// The patient's own medical record, with a share code for pharmacies and scan upload.
 class RecordsPage extends StatelessWidget {
@@ -38,7 +39,7 @@ class _RecordsView extends StatelessWidget {
     try {
       await repo.uploadCt(await file.readAsBytes(), file.name);
       cubit.load();
-      if (context.mounted) showSnack(context, 'Scan added to your record');
+      if (context.mounted) showSnack(context, tr('Scan added to your record'));
     } on ApiException catch (e) {
       if (context.mounted) showSnack(context, e.message, error: true);
     }
@@ -50,14 +51,14 @@ class _RecordsView extends StatelessWidget {
     return Scaffold(
       body: Column(children: [
         GradientHeader(
-          subtitle: 'Medical record',
-          title: 'Your health, in one place',
+          subtitle: tr('Medical record'),
+          title: tr('Your health, in one place'),
           bottom: Row(children: [
             Expanded(
-              child: _HeaderAction(icon: Icons.qr_code_2_rounded, label: 'Share with pharmacy', onTap: () => showShareCodeSheet(context)),
+              child: _HeaderAction(icon: Icons.qr_code_2_rounded, label: tr('Share with pharmacy'), onTap: () => showShareCodeSheet(context)),
             ),
             const SizedBox(width: 10),
-            Expanded(child: _HeaderAction(icon: Icons.add_photo_alternate_outlined, label: 'Add a scan', onTap: () => _upload(context))),
+            Expanded(child: _HeaderAction(icon: Icons.add_photo_alternate_outlined, label: tr('Add a scan'), onTap: () => _upload(context))),
           ]),
         ),
         Expanded(
@@ -150,9 +151,9 @@ class _ShareCodeSheetState extends State<_ShareCodeSheet> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text('Show this code at the pharmacy', style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+        Text(tr('Show this code at the pharmacy'), style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
         const SizedBox(height: 6),
-        Text('The pharmacist can see your current prescriptions for 30 minutes.', style: t.bodySmall, textAlign: TextAlign.center),
+        Text(tr('The pharmacist can see your current prescriptions for 30 minutes.'), style: t.bodySmall, textAlign: TextAlign.center),
         const SizedBox(height: 24),
         if (_error != null) ErrorView(message: _error!, onRetry: _create),
         if (_error == null && code == null) const CircularProgressIndicator(),
@@ -177,13 +178,13 @@ class _ShareCodeSheetState extends State<_ShareCodeSheet> {
               Text(code.code, style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w900, letterSpacing: 4)).popIn(),
               const SizedBox(height: 6),
               Text(
-                expired ? 'Expired' : '${left.inMinutes}:${(left.inSeconds % 60).toString().padLeft(2, '0')} left',
+                expired ? tr('Expired') : '${left.inMinutes}:${(left.inSeconds % 60).toString().padLeft(2, '0')} left',
                 style: t.labelLarge?.copyWith(color: expired ? AppColors.danger : null),
               ).animate(key: ValueKey(expired)).fadeIn(),
             ]),
           ]),
         const SizedBox(height: 24),
-        if (expired) PrimaryButton(label: 'Get a new code', onPressed: _create),
+        if (expired) PrimaryButton(label: tr('Get a new code'), onPressed: _create),
       ]),
     );
   }

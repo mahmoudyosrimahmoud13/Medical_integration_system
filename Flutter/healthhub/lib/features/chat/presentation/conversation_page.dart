@@ -10,6 +10,7 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/common.dart';
 import '../chat.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// One thread. Polls for new messages every few seconds while open.
 class ConversationPage extends StatefulWidget {
@@ -125,7 +126,7 @@ class _ConversationPageState extends State<ConversationPage> {
                           if (showDay)
                             Padding(
                               padding: const EdgeInsets.symmetric(vertical: 12),
-                              child: Text(DateFormat.yMMMEd().format(m.sentAt), style: Theme.of(context).textTheme.labelSmall),
+                              child: Text(DateFormat.yMMMEd(AppSettings.dateLocale).format(m.sentAt), style: Theme.of(context).textTheme.labelSmall),
                             ),
                           _Bubble(m: m).animate().fadeIn(duration: 200.ms).slideY(begin: .1, end: 0),
                         ]);
@@ -145,7 +146,7 @@ class _ConversationPageState extends State<ConversationPage> {
                   maxLines: 4,
                   textCapitalization: TextCapitalization.sentences,
                   onSubmitted: (_) => _send(),
-                  decoration: const InputDecoration(hintText: 'Write a message', contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
+                  decoration: InputDecoration(hintText: tr('Write a message'), contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12)),
                 ),
               ),
               const SizedBox(width: 6),
@@ -176,7 +177,7 @@ class _Bubble extends StatelessWidget {
       bottomRight: Radius.circular(m.mine ? 4 : 18),
     );
     return Align(
-      alignment: m.mine ? Alignment.centerRight : Alignment.centerLeft,
+      alignment: m.mine ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 3),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -186,7 +187,7 @@ class _Bubble extends StatelessWidget {
           Text(m.text, style: TextStyle(color: m.mine ? Colors.white : scheme.onSurface, height: 1.35)),
           const SizedBox(height: 4),
           Row(mainAxisSize: MainAxisSize.min, children: [
-            Text(DateFormat.jm().format(m.sentAt), style: TextStyle(fontSize: 11, color: m.mine ? Colors.white70 : scheme.outline)),
+            Text(DateFormat.jm(AppSettings.dateLocale).format(m.sentAt), style: TextStyle(fontSize: 11, color: m.mine ? Colors.white70 : scheme.outline)),
             if (m.mine) ...[
               const SizedBox(width: 4),
               Icon(m.readAt != null ? Icons.done_all : Icons.done, size: 14, color: m.readAt != null ? AppColors.amber : Colors.white70),

@@ -1,3 +1,5 @@
+import '../../core/i18n/i18n.dart';
+
 /// Form validators. They mirror the server rules so users see problems before sending.
 /// Each returns null when the value is fine, or a short message.
 class Validators {
@@ -7,7 +9,7 @@ class Validators {
   static final _nationalId = RegExp(r'^[23]\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])\d{7}$');
 
   static String? required(String? v, [String field = 'This field']) =>
-      (v == null || v.trim().isEmpty) ? '$field is required' : null;
+      (v == null || v.trim().isEmpty) ? tr('{field} is required', {'field': tr(field)}) : null;
 
   static String? email(String? v) {
     if (v == null || v.trim().isEmpty) return 'Email is required';

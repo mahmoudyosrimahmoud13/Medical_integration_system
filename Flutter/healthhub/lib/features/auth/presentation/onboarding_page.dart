@@ -5,6 +5,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/widgets/animations.dart';
 import 'session_cubit.dart';
+import '../../../core/widgets/clay.dart';
+import '../../../core/i18n/i18n.dart';
 
 class _Slide {
   const _Slide(this.image, this.title, this.text);
@@ -53,7 +55,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: Row(children: [
               const AppWordmark(size: 32),
               const Spacer(),
-              TextButton(onPressed: _finish, child: const Text('Skip')),
+              TextButton(onPressed: _finish, child: Text(tr('Skip'))),
             ]),
           ),
           Expanded(
@@ -67,7 +69,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   padding: const EdgeInsets.all(28),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
                     Expanded(
-                      child: SvgPicture.asset(s.image)
+                      // the illustration sits on a soft clay disc, a different pastel per slide
+                      child: Center(
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            padding: const EdgeInsets.all(28),
+                            decoration: Clay.decoration(context, const [Clay.lilac, Clay.mint, Clay.butter, Clay.blush][i % 4], radius: 999),
+                            child: SvgPicture.asset(s.image),
+                          ),
+                        ),
+                      )
                           .animate(key: ValueKey('img$i'))
                           .fadeIn(duration: 500.ms)
                           .scaleXY(begin: .85, end: 1, duration: 600.ms, curve: Curves.easeOutBack),
@@ -110,7 +122,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   : () => _controller.nextPage(duration: const Duration(milliseconds: 450), curve: Curves.easeOutCubic),
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 250),
-                child: Text(last ? 'Get started' : 'Next', key: ValueKey(last)),
+                child: Text(last ? tr('Get started') : tr('Next'), key: ValueKey(last)),
               ),
             ),
           ),

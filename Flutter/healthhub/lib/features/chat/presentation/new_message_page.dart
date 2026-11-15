@@ -9,6 +9,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../chat.dart';
 import 'conversation_page.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Pick someone you're allowed to write to (grouped by relationship), then open the thread.
 class NewMessagePage extends StatelessWidget {
@@ -31,12 +32,12 @@ class NewMessagePage extends StatelessWidget {
       child: Builder(builder: (context) {
         final cubit = context.watch<LoadCubit<List<Contact>>>();
         return Scaffold(
-          appBar: AppBar(title: const Text('New message')),
+          appBar: AppBar(title: Text(tr('New message'))),
           body: AsyncBody<List<Contact>>(
             state: cubit.state,
             onRetry: cubit.load,
             isEmpty: (d) => d.isEmpty,
-            empty: const EmptyView(title: 'No one to write to yet', message: 'Book a doctor or open a pharmacy page to start a conversation.'),
+            empty: EmptyView(title: tr('No one to write to yet'), message: tr('Book a doctor or open a pharmacy page to start a conversation.')),
             builder: (items) {
               final groups = <String, List<Contact>>{};
               for (final c in items) {
@@ -45,7 +46,7 @@ class NewMessagePage extends StatelessWidget {
               var i = 0;
               return ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 32), children: [
                 for (final e in groups.entries) ...[
-                  SectionTitle('${e.key}s'),
+                  SectionTitle(const {'Doctor': 'Doctors', 'Patient': 'Patients', 'Pharmacy': 'Pharmacies', 'Hospital': 'Hospitals'}[e.key] ?? e.key),
                   for (final c in e.value)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),

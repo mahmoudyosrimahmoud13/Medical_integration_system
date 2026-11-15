@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'app.dart';
 import 'core/config.dart';
 import 'core/di.dart';
+import 'core/i18n/i18n.dart';
 import 'core/network/api_client.dart';
 import 'core/storage/token_storage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await AppSettings.load(); // language and theme saved on the phone
   final tokens = await TokenStorage.load();
 
   // The session cubit is created inside the app; this hook lets the network layer

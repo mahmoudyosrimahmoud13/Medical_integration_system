@@ -15,6 +15,7 @@ import '../../doctor_portal/presentation/doctor_apply_page.dart';
 import '../../doctors/presentation/doctor_card.dart';
 import '../../pharmacy/presentation/facility_apply_form.dart';
 import '../domain/hospital.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Hospital manager: departments and doctors, plus the appointments booked with them.
 class HospitalHomePage extends StatelessWidget {
@@ -29,7 +30,7 @@ class HospitalHomePage extends StatelessWidget {
       child: Builder(builder: (context) {
         final cubit = context.watch<LoadCubit<(ApplicationStatus, Hospital?)>>();
         return Scaffold(
-          appBar: standalone ? AppBar(title: const Text('Register a hospital')) : null,
+          appBar: standalone ? AppBar(title: Text(tr('Register a hospital'))) : null,
           body: AsyncBody<(ApplicationStatus, Hospital?)>(
             state: cubit.state,
             onRetry: cubit.load,
@@ -71,27 +72,27 @@ class _Manage extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Add a doctor'),
+        title: Text(tr('Add a doctor')),
         content: Column(mainAxisSize: MainAxisSize.min, children: [
           TextField(controller: email, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: "Doctor's HealthHub email")),
           const SizedBox(height: 12),
-          TextField(controller: dept, decoration: const InputDecoration(labelText: 'Department')),
+          TextField(controller: dept, decoration: InputDecoration(labelText: tr('Department'))),
         ]),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Add')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(tr('Cancel'))),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: Text(tr('Add'))),
         ],
       ),
     );
     if (ok != true || !context.mounted) return;
     if (Validators.email(email.text) != null) {
-      showSnack(context, 'Enter a valid email', error: true);
+      showSnack(context, tr('Enter a valid email'), error: true);
       return;
     }
     try {
       await context.read<Deps>().hospital.addDoctor(email.text, dept.text);
       onChanged();
-      if (context.mounted) showSnack(context, 'Doctor added');
+      if (context.mounted) showSnack(context, tr('Doctor added'));
     } on ApiException catch (e) {
       if (context.mounted) showSnack(context, e.message, error: true);
     }
@@ -103,17 +104,17 @@ class _Manage extends StatelessWidget {
       length: 2,
       child: Column(children: [
         GradientHeader(
-          subtitle: 'Hospital workspace',
+          subtitle: tr('Hospital workspace'),
           title: hospital.name,
           bottom: Container(
             decoration: BoxDecoration(color: Colors.white.withValues(alpha: .14), borderRadius: BorderRadius.circular(14)),
-            child: const TabBar(
+            child: TabBar(
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.all(Radius.circular(14))),
               labelColor: AppColors.navy,
               unselectedLabelColor: Colors.white,
               dividerColor: Colors.transparent,
-              tabs: [Tab(text: 'Doctors'), Tab(text: 'Appointments')],
+              tabs: [Tab(text: tr('Doctors')), Tab(text: tr('Appointments'))],
             ),
           ),
         ),
@@ -141,7 +142,7 @@ class _Doctors extends StatelessWidget {
     var i = 0;
     return Scaffold(
       body: departments.isEmpty
-          ? EmptyView(title: 'No doctors yet', message: 'Add doctors by their HealthHub email and group them into departments.', action: FilledButton.icon(onPressed: onAdd, icon: const Icon(Icons.add), label: const Text('Add a doctor')))
+          ? EmptyView(title: tr('No doctors yet'), message: tr('Add doctors by their HealthHub email and group them into departments.'), action: FilledButton.icon(onPressed: onAdd, icon: const Icon(Icons.add), label: Text(tr('Add a doctor'))))
           : ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 100), children: [
               for (final e in departments.entries) ...[
                 SectionTitle(e.key),
@@ -165,7 +166,7 @@ class _Doctors extends StatelessWidget {
                   ),
               ],
             ]),
-      floatingActionButton: departments.isEmpty ? null : FloatingActionButton.extended(onPressed: onAdd, icon: const Icon(Icons.person_add_alt_1), label: const Text('Add doctor')),
+      floatingActionButton: departments.isEmpty ? null : FloatingActionButton.extended(onPressed: onAdd, icon: const Icon(Icons.person_add_alt_1), label: Text(tr('Add doctor'))),
     );
   }
 }
@@ -183,7 +184,7 @@ class _HospitalAppointments extends StatelessWidget {
           state: cubit.state,
           onRetry: cubit.load,
           isEmpty: (d) => d.isEmpty,
-          empty: const EmptyView(image: 'assets/images/booking.svg', title: 'No upcoming appointments', message: 'Bookings with your doctors show up here.'),
+          empty: EmptyView(image: 'assets/images/booking.svg', title: tr('No upcoming appointments'), message: tr('Bookings with your doctors show up here.')),
           builder: (items) => ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: items.length,

@@ -10,6 +10,7 @@ import '../../catalog/domain/catalog.dart';
 import '../../catalog/presentation/pickers.dart';
 import '../../chat/presentation/new_message_page.dart';
 import '../domain/pharmacy.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Patient side: pick a drug, see which pharmacies have it in stock and at what price.
 class FindPharmacyPage extends StatefulWidget {
@@ -52,10 +53,10 @@ class _FindPharmacyPageState extends State<FindPharmacyPage> {
   Widget build(BuildContext context) {
     final results = _results;
     return Scaffold(
-      appBar: AppBar(title: const Text('Find a pharmacy')),
+      appBar: AppBar(title: Text(tr('Find a pharmacy'))),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
         ProductSearchField(
-          label: 'Which medicine do you need? (e.g. Panadol)',
+          label: tr('Which medicine do you need? (e.g. Panadol)'),
           onPicked: (p) {
             setState(() => _product = p);
             _search();
@@ -74,7 +75,7 @@ class _FindPharmacyPageState extends State<FindPharmacyPage> {
                 },
               ).popIn(),
               const SizedBox(width: 8),
-              Expanded(child: Text('Showing pharmacies with ${_product!.activeIngredient}', style: Theme.of(context).textTheme.bodySmall)),
+              Expanded(child: Text(tr('Showing pharmacies with {drug}', {'drug': _product!.activeIngredient}), style: Theme.of(context).textTheme.bodySmall)),
             ]),
           ),
         const SizedBox(height: 12),
@@ -98,8 +99,8 @@ class _FindPharmacyPageState extends State<FindPharmacyPage> {
                       ? EmptyView(
                           key: const ValueKey('none'),
                           image: 'assets/images/no_results.svg',
-                          title: _product == null ? 'No pharmacies here yet' : 'No pharmacy has ${_product!.activeIngredient} in stock nearby',
-                          message: 'Try another area.',
+                          title: _product == null ? tr('No pharmacies here yet') : tr('No pharmacy has {drug} in stock nearby', {'drug': _product!.activeIngredient}),
+                          message: tr('Try another area.'),
                         )
                       : Column(key: ValueKey('r${results!.length}${_product?.id}'), children: [
                           for (var i = 0; i < results.length; i++)
@@ -137,15 +138,15 @@ class PharmacyCard extends StatelessWidget {
         ),
         if (item != null)
           Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Text('${item.price.toStringAsFixed(0)} EGP', style: t.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
-            Text(item.lowStock ? 'Only ${item.quantity} left' : 'In stock',
+            Text(tr('{n} EGP', {'n': item.price.toStringAsFixed(0)}), style: t.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+            Text(item.lowStock ? tr('Only {n} left', {'n': item.quantity}) : tr('In stock'),
                 style: t.bodySmall?.copyWith(color: item.lowStock ? AppColors.warning : AppColors.accent, fontWeight: FontWeight.w700)),
           ]),
         if (pharmacy.ownerId.isNotEmpty)
           IconButton(
-            tooltip: 'Message the pharmacy',
+            tooltip: tr('Message the pharmacy'),
             icon: const Icon(Icons.chat_bubble_outline),
-            onPressed: () => NewMessagePage.open(context, userId: pharmacy.ownerId, subject: item == null ? '' : 'About ${item.drugName}'),
+            onPressed: () => NewMessagePage.open(context, userId: pharmacy.ownerId, subject: item == null ? '' : tr('About {drug}', {'drug': item.drugName})),
           ),
       ]),
     );

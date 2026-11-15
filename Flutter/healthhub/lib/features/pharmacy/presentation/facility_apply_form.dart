@@ -5,6 +5,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../../catalog/presentation/pickers.dart';
 import '../domain/pharmacy.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Shared "register your pharmacy / hospital" form.
 class FacilityApplyForm extends StatefulWidget {
@@ -54,18 +55,18 @@ class _FacilityApplyFormState extends State<FacilityApplyForm> {
   @override
   Widget build(BuildContext context) {
     final fields = <Widget>[
-      Text('Tell us about your ${widget.kind}. Our team reviews every request before it goes live.', style: Theme.of(context).textTheme.bodyMedium),
-      TextFormField(controller: _name, textCapitalization: TextCapitalization.words, decoration: InputDecoration(labelText: '${widget.kind[0].toUpperCase()}${widget.kind.substring(1)} name', prefixIcon: const Icon(Icons.storefront_outlined)), validator: (v) => v == null || v.trim().length < 3 ? 'Enter the name' : null),
+      Text(tr(widget.kind == 'pharmacy' ? 'Tell us about your pharmacy. Our team reviews every request before it goes live.' : 'Tell us about your hospital. Our team reviews every request before it goes live.'), style: Theme.of(context).textTheme.bodyMedium),
+      TextFormField(controller: _name, textCapitalization: TextCapitalization.words, decoration: InputDecoration(labelText: tr(widget.kind == 'pharmacy' ? 'Pharmacy name' : 'Hospital name'), prefixIcon: const Icon(Icons.storefront_outlined)), validator: (v) => v == null || v.trim().length < 3 ? tr('Enter the name') : null),
       AreaPicker(onChanged: (_, a) => _area = a),
-      TextFormField(controller: _address, decoration: const InputDecoration(labelText: 'Street address', prefixIcon: Icon(Icons.place_outlined)), validator: (v) => Validators.required(v, 'Address')),
-      TextFormField(controller: _phone, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Phone', prefixIcon: Icon(Icons.phone_outlined))),
-      if (widget.withDescription) TextFormField(controller: _desc, maxLines: 3, decoration: const InputDecoration(labelText: 'Description (services, departments)', alignLabelWithHint: true)),
+      TextFormField(controller: _address, decoration: InputDecoration(labelText: tr('Street address'), prefixIcon: Icon(Icons.place_outlined)), validator: (v) => Validators.required(v, 'Address')),
+      TextFormField(controller: _phone, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: tr('Phone'), prefixIcon: Icon(Icons.phone_outlined))),
+      if (widget.withDescription) TextFormField(controller: _desc, maxLines: 3, decoration: InputDecoration(labelText: tr('Description (services, departments)'), alignLabelWithHint: true)),
     ];
     return Form(
       key: _form,
       child: ListView(padding: const EdgeInsets.fromLTRB(20, 8, 20, 32), children: [
         for (var i = 0; i < fields.length; i++) Padding(padding: const EdgeInsets.only(bottom: 14), child: fields[i].entrance(i)),
-        PrimaryButton(label: 'Send request', icon: Icons.send_rounded, busy: _busy, onPressed: _submit).entrance(fields.length),
+        PrimaryButton(label: tr('Send request'), icon: Icons.send_rounded, busy: _busy, onPressed: _submit).entrance(fields.length),
       ]),
     );
   }

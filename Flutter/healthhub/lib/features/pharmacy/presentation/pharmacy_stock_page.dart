@@ -9,6 +9,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../../catalog/presentation/pickers.dart';
 import '../domain/pharmacy.dart';
+import '../../../core/i18n/i18n.dart';
 
 class PharmacyStockPage extends StatelessWidget {
   const PharmacyStockPage({super.key});
@@ -38,7 +39,7 @@ class _StockView extends StatelessWidget {
     try {
       await repo.setStock(result.$1, result.$3, result.$4);
       cubit.load();
-      if (context.mounted) showSnack(context, '${result.$2} updated');
+      if (context.mounted) showSnack(context, tr('{drug} updated', {'drug': result.$2}));
     } on ApiException catch (e) {
       if (context.mounted) showSnack(context, e.message, error: true);
     }
@@ -49,12 +50,12 @@ class _StockView extends StatelessWidget {
     final cubit = context.watch<LoadCubit<List<StockItem>>>();
     final repo = context.read<Deps>().pharmacy;
     return Scaffold(
-      appBar: AppBar(title: const Text('Stock')),
+      appBar: AppBar(title: Text(tr('Stock'))),
       body: AsyncBody<List<StockItem>>(
         state: cubit.state,
         onRetry: cubit.load,
         isEmpty: (d) => d.isEmpty,
-        empty: const EmptyView(title: 'No stock yet', message: 'Add the medicines you carry so patients can find you.'),
+        empty: EmptyView(title: tr('No stock yet'), message: tr('Add the medicines you carry so patients can find you.')),
         builder: (items) => RefreshIndicator(
           onRefresh: cubit.load,
           child: ListView.separated(
@@ -77,8 +78,8 @@ class _StockView extends StatelessWidget {
                 },
                 onDismissed: (_) => cubit.load(),
                 background: Container(
-                  alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.only(right: 20),
+                  alignment: AlignmentDirectional.centerEnd,
+                  padding: const EdgeInsetsDirectional.only(end: 20),
                   decoration: BoxDecoration(color: AppColors.danger, borderRadius: BorderRadius.circular(16)),
                   child: const Icon(Icons.delete_outline, color: Colors.white),
                 ),
@@ -88,7 +89,7 @@ class _StockView extends StatelessWidget {
                     Expanded(
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(it.drugName, style: const TextStyle(fontWeight: FontWeight.w700)),
-                        Text('${it.price.toStringAsFixed(2)} EGP', style: Theme.of(context).textTheme.bodySmall),
+                        Text(tr('{n} EGP', {'n': it.price.toStringAsFixed(2)}), style: Theme.of(context).textTheme.bodySmall),
                       ]),
                     ),
                     Container(
@@ -109,7 +110,7 @@ class _StockView extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _edit(context),
         icon: const Icon(Icons.add),
-        label: const Text('Add medicine'),
+        label: Text(tr('Add medicine')),
       ),
     );
   }
@@ -153,7 +154,7 @@ class _StockSheetState extends State<_StockSheet> {
     return Padding(
       padding: EdgeInsets.fromLTRB(20, 0, 20, MediaQuery.viewInsetsOf(context).bottom + 24),
       child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-        Text(widget.existing == null ? 'Add medicine' : 'Update stock', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+        Text(widget.existing == null ? tr('Add medicine') : tr('Update stock'), style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
         const SizedBox(height: 16),
         if (_name == null)
           DrugSearchField(onPicked: (d) => setState(() {
@@ -164,14 +165,14 @@ class _StockSheetState extends State<_StockSheet> {
           InputChip(label: Text(_name!), avatar: const Icon(Icons.medication, size: 18), onDeleted: widget.existing == null ? () => setState(() => _id = _name = null) : null),
         const SizedBox(height: 14),
         Row(children: [
-          Expanded(child: TextField(controller: _qty, keyboardType: TextInputType.number, onChanged: (_) => setState(() {}), decoration: const InputDecoration(labelText: 'Quantity'))),
+          Expanded(child: TextField(controller: _qty, keyboardType: TextInputType.number, onChanged: (_) => setState(() {}), decoration: InputDecoration(labelText: tr('Quantity')))),
           const SizedBox(width: 12),
-          Expanded(child: TextField(controller: _price, keyboardType: const TextInputType.numberWithOptions(decimal: true), onChanged: (_) => setState(() {}), decoration: const InputDecoration(labelText: 'Price', suffixText: 'EGP'))),
+          Expanded(child: TextField(controller: _price, keyboardType: const TextInputType.numberWithOptions(decimal: true), onChanged: (_) => setState(() {}), decoration: InputDecoration(labelText: tr('Price'), suffixText: tr('EGP')))),
         ]),
         const SizedBox(height: 20),
         FilledButton(
           onPressed: _id == null || price == null || qty == null || qty < 0 || price < 0 ? null : () => Navigator.pop(context, (_id!, _name!, qty, price)),
-          child: const Text('Save'),
+          child: Text(tr('Save')),
         ),
       ]),
     );

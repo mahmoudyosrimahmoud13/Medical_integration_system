@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../notifications.dart';
+import '../../../core/i18n/i18n.dart';
 
 class NotificationsPage extends StatelessWidget {
   const NotificationsPage({super.key});
@@ -27,12 +28,12 @@ class NotificationsPage extends StatelessWidget {
       child: Builder(builder: (context) {
         final cubit = context.watch<LoadCubit<List<AppNotification>>>();
         return Scaffold(
-          appBar: AppBar(title: const Text('Notifications')),
+          appBar: AppBar(title: Text(tr('Notifications'))),
           body: AsyncBody<List<AppNotification>>(
             state: cubit.state,
             onRetry: cubit.load,
             isEmpty: (d) => d.isEmpty,
-            empty: const EmptyView(image: 'assets/images/notifications.svg', title: "You're all caught up", message: 'New activity shows up here.'),
+            empty: EmptyView(image: 'assets/images/notifications.svg', title: "You're all caught up", message: tr('New activity shows up here.')),
             builder: (items) => ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: items.length,
@@ -54,7 +55,7 @@ class NotificationsPage extends StatelessWidget {
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                         Text(n.message, style: TextStyle(fontWeight: n.isRead ? FontWeight.w500 : FontWeight.w700)),
                         if (n.createdAt != null)
-                          Text(DateFormat.yMMMd().add_jm().format(n.createdAt!), style: Theme.of(context).textTheme.bodySmall),
+                          Text(DateFormat.yMMMd(AppSettings.dateLocale).add_jm().format(n.createdAt!), style: Theme.of(context).textTheme.bodySmall),
                       ]),
                     ),
                     if (!n.isRead) Container(width: 8, height: 8, decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle)),

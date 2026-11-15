@@ -5,6 +5,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../domain/records.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// The medical record body, shared by the patient's own record and a doctor's patient lookup.
 class RecordView extends StatelessWidget {
@@ -22,15 +23,15 @@ class RecordView extends StatelessWidget {
       children: [
         if (header != null) header!,
         Row(children: [
-          Expanded(child: StatTile(label: 'Active drugs', value: record.currentPrescriptions.length, icon: Icons.medication_outlined)),
+          Expanded(child: StatTile(label: tr('Active drugs'), value: record.currentPrescriptions.length, icon: Icons.medication_outlined)),
           const SizedBox(width: 10),
-          Expanded(child: StatTile(label: 'Visits', value: record.sessions.length, icon: Icons.event_note_outlined, color: AppColors.accent)),
+          Expanded(child: StatTile(label: tr('Visits'), value: record.sessions.length, icon: Icons.event_note_outlined, color: AppColors.accent)),
           const SizedBox(width: 10),
-          Expanded(child: StatTile(label: 'Chronic', value: record.chronic.length, icon: Icons.favorite_outline, color: AppColors.danger)),
+          Expanded(child: StatTile(label: tr('Chronic'), value: record.chronic.length, icon: Icons.favorite_outline, color: AppColors.danger)),
         ]).entrance(i++),
         const SectionTitle('Current medicines'),
         if (record.currentPrescriptions.isEmpty)
-          const AppCard(child: Text('No active prescriptions.'))
+          AppCard(child: Text(tr('No active prescriptions.')))
         else
           for (final p in record.currentPrescriptions) Padding(padding: const EdgeInsets.only(bottom: 10), child: PrescriptionTile(p).entrance(i++)),
         if (record.diseases.isNotEmpty) ...[
@@ -49,7 +50,7 @@ class RecordView extends StatelessWidget {
         ],
         const SectionTitle('Visit history'),
         if (record.sessions.isEmpty)
-          const AppCard(child: Text('No visits recorded yet.'))
+          AppCard(child: Text(tr('No visits recorded yet.')))
         else
           for (final s in record.sessions) Padding(padding: const EdgeInsets.only(bottom: 10), child: SessionTile(s).entrance(i++)),
         if (record.ctScans.isNotEmpty) ...[
@@ -75,7 +76,7 @@ class RecordView extends StatelessWidget {
                         child: Container(
                           color: Colors.black45,
                           padding: const EdgeInsets.all(4),
-                          child: Text(DateFormat.yMMMd().format(c.uploadedAt!), style: const TextStyle(color: Colors.white, fontSize: 11), textAlign: TextAlign.center),
+                          child: Text(DateFormat.yMMMd(AppSettings.dateLocale).format(c.uploadedAt!), style: const TextStyle(color: Colors.white, fontSize: 11), textAlign: TextAlign.center),
                         ),
                       ),
                   ]),
@@ -99,8 +100,8 @@ class PrescriptionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final dates = [
-      if (p.startDate != null) 'from ${DateFormat.MMMd().format(p.startDate!)}',
-      if (p.endDate != null) 'until ${DateFormat.yMMMd().format(p.endDate!)}',
+      if (p.startDate != null) tr('from {date}', {'date': DateFormat.MMMd(AppSettings.dateLocale).format(p.startDate!)}),
+      if (p.endDate != null) tr('until {date}', {'date': DateFormat.yMMMd(AppSettings.dateLocale).format(p.endDate!)}),
     ].join(' ');
     return AppCard(
       child: Row(children: [
@@ -137,7 +138,7 @@ class SessionTile extends StatelessWidget {
         shape: const Border(),
         leading: Avatar(name: s.doctor.name, url: s.doctor.imageUrl, radius: 20),
         title: Text(s.diseaseName, style: t.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
-        subtitle: Text('Dr. ${s.doctor.name} · ${DateFormat.yMMMd().format(s.date)}'),
+        subtitle: Text('Dr. ${s.doctor.name} · ${DateFormat.yMMMd(AppSettings.dateLocale).format(s.date)}'),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -148,7 +149,7 @@ class SessionTile extends StatelessWidget {
               child: Row(children: [
                 const Icon(Icons.circle, size: 6),
                 const SizedBox(width: 8),
-                Expanded(child: Text('${p.drugName}${p.repeat == null ? '' : ' · ${p.repeat}'}')),
+                Expanded(child: Text('${p.drugName}${p.repeat == null ? '' : ' · ${tr(p.repeat!)}'}')),
               ]),
             ),
           if (s.doctor.phone != null) ...[const SizedBox(height: 8), InfoRow(icon: Icons.phone_outlined, text: s.doctor.phone!)],

@@ -13,6 +13,7 @@ import '../../appointments/presentation/booking_sheet.dart';
 import '../../chat/presentation/new_message_page.dart';
 import '../domain/doctors.dart';
 import 'doctor_card.dart';
+import '../../../core/i18n/i18n.dart';
 
 class DoctorDetailsPage extends StatelessWidget {
   const DoctorDetailsPage({super.key, required this.doctorId, this.preview});
@@ -56,9 +57,9 @@ class _DetailsView extends StatelessWidget {
           actions: [
             if (full != null && full.userId.isNotEmpty)
               IconButton(
-                tooltip: 'Message',
+                tooltip: tr('Message'),
                 icon: const Icon(Icons.chat_bubble_outline),
-                onPressed: () => NewMessagePage.open(context, userId: full.userId, subject: 'Question for Dr. ${full.name}'),
+                onPressed: () => NewMessagePage.open(context, userId: full.userId, subject: tr('Question for Dr. {name}', {'name': full.name})),
               ),
           ],
           flexibleSpace: FlexibleSpaceBar(
@@ -70,10 +71,10 @@ class _DetailsView extends StatelessWidget {
                   const SizedBox(height: 24),
                   Avatar(name: d?.name ?? '', url: d?.imageUrl, radius: 52, heroTag: 'doctor-$doctorId'),
                   const SizedBox(height: 12),
-                  Text('Dr. ${d?.name ?? ''}', style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800))
+                  Text(tr('Dr. {name}', {'name': d?.name ?? ''}), style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800))
                       .animate()
                       .fadeIn(delay: 150.ms),
-                  Text(d?.specialty ?? '', style: const TextStyle(color: Colors.white70)).animate().fadeIn(delay: 250.ms),
+                  Text(tr(d?.specialty ?? ''), style: const TextStyle(color: Colors.white70)).animate().fadeIn(delay: 250.ms),
                   const SizedBox(height: 8),
                   if (d != null) RatingStars(d.ratingStars, size: 18, count: d.reviewCount).animate().fadeIn(delay: 350.ms),
                 ]),
@@ -86,11 +87,11 @@ class _DetailsView extends StatelessWidget {
           sliver: SliverList.list(children: [
             if (d != null)
               Row(children: [
-                Expanded(child: _Pill(icon: Icons.payments_outlined, label: 'Visit', value: d.price > 0 ? '${d.price.toStringAsFixed(0)} EGP' : 'Ask clinic')),
+                Expanded(child: _Pill(icon: Icons.payments_outlined, label: tr('Visit'), value: d.price > 0 ? tr('{n} EGP', {'n': d.price.toStringAsFixed(0)}) : tr('Ask clinic'))),
                 const SizedBox(width: 10),
-                Expanded(child: _Pill(icon: Icons.reviews_outlined, label: 'Reviews', value: '${d.reviewCount}')),
+                Expanded(child: _Pill(icon: Icons.reviews_outlined, label: tr('Reviews'), value: '${d.reviewCount}')),
                 const SizedBox(width: 10),
-                Expanded(child: _Pill(icon: Icons.location_city_outlined, label: 'Area', value: d.area)),
+                Expanded(child: _Pill(icon: Icons.location_city_outlined, label: tr('Area'), value: d.area)),
               ]).entrance(0),
             if (full == null && state.status == LoadStatus.failure)
               Padding(padding: const EdgeInsets.only(top: 24), child: ErrorView(message: state.error ?? '', onRetry: context.read<LoadCubit<Doctor>>().load)),
@@ -108,13 +109,13 @@ class _DetailsView extends StatelessWidget {
                   if (full.college.isNotEmpty)
                     InfoRow(
                       icon: Icons.school_outlined,
-                      text: full.graduationYear == null ? full.college : '${full.college}, class of ${full.graduationYear!.year}',
+                      text: full.graduationYear == null ? full.college : tr('{college}, class of {year}', {'college': full.college, 'year': full.graduationYear!.year}),
                     ),
                 ]),
               ).entrance(2),
               const SectionTitle('Working hours'),
               if (full.schedule.isEmpty)
-                const AppCard(child: Text('This doctor has not published working hours yet.'))
+                AppCard(child: Text(tr('This doctor has not published working hours yet.')))
               else
                 AppCard(
                   child: Column(children: [
@@ -124,12 +125,12 @@ class _DetailsView extends StatelessWidget {
                         child: Row(children: [
                           Text(s.day, style: t.bodyLarge?.copyWith(fontWeight: FontWeight.w600)),
                           const Spacer(),
-                          Text('${s.from} - ${s.to}'),
+                          Text('${clock(s.from)} - ${clock(s.to)}'),
                         ]),
                       ),
                   ]),
                 ).entrance(3),
-              SectionTitle('Reviews', action: TextButton(onPressed: () => _rate(context), child: const Text('Rate'))),
+              SectionTitle('Reviews', action: TextButton(onPressed: () => _rate(context), child: Text(tr('Rate')))),
               const _Reviews(),
             ],
           ]),
@@ -140,7 +141,7 @@ class _DetailsView extends StatelessWidget {
           : SafeArea(
               minimum: const EdgeInsets.all(16),
               child: PrimaryButton(
-                label: 'Book an appointment',
+                label: tr('Book an appointment'),
                 icon: Icons.calendar_month_outlined,
                 onPressed: () => showBookingSheet(context, full),
               ).animate().slideY(begin: 1, end: 0, duration: 450.ms, curve: Curves.easeOutCubic),
@@ -158,7 +159,7 @@ class _DetailsView extends StatelessWidget {
       await repo.addReview(doctorId, result.$1, result.$2);
       reviews.load();
       doctor.load();
-      if (context.mounted) showSnack(context, 'Thanks for your review!');
+      if (context.mounted) showSnack(context, tr('Thanks for your review!'));
     } on ApiException catch (e) {
       if (context.mounted) showSnack(context, e.message, error: true);
     }
@@ -192,7 +193,7 @@ class _Reviews extends StatelessWidget {
     final s = context.watch<LoadCubit<List<Review>>>().state;
     final items = s.data ?? const <Review>[];
     if (s.isLoading && items.isEmpty) return const SkeletonList(count: 2, itemHeight: 70);
-    if (items.isEmpty) return const AppCard(child: Text('No reviews yet. Be the first after your visit.'));
+    if (items.isEmpty) return AppCard(child: Text(tr('No reviews yet. Be the first after your visit.')));
     return Column(children: [
       for (var i = 0; i < items.length; i++)
         Padding(
@@ -208,7 +209,7 @@ class _Reviews extends StatelessWidget {
               if (items[i].message.isNotEmpty) ...[const SizedBox(height: 8), Text(items[i].message)],
               if (items[i].sentAt != null) ...[
                 const SizedBox(height: 4),
-                Text(DateFormat.yMMMd().format(items[i].sentAt!), style: Theme.of(context).textTheme.bodySmall),
+                Text(DateFormat.yMMMd(AppSettings.dateLocale).format(items[i].sentAt!), style: Theme.of(context).textTheme.bodySmall),
               ],
             ]),
           ),
@@ -237,7 +238,7 @@ class _RateDialogState extends State<_RateDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Rate your visit'),
+      title: Text(tr('Rate your visit')),
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           for (var i = 1; i <= 5; i++)
@@ -250,11 +251,11 @@ class _RateDialogState extends State<_RateDialog> {
               ),
             ),
         ]),
-        TextField(controller: _text, maxLines: 3, decoration: const InputDecoration(hintText: 'Tell others about your visit (optional)')),
+        TextField(controller: _text, maxLines: 3, decoration: InputDecoration(hintText: tr('Tell others about your visit (optional)'))),
       ]),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-        FilledButton(onPressed: () => Navigator.pop(context, (_rate.toDouble(), _text.text.trim())), child: const Text('Send')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(tr('Cancel'))),
+        FilledButton(onPressed: () => Navigator.pop(context, (_rate.toDouble(), _text.text.trim())), child: Text(tr('Send'))),
       ],
     );
   }

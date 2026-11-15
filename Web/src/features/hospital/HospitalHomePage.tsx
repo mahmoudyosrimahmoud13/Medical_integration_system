@@ -10,6 +10,7 @@ import { StatusCard } from '../doctorPortal/DoctorApplyPage';
 import { DoctorCard } from '../doctors/DoctorCard';
 import { FacilityForm } from '../pharmacy/FacilityForm';
 import { departmentsOf } from './HospitalsPage';
+import { tr } from '../../core/i18n/i18n';
 
 export function HospitalHomePage() {
   const q = useQuery({ queryKey: ['hospital', 'mine'], queryFn: hospital.mine });
@@ -17,9 +18,9 @@ export function HospitalHomePage() {
   if (q.isError) return <div className="p-6"><ErrorBox message={(q.error as Error).message} onRetry={() => q.refetch()} /></div>;
   const { status, access_token, hospital: mine } = q.data!;
   if (status === 'none' || status === 'rejected') {
-    return (<><PageHeader eyebrow="For hospitals" title="Register your hospital" /><div className="mx-auto mt-6 max-w-2xl px-4 md:px-0"><FacilityForm kind="hospital" withDescription onSubmit={async (b) => { await hospital.apply(b); q.refetch(); }} /></div></>);
+    return (<><PageHeader eyebrow={tr('For hospitals')} title={tr('Register your hospital')} /><div className="mx-auto mt-6 max-w-2xl px-4 md:px-0"><FacilityForm kind="hospital" withDescription onSubmit={async (b) => { await hospital.apply(b); q.refetch(); }} /></div></>);
   }
-  if (status !== 'accepted') return (<><PageHeader eyebrow="For hospitals" title="Your hospital" /><div className="mt-6 px-4"><StatusCard status={status} kind="hospital" token={access_token} /></div></>);
+  if (status !== 'accepted') return (<><PageHeader eyebrow={tr('For hospitals')} title={tr('Your hospital')} /><div className="mt-6 px-4"><StatusCard status={status} kind="hospital" token={access_token} /></div></>);
   return <Manage h={mine!} onChanged={() => q.refetch()} />;
 }
 
@@ -34,37 +35,37 @@ function Manage({ h, onChanged }: { h: Hospital; onChanged: () => void }) {
 
   async function add() {
     setBusy(true);
-    try { await hospital.addDoctor(email, dept); toast('Doctor added'); setAdding(false); setEmail(''); setDept(''); onChanged(); }
-    catch (e) { toast(e instanceof ApiError ? e.message : 'Could not add', true); } finally { setBusy(false); }
+    try { await hospital.addDoctor(email, dept); toast(tr('Doctor added')); setAdding(false); setEmail(''); setDept(''); onChanged(); }
+    catch (e) { toast(e instanceof ApiError ? tr(e.message) : tr('Could not add'), true); } finally { setBusy(false); }
   }
   async function remove(id: string) {
-    try { await hospital.removeDoctor(id); onChanged(); } catch (e) { toast(e instanceof ApiError ? e.message : 'Could not remove', true); }
+    try { await hospital.removeDoctor(id); onChanged(); } catch (e) { toast(e instanceof ApiError ? tr(e.message) : tr('Could not remove'), true); }
   }
   const depts = departmentsOf(h);
 
   return (
     <>
-      <PageHeader eyebrow="Hospital workspace" title={h.name} right={<Button variant="amber" onClick={() => setAdding(true)}>Add doctor</Button>}>
-        <Tabs value={tab} onChange={setTab} items={[{ value: 'doctors', label: 'Doctors' }, { value: 'appointments', label: 'Appointments' }]} />
+      <PageHeader eyebrow={tr('Hospital workspace')} title={h.name} right={<Button variant="amber" onClick={() => setAdding(true)}>{tr('Add doctor')}</Button>}>
+        <Tabs value={tab} onChange={setTab} items={[{ value: 'doctors', label: tr('Doctors') }, { value: 'appointments', label: tr('Appointments') }]} />
       </PageHeader>
       <div className="mx-auto mt-6 max-w-4xl px-4 md:px-0">
         {tab === 'doctors' ? (
-          depts.size === 0 ? <Empty title="No doctors yet" text="Add doctors by their HealthHub email and group them into departments." action={<Button onClick={() => setAdding(true)}>Add a doctor</Button>} /> : (
+          depts.size === 0 ? <Empty title={tr('No doctors yet')} text={tr('Add doctors by their HealthHub email and group them into departments.')} action={<Button onClick={() => setAdding(true)}>{tr('Add a doctor')}</Button>} /> : (
             [...depts.entries()].map(([d, docs]) => (
               <Section key={d} title={d}>
-                <div className="space-y-2">{docs.map((x, i) => <DoctorCard key={x.doctor.id} d={x.doctor} index={i} right={<Button variant="danger" className="!px-3 !py-1.5" onClick={(e) => { e.stopPropagation(); remove(x.doctor.id); }}>Remove</Button>} />)}</div>
+                <div className="space-y-2">{docs.map((x, i) => <DoctorCard key={x.doctor.id} d={x.doctor} index={i} right={<Button variant="danger" className="!px-3 !py-1.5" onClick={(e) => { e.stopPropagation(); remove(x.doctor.id); }}>{tr('Remove')}</Button>} />)}</div>
               </Section>
             ))
           )
-        ) : appts.isLoading ? <SkeletonList /> : (appts.data ?? []).length === 0 ? <Empty title="No upcoming appointments" text="Bookings with your doctors show up here." /> : (
+        ) : appts.isLoading ? <SkeletonList /> : (appts.data ?? []).length === 0 ? <Empty title={tr('No upcoming appointments')} text={tr('Bookings with your doctors show up here.')} /> : (
           <div className="space-y-3">{appts.data!.map((a, i) => <AppointmentCard key={a.id} a={a} index={i} showPatient />)}</div>
         )}
       </div>
-      <Modal open={adding} onClose={() => setAdding(false)} title="Add a doctor">
+      <Modal open={adding} onClose={() => setAdding(false)} title={tr('Add a doctor')}>
         <div className="space-y-3">
-          <Field label="Doctor's HealthHub email"><input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
-          <Field label="Department"><input className="input" value={dept} onChange={(e) => setDept(e.target.value)} /></Field>
-          <Button className="w-full" busy={busy} onClick={add}>Add</Button>
+          <Field label={tr("Doctor's HealthHub email")}><input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+          <Field label={tr('Department')}><input className="input" value={dept} onChange={(e) => setDept(e.target.value)} /></Field>
+          <Button className="w-full" busy={busy} onClick={add}>{tr('Add')}</Button>
         </div>
       </Modal>
     </>

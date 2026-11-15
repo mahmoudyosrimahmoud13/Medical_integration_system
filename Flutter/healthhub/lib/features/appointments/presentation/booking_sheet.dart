@@ -11,6 +11,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../../doctors/domain/doctors.dart';
 import '../domain/appointments.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Opens the booking flow. Returns the new appointment, or null if the user closed it.
 /// Pass [reschedule] to move an existing appointment instead of booking a new one.
@@ -113,12 +114,12 @@ class _BookingSheetState extends State<BookingSheet> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(widget.reschedule == null ? 'Book with Dr. ${widget.doctor.name}' : 'Move your appointment',
+        Text(widget.reschedule == null ? tr('Book with Dr. {name}', {'name': widget.doctor.name}) : tr('Move your appointment'),
             style: t.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
         const SizedBox(height: 4),
-        Text('Each visit is one hour.', style: t.bodySmall),
+        Text(tr('Each visit is one hour.'), style: t.bodySmall),
         const SizedBox(height: 16),
-        Text('Day', style: t.labelLarge),
+        Text(tr('Day'), style: t.labelLarge),
         const SizedBox(height: 8),
         SizedBox(
           height: 84,
@@ -141,10 +142,10 @@ class _BookingSheetState extends State<BookingSheet> {
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    Text(DateFormat.E().format(d), style: TextStyle(color: selected ? Colors.white70 : scheme.outline, fontSize: 12)),
+                    Text(DateFormat.E(AppSettings.dateLocale).format(d), style: TextStyle(color: selected ? Colors.white70 : scheme.outline, fontSize: 12)),
                     const SizedBox(height: 4),
                     Text('${d.day}', style: TextStyle(color: selected ? Colors.white : scheme.onSurface, fontSize: 22, fontWeight: FontWeight.w800)),
-                    Text(DateFormat.MMM().format(d), style: TextStyle(color: selected ? Colors.white70 : scheme.outline, fontSize: 11)),
+                    Text(DateFormat.MMM(AppSettings.dateLocale).format(d), style: TextStyle(color: selected ? Colors.white70 : scheme.outline, fontSize: 11)),
                   ]),
                 ),
               ).entrance(i, dy: 0, baseDelayMs: 30);
@@ -152,7 +153,7 @@ class _BookingSheetState extends State<BookingSheet> {
           ),
         ),
         const SizedBox(height: 20),
-        Text('Time', style: t.labelLarge),
+        Text(tr('Time'), style: t.labelLarge),
         const SizedBox(height: 8),
         Expanded(
           child: AnimatedSwitcher(
@@ -160,7 +161,7 @@ class _BookingSheetState extends State<BookingSheet> {
             child: _loadingSlots
                 ? const Center(key: ValueKey('l'), child: CircularProgressIndicator())
                 : _slots.isEmpty
-                    ? const Center(key: ValueKey('e'), child: Text('No free hours on this day. Try another day.'))
+                    ? Center(key: ValueKey('e'), child: Text(tr('No free hours on this day. Try another day.')))
                     : GridView.builder(
                         key: ValueKey(_day),
                         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 120, mainAxisExtent: 48, crossAxisSpacing: 10, mainAxisSpacing: 10),
@@ -182,7 +183,7 @@ class _BookingSheetState extends State<BookingSheet> {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Text(
-                                slot.label,
+                                clock(slot.label),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
                                   color: !slot.available ? scheme.outline : (selected ? Colors.white : scheme.onPrimaryContainer),
@@ -197,7 +198,7 @@ class _BookingSheetState extends State<BookingSheet> {
         ),
         const SizedBox(height: 12),
         PrimaryButton(
-          label: _slot == null ? 'Pick a time' : (widget.reschedule == null ? 'Book ${_slot!.label}' : 'Move to ${_slot!.label}'),
+          label: _slot == null ? tr('Pick a time') : (widget.reschedule == null ? tr('Book {time}', {'time': clock(_slot!.label)}) : tr('Move to {time}', {'time': clock(_slot!.label)})),
           icon: Icons.check,
           busy: _booking,
           onPressed: _slot == null ? null : _book,
@@ -229,7 +230,7 @@ class _Success extends StatelessWidget {
             .fadeIn(delay: 250.ms),
         const SizedBox(height: 8),
         Text(
-          '${appointment.dayName}, ${DateFormat.yMMMd().format(appointment.day)}\n${appointment.from} with Dr. ${doctor.name}',
+          tr('{day}, {date}\n{time} with Dr. {name}', {'day': tr(appointment.dayName), 'date': DateFormat.yMMMd(AppSettings.dateLocale).format(appointment.day), 'time': clock(appointment.from), 'name': doctor.name}),
           textAlign: TextAlign.center,
         ).animate().fadeIn(delay: 400.ms),
       ]),

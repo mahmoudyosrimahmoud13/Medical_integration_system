@@ -10,6 +10,7 @@ import '../../appointments/domain/appointments.dart';
 import '../../appointments/presentation/appointments_page.dart';
 import '../../auth/presentation/session_cubit.dart';
 import '../domain/doctor_portal.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Doctor's day: stats and the upcoming booked patients.
 class DoctorHomePage extends StatelessWidget {
@@ -48,8 +49,8 @@ class _DoctorHomeView extends StatelessWidget {
         child: CustomScrollView(slivers: [
           SliverToBoxAdapter(
             child: GradientHeader(
-              subtitle: 'Doctor workspace',
-              title: 'Dr. ${user?.firstName ?? ''}',
+              subtitle: tr('Doctor workspace'),
+              title: tr('Dr. {name}', {'name': user?.firstName ?? ''}),
               trailing: Avatar(name: user?.name ?? '', url: user?.imageUrl, radius: 22),
             ),
           ),
@@ -57,11 +58,11 @@ class _DoctorHomeView extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
             sliver: SliverList.list(children: [
               Row(children: [
-                Expanded(child: StatTile(label: 'Upcoming', value: stats.upcoming, icon: Icons.event_available_outlined)),
+                Expanded(child: StatTile(label: tr('Upcoming'), value: stats.upcoming, icon: Icons.event_available_outlined)),
                 const SizedBox(width: 10),
-                Expanded(child: StatTile(label: 'Patients', value: stats.total, icon: Icons.people_outline, color: AppColors.accent)),
+                Expanded(child: StatTile(label: tr('Patients'), value: stats.total, icon: Icons.people_outline, color: AppColors.accent)),
                 const SizedBox(width: 10),
-                Expanded(child: StatTile(label: 'Women', value: stats.total == 0 ? 0 : (stats.female * 100 / stats.total).round(), icon: Icons.female, color: AppColors.danger)),
+                Expanded(child: StatTile(label: tr('Women'), value: stats.total == 0 ? 0 : (stats.female * 100 / stats.total).round(), icon: Icons.female, color: AppColors.danger)),
               ]).entrance(0),
               const SectionTitle('Booked patients'),
               AsyncBody<List<Appointment>>(
@@ -69,7 +70,7 @@ class _DoctorHomeView extends StatelessWidget {
                 onRetry: appts.load,
                 loading: const SkeletonList(count: 3),
                 isEmpty: (d) => d.isEmpty,
-                empty: const EmptyView(image: 'assets/images/booking.svg', title: 'No bookings yet', message: 'Patients can book once your schedule is published.'),
+                empty: EmptyView(image: 'assets/images/booking.svg', title: tr('No bookings yet'), message: tr('Patients can book once your schedule is published.')),
                 builder: (items) => Column(children: [
                   for (var i = 0; i < items.length; i++)
                     Padding(

@@ -9,6 +9,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../domain/appointments.dart';
 import 'booking_sheet.dart';
+import '../../../core/i18n/i18n.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({super.key});
@@ -30,16 +31,16 @@ class _AppointmentsView extends StatelessWidget {
     final cubit = context.watch<LoadCubit<List<Appointment>>>();
     return Scaffold(
       body: Column(children: [
-        const GradientHeader(subtitle: 'Your visits', title: 'Appointments'),
+        GradientHeader(subtitle: tr('Your visits'), title: tr('Appointments')),
         Expanded(
           child: AsyncBody<List<Appointment>>(
             state: cubit.state,
             onRetry: cubit.load,
             isEmpty: (d) => d.isEmpty,
-            empty: const EmptyView(
+            empty: EmptyView(
               image: 'assets/images/booking.svg',
-              title: 'No upcoming appointments',
-              message: 'Find a doctor and book a time that suits you.',
+              title: tr('No upcoming appointments'),
+              message: tr('Find a doctor and book a time that suits you.'),
             ),
             builder: (items) => RefreshIndicator(
               onRefresh: cubit.load,
@@ -70,11 +71,11 @@ class AppointmentCard extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Cancel appointment?'),
-        content: Text('${appointment.dayName} ${DateFormat.yMMMd().format(appointment.day)} at ${appointment.from}'),
+        title: Text(tr('Cancel appointment?')),
+        content: Text(tr('{day} {date} at {time}', {'day': tr(appointment.dayName), 'date': DateFormat.yMMMd(AppSettings.dateLocale).format(appointment.day), 'time': clock(appointment.from)})),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Keep it')),
-          FilledButton.tonal(onPressed: () => Navigator.pop(context, true), child: const Text('Cancel it')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: Text(tr('Keep it'))),
+          FilledButton.tonal(onPressed: () => Navigator.pop(context, true), child: Text(tr('Cancel it'))),
         ],
       ),
     );
@@ -85,7 +86,7 @@ class AppointmentCard extends StatelessWidget {
       } else {
         await context.read<Deps>().appointments.cancel(appointment.id);
       }
-      if (context.mounted) showSnack(context, 'Appointment cancelled');
+      if (context.mounted) showSnack(context, tr('Appointment cancelled'));
       onChanged?.call();
     } on ApiException catch (e) {
       if (context.mounted) showSnack(context, e.message, error: true);
@@ -119,9 +120,9 @@ class AppointmentCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(color: scheme.primaryContainer, borderRadius: BorderRadius.circular(16)),
             child: Column(children: [
-              Text(DateFormat.MMM().format(appointment.day).toUpperCase(), style: TextStyle(color: scheme.onPrimaryContainer, fontSize: 12, fontWeight: FontWeight.w700)),
+              Text(DateFormat.MMM(AppSettings.dateLocale).format(appointment.day).toUpperCase(), style: TextStyle(color: scheme.onPrimaryContainer, fontSize: 12, fontWeight: FontWeight.w700)),
               Text('${appointment.day.day}', style: TextStyle(color: scheme.onPrimaryContainer, fontSize: 24, fontWeight: FontWeight.w800)),
-              Text(appointment.dayName.length >= 3 ? appointment.dayName.substring(0, 3) : appointment.dayName, style: TextStyle(color: scheme.onPrimaryContainer, fontSize: 12)),
+              Text(DateFormat.E(AppSettings.dateLocale).format(appointment.day), style: TextStyle(color: scheme.onPrimaryContainer, fontSize: 12)),
             ]),
           ),
           const SizedBox(width: 14),
@@ -129,17 +130,17 @@ class AppointmentCard extends StatelessWidget {
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               if (showPatient && p != null) ...[
                 Text(p.name, style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-                Text([p.gender, if (p.age != null) '${p.age} years', if (p.phone != null) p.phone!].join(' · '), style: t.bodySmall),
+                Text([tr(p.gender), if (p.age != null) tr('{n} years', {'n': p.age}), if (p.phone != null) p.phone!].join(' · '), style: t.bodySmall),
               ] else if (d != null) ...[
                 Text('Dr. ${d.name}', style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-                Text(d.specialty, style: t.bodyMedium?.copyWith(color: scheme.primary)),
-                Text('${d.area}, ${d.governorate}', style: t.bodySmall),
+                Text(tr(d.specialty), style: t.bodyMedium?.copyWith(color: scheme.primary)),
+                Text('${place(d.area)}${tr(', ')}${place(d.governorate)}', style: t.bodySmall),
               ],
               const SizedBox(height: 6),
               Row(children: [
                 Icon(Icons.schedule, size: 16, color: scheme.outline),
                 const SizedBox(width: 4),
-                Text('${appointment.from} - ${appointment.to}', style: t.labelLarge),
+                Text('${clock(appointment.from)} - ${clock(appointment.to)}', style: t.labelLarge),
               ]),
             ]),
           ),
@@ -148,13 +149,13 @@ class AppointmentCard extends StatelessWidget {
         const SizedBox(height: 12),
         Row(children: [
           if (!showPatient)
-            Expanded(child: OutlinedButton.icon(onPressed: () => _move(context), icon: const Icon(Icons.edit_calendar_outlined, size: 18), label: const Text('Move'))),
+            Expanded(child: OutlinedButton.icon(onPressed: () => _move(context), icon: const Icon(Icons.edit_calendar_outlined, size: 18), label: Text(tr('Move')))),
           if (!showPatient) const SizedBox(width: 10),
           Expanded(
             child: FilledButton.tonalIcon(
               onPressed: () => _cancel(context),
               icon: const Icon(Icons.close, size: 18),
-              label: const Text('Cancel'),
+              label: Text(tr('Cancel')),
               style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(44)),
             ),
           ),

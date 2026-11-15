@@ -9,6 +9,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../../catalog/presentation/pickers.dart';
 import '../domain/auth.dart';
+import '../../../core/i18n/i18n.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -52,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> _submit() async {
     final valid = _form.currentState!.validate();
     if (!valid || _birth == null) {
-      if (_birth == null) showSnack(context, 'Pick your birth date', error: true);
+      if (_birth == null) showSnack(context, tr('Pick your birth date'), error: true);
       return;
     }
     setState(() => _busy = true);
@@ -68,7 +69,7 @@ class _RegisterPageState extends State<RegisterPage> {
             areaId: _areaId!,
           ));
       if (!mounted) return;
-      showSnack(context, 'Account created. You can log in now.');
+      showSnack(context, tr('Account created. You can log in now.'));
       Navigator.of(context).pop();
     } on ApiException catch (e) {
       if (mounted) showSnack(context, e.message, error: true);
@@ -80,33 +81,33 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final fields = <Widget>[
-      TextFormField(controller: _name, textCapitalization: TextCapitalization.words, decoration: const InputDecoration(labelText: 'Full name', prefixIcon: Icon(Icons.person_outline)), validator: Validators.name),
-      TextFormField(controller: _email, keyboardType: TextInputType.emailAddress, decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)), validator: Validators.email),
-      TextFormField(controller: _phone, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Mobile number', prefixIcon: Icon(Icons.phone_outlined)), validator: Validators.phone),
-      TextFormField(controller: _nid, keyboardType: TextInputType.number, maxLength: 14, decoration: const InputDecoration(labelText: 'National ID', prefixIcon: Icon(Icons.badge_outlined), counterText: ''), validator: Validators.nationalId),
+      TextFormField(controller: _name, textCapitalization: TextCapitalization.words, decoration: InputDecoration(labelText: tr('Full name'), prefixIcon: Icon(Icons.person_outline)), validator: Validators.name),
+      TextFormField(controller: _email, keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: tr('Email'), prefixIcon: Icon(Icons.email_outlined)), validator: Validators.email),
+      TextFormField(controller: _phone, keyboardType: TextInputType.phone, decoration: InputDecoration(labelText: tr('Mobile number'), prefixIcon: Icon(Icons.phone_outlined)), validator: Validators.phone),
+      TextFormField(controller: _nid, keyboardType: TextInputType.number, maxLength: 14, decoration: InputDecoration(labelText: tr('National ID'), prefixIcon: Icon(Icons.badge_outlined), counterText: ''), validator: Validators.nationalId),
       InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: _pickBirth,
         child: InputDecorator(
-          decoration: const InputDecoration(labelText: 'Birth date', prefixIcon: Icon(Icons.cake_outlined)),
-          child: Text(_birth == null ? 'Tap to pick' : DateFormat.yMMMd().format(_birth!)),
+          decoration: InputDecoration(labelText: tr('Birth date'), prefixIcon: Icon(Icons.cake_outlined)),
+          child: Text(_birth == null ? tr('Tap to pick') : DateFormat.yMMMd(AppSettings.dateLocale).format(_birth!)),
         ),
       ),
       SegmentedButton<String>(
-        segments: const [
-          ButtonSegment(value: 'male', label: Text('Male'), icon: Icon(Icons.male)),
-          ButtonSegment(value: 'female', label: Text('Female'), icon: Icon(Icons.female)),
+        segments: [
+          ButtonSegment(value: 'male', label: Text(tr('Male')), icon: Icon(Icons.male)),
+          ButtonSegment(value: 'female', label: Text(tr('Female')), icon: Icon(Icons.female)),
         ],
         selected: {_gender},
         onSelectionChanged: (s) => setState(() => _gender = s.first),
       ),
       AreaPicker(onChanged: (_, area) => _areaId = area),
-      TextFormField(controller: _password, obscureText: true, decoration: const InputDecoration(labelText: 'Password', prefixIcon: Icon(Icons.lock_outline), helperText: 'Upper and lower case, a number and a symbol', helperMaxLines: 2), validator: Validators.password),
-      TextFormField(controller: _confirm, obscureText: true, decoration: const InputDecoration(labelText: 'Confirm password', prefixIcon: Icon(Icons.lock_reset)), validator: Validators.match(() => _password.text)),
+      TextFormField(controller: _password, obscureText: true, decoration: InputDecoration(labelText: tr('Password'), prefixIcon: Icon(Icons.lock_outline), helperText: tr('Upper and lower case, a number and a symbol'), helperMaxLines: 2), validator: Validators.password),
+      TextFormField(controller: _confirm, obscureText: true, decoration: InputDecoration(labelText: tr('Confirm password'), prefixIcon: Icon(Icons.lock_reset)), validator: Validators.match(() => _password.text)),
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Create your account')),
+      appBar: AppBar(title: Text(tr('Create your account'))),
       body: Form(
         key: _form,
         child: ListView(
@@ -114,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage> {
           children: [
             for (var i = 0; i < fields.length; i++) Padding(padding: const EdgeInsets.only(bottom: 14), child: fields[i].entrance(i)),
             const SizedBox(height: 8),
-            PrimaryButton(label: 'Create account', icon: Icons.check, busy: _busy, onPressed: _submit).entrance(fields.length),
+            PrimaryButton(label: tr('Create account'), icon: Icons.check, busy: _busy, onPressed: _submit).entrance(fields.length),
           ],
         ),
       ),

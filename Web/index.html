@@ -7,6 +7,16 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/logo-192.png" />
     <title>HealthHub</title>
+    <script>
+      // Apply light or dark before the page paints, so there is no white flash.
+      try {
+        var t = localStorage.getItem('healthhub-theme');
+        if (t === 'dark' || (t !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches)) document.documentElement.classList.add('dark');
+        var l = localStorage.getItem('healthhub-lang') || ((navigator.language || '').toLowerCase().indexOf('ar') === 0 ? 'ar' : 'en');
+        document.documentElement.lang = l;
+        document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

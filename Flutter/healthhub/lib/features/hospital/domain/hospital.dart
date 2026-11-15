@@ -4,6 +4,7 @@ import '../../appointments/domain/appointments.dart';
 import '../../doctor_portal/domain/doctor_portal.dart';
 import '../../doctors/domain/doctors.dart';
 import '../../pharmacy/domain/pharmacy.dart';
+import '../../../core/i18n/i18n.dart';
 
 class HospitalDoctor extends Equatable {
   const HospitalDoctor({required this.doctor, required this.department});
@@ -44,7 +45,7 @@ class Hospital extends Equatable {
   Map<String, List<DoctorSummary>> get departments {
     final out = <String, List<DoctorSummary>>{};
     for (final d in doctors) {
-      out.putIfAbsent(d.department.isEmpty ? 'General' : d.department, () => []).add(d.doctor);
+      out.putIfAbsent(d.department.isEmpty ? tr('General') : d.department, () => []).add(d.doctor);
     }
     return out;
   }

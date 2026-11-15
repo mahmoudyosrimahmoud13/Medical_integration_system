@@ -6,6 +6,7 @@ import { ApiError } from '../../core/api/client';
 import type { ShareCode } from '../../core/api/types';
 import { Button, ErrorBox, Modal, PageHeader, SkeletonList, useToast } from '../../core/ui';
 import { RecordView } from './RecordView';
+import { tr } from '../../core/i18n/i18n';
 
 export function RecordsPage() {
   const q = useQuery({ queryKey: ['record'], queryFn: records.mine });
@@ -16,16 +17,16 @@ export function RecordsPage() {
 
   async function upload(f: File | undefined) {
     if (!f) return;
-    try { await records.uploadCt(f); toast('Scan added to your record'); qc.invalidateQueries({ queryKey: ['record'] }); }
-    catch (e) { toast(e instanceof ApiError ? e.message : 'Upload failed', true); }
+    try { await records.uploadCt(f); toast(tr('Scan added to your record')); qc.invalidateQueries({ queryKey: ['record'] }); }
+    catch (e) { toast(e instanceof ApiError ? tr(e.message) : tr('Upload failed'), true); }
   }
 
   return (
     <>
-      <PageHeader eyebrow="Medical record" title="Your health, in one place">
+      <PageHeader eyebrow={tr('Medical record')} title={tr('Your health, in one place')}>
         <div className="flex flex-wrap gap-3">
-          <Button variant="amber" onClick={() => setShare(true)}>Share with a pharmacy</Button>
-          <Button variant="ghost" onClick={() => file.current?.click()}>Add a scan</Button>
+          <Button variant="amber" onClick={() => setShare(true)}>{tr('Share with a pharmacy')}</Button>
+          <Button variant="ghost" onClick={() => file.current?.click()}>{tr('Add a scan')}</Button>
           <input ref={file} type="file" accept="image/*,.pdf" hidden onChange={(e) => upload(e.target.files?.[0])} />
         </div>
       </PageHeader>
@@ -45,7 +46,7 @@ export function ShareCodeModal({ open, onClose }: { open: boolean; onClose: () =
   useEffect(() => {
     if (!open) return;
     setCode(null);
-    records.shareCode().then(setCode).catch((e) => setError(e instanceof ApiError ? e.message : 'Could not create a code'));
+    records.shareCode().then(setCode).catch((e) => setError(e instanceof ApiError ? tr(e.message) : tr('Could not create a code')));
     const t = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(t);
   }, [open]);
@@ -55,11 +56,11 @@ export function ShareCodeModal({ open, onClose }: { open: boolean; onClose: () =
   const pct = code ? left / (30 * 60) : 0;
 
   return (
-    <Modal open={open} onClose={onClose} title="Show this code at the pharmacy">
-      <p className="text-sm text-muted">The pharmacist can see your current prescriptions for 30 minutes.</p>
+    <Modal open={open} onClose={onClose} title={tr('Show this code at the pharmacy')}>
+      <p className="text-sm text-muted">{tr('The pharmacist can see your current prescriptions for 30 minutes.')}</p>
       <div className="my-6 flex flex-col items-center">
         {error && <p className="text-danger">{error}</p>}
-        {!code && !error && <p className="text-sm text-muted">Creating your code...</p>}
+        {!code && !error && <p className="text-sm text-muted">{tr('Creating your code...')}</p>}
         {code && (
           <div className="relative flex size-52 items-center justify-center">
             <svg className="absolute inset-0 -rotate-90" viewBox="0 0 100 100" aria-hidden>
@@ -68,12 +69,12 @@ export function ShareCodeModal({ open, onClose }: { open: boolean; onClose: () =
             </svg>
             <div className="text-center">
               <p className="pop text-4xl font-bold tracking-[0.3em]">{code.code}</p>
-              <p className={`mt-1 text-sm font-semibold ${expired ? 'text-danger' : 'text-muted'}`}>{expired ? 'Expired' : `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')} left`}</p>
+              <p className={`mt-1 text-sm font-semibold ${expired ? 'text-danger' : 'text-muted'}`}>{expired ? tr('Expired') : `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')} left`}</p>
             </div>
           </div>
         )}
       </div>
-      {expired && <Button className="w-full" onClick={() => { setCode(null); records.shareCode().then(setCode); }}>Get a new code</Button>}
+      {expired && <Button className="w-full" onClick={() => { setCode(null); records.shareCode().then(setCode); }}>{tr('Get a new code')}</Button>}
     </Modal>
   );
 }

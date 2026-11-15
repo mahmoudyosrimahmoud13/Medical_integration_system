@@ -6,6 +6,7 @@ import { doctors, type DoctorFilter } from '../../core/api/endpoints';
 import { Button, Empty, ErrorBox, PageHeader, SkeletonList } from '../../core/ui';
 import { AreaPicker, SpecialtySelect } from '../catalog/pickers';
 import { DoctorCard } from './DoctorCard';
+import { tr } from '../../core/i18n/i18n';
 
 export function FindDoctorsPage() {
   const [params] = useSearchParams();
@@ -27,11 +28,11 @@ export function FindDoctorsPage() {
 
   return (
     <>
-      <PageHeader eyebrow="Find a doctor" title="Who do you need today?">
+      <PageHeader eyebrow={tr('Find a doctor')} title={tr('Who do you need today?')}>
         <div className="grid gap-3 md:grid-cols-[1fr_auto]">
-          <input className="input" placeholder="Search by doctor name" value={name} onChange={(e) => setName(e.target.value)} aria-label="Search by doctor name" />
-          <select className="input md:w-44" value={filter.sort} onChange={(e) => setFilter({ ...filter, sort: e.target.value as DoctorFilter['sort'] })} aria-label="Sort">
-            <option value="none">Sort: name</option><option value="rate">Sort: top rated</option><option value="join">Sort: experience</option>
+          <input className="input" placeholder={tr('Search by doctor name')} value={name} onChange={(e) => setName(e.target.value)} aria-label={tr('Search by doctor name')} />
+          <select className="input md:w-44" value={filter.sort} onChange={(e) => setFilter({ ...filter, sort: e.target.value as DoctorFilter['sort'] })} aria-label={tr('Sort')}>
+            <option value="none">{tr('Sort: name')}</option><option value="rate">{tr('Sort: top rated')}</option><option value="join">{tr('Sort: experience')}</option>
           </select>
         </div>
       </PageHeader>
@@ -42,12 +43,12 @@ export function FindDoctorsPage() {
         </aside>
         <section>
           {q.isLoading ? <SkeletonList /> : q.isError ? <ErrorBox message={(q.error as Error).message} onRetry={() => q.refetch()} /> : items.length === 0 ? (
-            <Empty title="No doctors found" text="Try another specialty or a wider area." />
+            <Empty title={tr('No doctors found')} text={tr('Try another specialty or a wider area.')} />
           ) : (
             <>
-              <p className="mb-3 text-sm font-semibold text-muted">{total} doctor{total === 1 ? '' : 's'} found</p>
+              <p className="mb-3 text-sm font-semibold text-muted">{total === 1 ? tr('1 doctor found') : tr('{n} doctors found', { n: total })}</p>
               <div className="space-y-3">{items.map((d, i) => <DoctorCard key={d.id} d={d} index={i % 10} />)}</div>
-              {q.hasNextPage && <div className="mt-4 text-center"><Button variant="ghost" busy={q.isFetchingNextPage} onClick={() => q.fetchNextPage()}>Show more</Button></div>}
+              {q.hasNextPage && <div className="mt-4 text-center"><Button variant="ghost" busy={q.isFetchingNextPage} onClick={() => q.fetchNextPage()}>{tr('Show more')}</Button></div>}
             </>
           )}
         </section>

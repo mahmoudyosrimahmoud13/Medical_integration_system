@@ -6,6 +6,7 @@ import { ApiError } from '../../core/api/client';
 import { Button, Field, useToast } from '../../core/ui';
 import { v } from '../../core/validators';
 import { AuthFrame } from './LoginPage';
+import { tr } from '../../core/i18n/i18n';
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -24,32 +25,32 @@ export function ForgotPasswordPage() {
         if (v.email(email)) return toast(v.email(email), true);
         await auth.forgot(email);
         setSent(true);
-        toast('If this email is registered, a code is on its way.');
+        toast(tr('If this email is registered, a code is on its way.'));
       } else {
         if (v.password(password)) return toast(v.password(password), true);
         await auth.reset(code, password);
-        toast('Password changed. Log in with your new password.');
+        toast(tr('Password changed. Log in with your new password.'));
         navigate('/login');
       }
     } catch (err) {
-      toast(err instanceof ApiError ? err.message : 'Something went wrong', true);
+      toast(err instanceof ApiError ? tr(err.message) : tr('Something went wrong'), true);
     } finally {
       setBusy(false);
     }
   }
 
   return (
-    <AuthFrame title="Reset password" subtitle={sent ? `We sent a code to ${email}` : "We'll email you a reset code"} footer={<Link to="/login" className="font-semibold text-amber hover:underline">Back to log in</Link>}>
+    <AuthFrame title={tr('Reset password')} subtitle={sent ? tr('We sent a code to {email}', { email }) : tr("We'll email you a reset code")} footer={<Link to="/login" className="font-semibold text-amber hover:underline">{tr('Back to log in')}</Link>}>
       <form onSubmit={submit} noValidate className="space-y-4">
         {!sent ? (
-          <Field label="Email"><input type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
+          <Field label={tr('Email')}><input type="email" className="input" value={email} onChange={(e) => setEmail(e.target.value)} /></Field>
         ) : (
           <div key="step2" className="rise space-y-4">
-            <Field label="Reset code"><input className="input" value={code} onChange={(e) => setCode(e.target.value)} /></Field>
-            <Field label="New password"><input type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
+            <Field label={tr('Reset code')}><input className="input" value={code} onChange={(e) => setCode(e.target.value)} /></Field>
+            <Field label={tr('New password')}><input type="password" className="input" value={password} onChange={(e) => setPassword(e.target.value)} /></Field>
           </div>
         )}
-        <Button type="submit" busy={busy} className="w-full">{sent ? 'Change password' : 'Send code'}</Button>
+        <Button type="submit" busy={busy} className="w-full">{sent ? tr('Change password') : tr('Send code')}</Button>
       </form>
     </AuthFrame>
   );

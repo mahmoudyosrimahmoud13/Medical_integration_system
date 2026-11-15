@@ -4,6 +4,7 @@ import '../../doctor_portal/data/doctor_portal_repository_impl.dart';
 import '../../doctor_portal/domain/doctor_portal.dart';
 import '../../records/data/records_repository_impl.dart';
 import '../domain/pharmacy.dart';
+import '../../../core/i18n/i18n.dart';
 
 StockItem stockFromJson(Map<String, dynamic> j) => StockItem(
       drugId: str(j['drug_id']),
@@ -15,8 +16,8 @@ StockItem stockFromJson(Map<String, dynamic> j) => StockItem(
 Pharmacy pharmacyFromJson(Map<String, dynamic> j) => Pharmacy(
       id: str(j['id']),
       name: str(j['name']),
-      area: str(map(j['area'])['key']),
-      governorate: str(map(j['governorate'])['key']),
+      area: rememberPlace(j['area']),
+      governorate: rememberPlace(j['governorate']),
       address: str(j['address_description']),
       phone: strOrNull(j['phone']),
       status: str(j['status'], 'accepted'),

@@ -8,6 +8,7 @@ import '../../../core/utils/time_slots.dart';
 import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../../doctors/domain/doctors.dart';
+import '../../../core/i18n/i18n.dart';
 
 /// Weekly working hours and visit price.
 class DoctorSchedulePage extends StatelessWidget {
@@ -46,13 +47,13 @@ class _ScheduleViewState extends State<_ScheduleView> {
 
   Future<void> _edit(String day) async {
     final current = _days[day] ?? (9 * 60, 17 * 60);
-    final from = await showTimePicker(context: context, initialTime: TimeOfDay(hour: current.$1 ~/ 60, minute: current.$1 % 60), helpText: '$day: start');
+    final from = await showTimePicker(context: context, initialTime: TimeOfDay(hour: current.$1 ~/ 60, minute: current.$1 % 60), helpText: tr('{day} start', {'day': tr(day)}));
     if (from == null || !mounted) return;
-    final to = await showTimePicker(context: context, initialTime: TimeOfDay(hour: current.$2 ~/ 60, minute: current.$2 % 60), helpText: '$day: end');
+    final to = await showTimePicker(context: context, initialTime: TimeOfDay(hour: current.$2 ~/ 60, minute: current.$2 % 60), helpText: tr('{day} end', {'day': tr(day)}));
     if (to == null) return;
     final f = from.hour * 60 + from.minute, t = to.hour * 60 + to.minute;
     if (t <= f) {
-      if (mounted) showSnack(context, 'End time must be after start time', error: true);
+      if (mounted) showSnack(context, tr('End time must be after start time'), error: true);
       return;
     }
     setState(() {
@@ -69,7 +70,7 @@ class _ScheduleViewState extends State<_ScheduleView> {
       ]);
       if (!mounted) return;
       setState(() => _dirty = false);
-      showSnack(context, 'Schedule saved. Patients see the new hours now.');
+      showSnack(context, tr('Schedule saved. Patients see the new hours now.'));
     } on ApiException catch (e) {
       if (mounted) showSnack(context, e.message, error: true);
     } finally {
@@ -82,18 +83,18 @@ class _ScheduleViewState extends State<_ScheduleView> {
     final v = await showDialog<double>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Visit price'),
-        content: TextField(controller: c, keyboardType: TextInputType.number, autofocus: true, decoration: const InputDecoration(suffixText: 'EGP')),
+        title: Text(tr('Visit price')),
+        content: TextField(controller: c, keyboardType: TextInputType.number, autofocus: true, decoration: InputDecoration(suffixText: tr('EGP'))),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, double.tryParse(c.text)), child: const Text('Save')),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text(tr('Cancel'))),
+          FilledButton(onPressed: () => Navigator.pop(context, double.tryParse(c.text)), child: Text(tr('Save'))),
         ],
       ),
     );
     if (v == null || !mounted) return;
     try {
       await context.read<Deps>().doctorPortal.setPrice(v);
-      if (mounted) showSnack(context, 'Price updated');
+      if (mounted) showSnack(context, tr('Price updated'));
     } on ApiException catch (e) {
       if (mounted) showSnack(context, e.message, error: true);
     }
@@ -107,14 +108,14 @@ class _ScheduleViewState extends State<_ScheduleView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Working hours'),
-        actions: [IconButton(onPressed: _price, icon: const Icon(Icons.payments_outlined), tooltip: 'Visit price')],
+        title: Text(tr('Working hours')),
+        actions: [IconButton(onPressed: _price, icon: const Icon(Icons.payments_outlined), tooltip: tr('Visit price'))],
       ),
       body: AsyncBody<List<ScheduleDay>>(
         state: cubit.state,
         onRetry: cubit.load,
         builder: (_) => ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 120), children: [
-          Text('Tap a day to turn it on, then tap the hours to change them. Visits are one hour each.', style: Theme.of(context).textTheme.bodyMedium),
+          Text(tr('Tap a day to turn it on, then tap the hours to change them. Visits are one hour each.'), style: Theme.of(context).textTheme.bodyMedium),
           const SizedBox(height: 16),
           for (var i = 0; i < weekdays.length; i++)
             Padding(
@@ -159,7 +160,7 @@ class _ScheduleViewState extends State<_ScheduleView> {
         offset: _dirty ? Offset.zero : const Offset(0, 1.2),
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOutCubic,
-        child: SafeArea(minimum: const EdgeInsets.all(16), child: PrimaryButton(label: 'Save schedule', icon: Icons.check, busy: _saving, onPressed: _save)),
+        child: SafeArea(minimum: const EdgeInsets.all(16), child: PrimaryButton(label: tr('Save schedule'), icon: Icons.check, busy: _saving, onPressed: _save)),
       ),
     );
   }

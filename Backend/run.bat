@@ -5,7 +5,7 @@ cd /d "%~dp0"
 
 set VENV=.venv
 set PY=%VENV%\Scripts\python.exe
-if "%PORT%"=="" set PORT=8000
+if "%PORT%"=="" set PORT=8020
 
 set CMD=%1
 if "%CMD%"=="" set CMD=help
@@ -89,7 +89,7 @@ goto end
 
 :docker
 docker compose up --build -d
-echo ^>^> API on http://localhost:8000/docs
+echo ^>^> API on http://localhost:8020/docs
 goto end
 
 :dockerdown
@@ -100,7 +100,7 @@ goto end
 echo Usage: run.bat ^<option^>
 echo.
 echo   setup         create .venv, install packages, create .env
-echo   dev           migrate + demo data + start with auto reload (set PORT=8000)
+echo   dev           migrate + demo data + start with auto reload (set PORT=8020)
 echo   start         migrate + reference data + start for production
 echo   migrate       create or update the database tables
 echo   seed [--demo] load governorates, areas, specialties, drugs, admin (+ demo users)

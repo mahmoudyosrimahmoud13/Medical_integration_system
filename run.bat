@@ -82,7 +82,7 @@ popd
 
 echo.
 echo == Starting HealthHub
-start "HealthHub API" /min cmd /c "cd /d %ROOT%\Backend && .venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000"
+start "HealthHub API" /min cmd /c "cd /d %ROOT%\Backend && .venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8020"
 start "HealthHub Web" /min cmd /c "cd /d %ROOT%\Web && npx vite preview --host 127.0.0.1 --port 8080 --strictPort"
 
 if "%TUNNEL%"=="1" (
@@ -98,7 +98,7 @@ if "%TUNNEL%"=="1" (
 
 echo.
 echo   HealthHub is running:   http://localhost:8080
-echo   API docs:               http://localhost:8000/docs
+echo   API docs:               http://localhost:8020/docs
 echo   Demo password = role + @12345, for example doctor@healthhub.local / Doctor@12345
 echo   Stop everything with:   run.bat stop
 goto end

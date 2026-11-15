@@ -36,7 +36,7 @@ case "${1:-help}" in
   clean)   flutter clean; rm -rf android ios web windows linux macos; echo ">> Removed build output and generated platform folders" ;;
   *)
     cat <<'HELP'
-Usage: ./run.sh <option>      (set API_BASE_URL=http://192.168.1.10:8000 to point at your backend)
+Usage: ./run.sh <option>      (set API_BASE_URL=http://192.168.1.10:8020 to point at your backend)
 
   setup       create platform folders, apply the HealthHub identity, get packages, make icons
   run         run on the connected device or emulator (extra flags go to flutter run)

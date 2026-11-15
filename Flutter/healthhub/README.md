@@ -22,11 +22,11 @@ workflow does the same, so the repo stays small and the generated code never goe
 
 ### Pointing the app at your backend
 
-By default the app talks to `http://localhost:8000` (or `http://10.0.2.2:8000` on the Android emulator,
+By default the app talks to `http://localhost:8020` (or `http://10.0.2.2:8020` on the Android emulator,
 which is how the emulator reaches your computer). For a real phone on the same Wi-Fi, use your computer's IP:
 
 ```
-API_BASE_URL=http://192.168.1.10:8000 ./run.sh run
+API_BASE_URL=http://192.168.1.10:8020 ./run.sh run
 ```
 
 Demo accounts come from the backend seed: `patient@healthhub.local` / `Patient@12345`,

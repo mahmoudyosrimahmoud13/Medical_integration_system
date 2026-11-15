@@ -43,7 +43,7 @@ All options:
 
 `.env` (copied from `.env.example` on setup):
 
-- `VITE_PROXY_TARGET`: where the dev server sends `/api` and `/Image` calls. Default `http://localhost:8000`.
+- `VITE_PROXY_TARGET`: where the dev server sends `/api` and `/Image` calls. Default `http://localhost:8020`.
 - `VITE_API_BASE_URL`: full API address for production builds. Leave empty when the API sits behind the same domain (the Docker setup does this with nginx).
 
 ## How the code is organised

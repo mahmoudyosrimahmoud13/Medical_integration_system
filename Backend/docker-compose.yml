@@ -23,7 +23,7 @@ services:
       SEED_ARGS: ${SEED_ARGS:---demo}
       ML_SERVICE_URL: ${ML_SERVICE_URL:-}
     ports:
-      - "8000:8000"
+      - "8020:8000"   # on your computer the API is at port 8020 (8000 is often taken, e.g. by Rubies)
     volumes:
       - media:/app/media
 

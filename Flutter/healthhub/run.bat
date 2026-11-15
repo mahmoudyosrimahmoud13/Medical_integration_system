@@ -82,7 +82,7 @@ echo ^>^> Removed build output and generated platform folders
 goto end
 
 :help
-echo Usage: run.bat ^<option^>      (set API_BASE_URL=http://192.168.1.10:8000 to point at your backend)
+echo Usage: run.bat ^<option^>      (set API_BASE_URL=http://192.168.1.10:8020 to point at your backend)
 echo.
 echo   setup       create platform folders, apply the HealthHub identity, get packages, make icons
 echo   run         run on the connected device or emulator

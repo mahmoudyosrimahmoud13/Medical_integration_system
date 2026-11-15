@@ -3,7 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
-const apiTarget = process.env.VITE_PROXY_TARGET ?? 'http://localhost:8000';
+const apiTarget = process.env.VITE_PROXY_TARGET ?? 'http://localhost:8020';
 // Addresses allowed to open the dev/preview server: this computer, Cloudflare quick tunnels
 // (*.trycloudflare.com) and any of your own domains in VITE_ALLOWED_HOSTS (comma separated).
 const allowedHosts = ['localhost', '.trycloudflare.com', ...(process.env.VITE_ALLOWED_HOSTS ?? '').split(',').map((h) => h.trim()).filter(Boolean)];

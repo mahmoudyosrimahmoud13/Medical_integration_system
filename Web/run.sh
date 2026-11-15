@@ -18,7 +18,7 @@ setup() {
   echo ">> Setup done"
 }
 
-dev()     { need_modules; echo ">> Web app on http://localhost:5173 (talks to the API at ${VITE_PROXY_TARGET:-http://localhost:8000})"; npx vite --host; }
+dev()     { need_modules; echo ">> Web app on http://localhost:5173 (talks to the API at ${VITE_PROXY_TARGET:-http://localhost:8020})"; npx vite --host; }
 full() {
   need_modules
   if [ -x ../Backend/run.sh ]; then

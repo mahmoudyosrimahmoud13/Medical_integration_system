@@ -19,7 +19,7 @@ It serves two kinds of clients:
 | Start fresh (delete local database) | `./run.sh reset` | `run.bat reset` |
 | Run with PostgreSQL in Docker | `./run.sh docker` | `run.bat docker` |
 
-After `dev` starts, open **http://localhost:8000/docs** for the interactive API docs.
+After `dev` starts, open **http://localhost:8020/docs** for the interactive API docs.
 
 You need Python 3.11 or newer. Docker is only needed for the `docker` option.
 

@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 ROOT="$(pwd)"
 CONF="$ROOT/.run.conf"          # settings remembered between runs (tunnel token, site address). Never in git.
 PIDS="$ROOT/logs/healthhub.pids"
-WEB_PORT="${WEB_PORT:-8080}"; API_PORT=8000; AI_PORT=8001
+WEB_PORT="${WEB_PORT:-8080}"; API_PORT="${API_PORT:-8020}"; AI_PORT=8001
 
 say()  { printf "\n\033[1;33m◆\033[0m \033[1m%s\033[0m\n" "$1"; }
 ok()   { printf "  \033[32m✓\033[0m %s\n" "$1"; }
@@ -441,6 +441,7 @@ print_box() {
     row "  Doctor" "doctor@healthhub.local     Doctor@12345"
     row "  Pharmacy" "pharmacy@healthhub.local   Pharmacy@12345"
     row "  Hospital" "hospital@healthhub.local   Hospital@12345"
+    row "  Support" "support@healthhub.local    Support@12345"
     row "  Admin" "admin@healthhub.local      Admin@12345"
     echo "  │  All $(user_count) accounts: ./run.sh accounts"
   fi

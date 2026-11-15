@@ -178,6 +178,7 @@ class DoctorSummaryOut(Out):
 
 
 class DoctorOut(DoctorSummaryOut):
+    user_id: uuid.UUID
     email: str
     gender: str
     college_name: str
@@ -219,6 +220,7 @@ def build_doctor_summary(d: Doctor, request: Request) -> DoctorSummaryOut:
 def _doctor_detail_fields(d: Doctor, request: Request) -> dict:
     return dict(
         **_doctor_fields(d, request),
+        user_id=d.user_id,
         email=d.user.email,
         gender="male" if d.user.gender_male else "female",
         college_name=d.college_name,
@@ -572,6 +574,7 @@ def build_stock(row) -> StockOut:
 
 class PharmacyOut(Out):
     id: uuid.UUID
+    owner_id: uuid.UUID | None
     name: str
     area: AreaOut
     governorate: GovernorateOut
@@ -588,6 +591,7 @@ def _status(x) -> str:
 def build_pharmacy(p, item=None) -> PharmacyOut:
     return PharmacyOut(
         id=p.id,
+        owner_id=p.owner_id,
         name=p.name,
         area=AreaOut.model_validate(p.area),
         governorate=GovernorateOut.model_validate(p.area.governorate),
@@ -624,6 +628,7 @@ class HospitalDoctorOut(Out):
 
 class HospitalOut(Out):
     id: uuid.UUID
+    owner_id: uuid.UUID
     name: str
     description: str
     area: AreaOut
@@ -637,6 +642,7 @@ class HospitalOut(Out):
 def build_hospital(h, request: Request) -> HospitalOut:
     return HospitalOut(
         id=h.id,
+        owner_id=h.owner_id,
         name=h.name,
         description=h.description,
         area=AreaOut.model_validate(h.area),

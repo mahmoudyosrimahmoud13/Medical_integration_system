@@ -47,7 +47,7 @@ rng = random.Random(55)  # fixed seed: the same demo every time
 DOCTORS = [
     # name, email, specialty, governorate, area, college, price, gender_male, summary
     ("Ahmed Hassan", "doctor@healthhub.local", "Cardiology", "Cairo", "Maadi", "Cairo University", 400, True, "Consultant cardiologist, 15 years in interventional cardiology at Kasr Al Ainy."),
-    ("Mona El Sayed", "mona.elsayed@healthhub.local", "Dermatology", "Cairo", "Heliopolis", "Ain Shams University", 350, False, "Dermatology and cosmetic procedures. Special interest in acne and pigmentation."),
+    ("Mona El Sayed", "mona.elsayed@healthhub.local", "Dermatology", "Cairo", "New Heliopolis", "Ain Shams University", 350, False, "Dermatology and cosmetic procedures. Special interest in acne and pigmentation."),
     ("Khaled Mostafa", "khaled.mostafa@healthhub.local", "Orthopaedics", "Giza", "Dokki", "Cairo University", 450, True, "Orthopaedic surgeon, sports injuries and joint replacement."),
     ("Yasmin Fouad", "yasmin.fouad@healthhub.local", "Paediatrics", "Cairo", "Nasr City", "Ain Shams University", 300, False, "Paediatrician. Newborn care, vaccination schedules and growth follow-up."),
     ("Omar Abdelrahman", "omar.abdel@healthhub.local", "Internal medicine", "Alexandria", "Smouha", "Alexandria University", 300, True, "Internal medicine with a focus on diabetes and hypertension."),
@@ -56,7 +56,7 @@ DOCTORS = [
     ("Dina Samir", "dina.samir@healthhub.local", "Psychiatry", "Cairo", "New Cairo", "Ain Shams University", 500, False, "Psychiatrist and psychotherapist. Anxiety, depression and sleep."),
     ("Tarek Nabil", "tarek.nabil@healthhub.local", "Ophthalmology", "Alexandria", "Sidi Gaber", "Alexandria University", 350, True, "Ophthalmologist, cataract and refractive surgery."),
     ("Heba Mahmoud", "heba.mahmoud@healthhub.local", "Endocrinology", "Cairo", "Maadi", "Cairo University", 400, False, "Endocrinologist. Thyroid, diabetes and hormones."),
-    ("Amr Lotfy", "amr.lotfy@healthhub.local", "Gastroenterology", "Giza", "Sheikh Zayed", "Cairo University", 450, True, "Gastroenterology and endoscopy. Liver and IBS clinic."),
+    ("Amr Lotfy", "amr.lotfy@healthhub.local", "Gastroenterology", "Giza", "Mohandessin", "Cairo University", 450, True, "Gastroenterology and endoscopy. Liver and IBS clinic."),
     ("Salma Youssef", "salma.youssef@healthhub.local", "General practice", "Cairo", "Shubra", "Ain Shams University", 200, False, "Family doctor. First stop for the whole family."),
 ]
 
@@ -68,7 +68,7 @@ HOSPITALS = [
 
 PHARMACIES = [
     ("El Nour Pharmacy", "pharmacy@healthhub.local", "Cairo", "Maadi", "5 Nile St., Maadi", "0225551234"),
-    ("El Ezaby Pharmacy, Heliopolis", "ezaby.helio@healthhub.local", "Cairo", "Heliopolis", "34 El Thawra St.", "0226445566"),
+    ("El Ezaby Pharmacy, Heliopolis", "ezaby.helio@healthhub.local", "Cairo", "New Heliopolis", "34 El Thawra St.", "0226445566"),
     ("Seif Pharmacy, Nasr City", "seif.nasr@healthhub.local", "Cairo", "Nasr City", "12 Abbas El Akkad St.", "0222738899"),
     ("19011 Pharmacy, Dokki", "19011.dokki@healthhub.local", "Giza", "Dokki", "7 Mossadak St.", "19011"),
     ("Roshdy Pharmacy, Smouha", "roshdy.smouha@healthhub.local", "Alexandria", "Smouha", "40 Victor Emmanuel Sq.", "0334201122"),
@@ -124,7 +124,9 @@ CHATS = [
 
 async def _area(db: AsyncSession, gov: str, area: str) -> Area:
     row = await db.scalar(select(Area).join(Governorate).where(Governorate.key == gov, Area.key == area))
-    if row is None:  # fall back to any area in that governorate
+    if row is None:  # the dataset may file the area under another governorate; exact name wins
+        row = await db.scalar(select(Area).where(Area.key == area).limit(1))
+    if row is None:  # last resort: any area in that governorate
         row = await db.scalar(select(Area).join(Governorate).where(Governorate.key == gov).order_by(Area.key).limit(1))
     return row
 
@@ -253,7 +255,7 @@ async def seed_demo(db: AsyncSession) -> None:
     for i, (name, _) in enumerate(PATIENT_NAMES):
         male = PATIENT_NAMES[i][1]
         email = "patient@healthhub.local" if i == 0 else f"{name.lower().replace(' ', '.')}@healthhub.local"
-        gov, area_name = rng.choice([("Cairo", "Maadi"), ("Cairo", "Nasr City"), ("Cairo", "Heliopolis"), ("Giza", "Dokki"), ("Alexandria", "Smouha"), ("Cairo", "New Cairo")])
+        gov, area_name = rng.choice([("Cairo", "Maadi"), ("Cairo", "Nasr City"), ("Cairo", "New Heliopolis"), ("Giza", "Dokki"), ("Alexandria", "Smouha"), ("Cairo", "New Cairo")])
         birth = date(1950 + rng.randint(0, 55), rng.randint(1, 12), rng.randint(1, 28))
         patients.append(await _user(db, email=email, password="Patient@12345", name=name, roles=[Role.PATIENT], area=await _area(db, gov, area_name),
                                     phone=f"0111{4000000 + i:07d}", national_id=_nid(400 + i, birth), male=male, birth=birth))

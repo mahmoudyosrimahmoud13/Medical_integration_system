@@ -11,8 +11,7 @@ import asyncio
 import csv
 import json
 import shutil
-from datetime import date, datetime, time, timezone
-from decimal import Decimal
+from datetime import date
 from pathlib import Path
 
 from sqlalchemy import select
@@ -20,21 +19,7 @@ from sqlalchemy import select
 from app.core.config import BASE_DIR, settings
 from app.core.security import hash_password
 from app.db.session import SessionLocal
-from app.models import (
-    Area,
-    Doctor,
-    DoctorSchedule,
-    Drug,
-    Governorate,
-    Hospital,
-    HospitalDoctor,
-    Pharmacy,
-    PharmacyDrug,
-    Role,
-    Specialty,
-    User,
-    UserRole,
-)
+from app.models import Area, Drug, Governorate, Role, Specialty, User, UserRole
 
 SEED_DIR = BASE_DIR / "seed_data"
 
@@ -121,50 +106,9 @@ async def seed_admin(db) -> None:
 
 
 async def seed_demo(db) -> None:
-    area = await db.scalar(select(Area).join(Governorate).where(Governorate.key == "Cairo").order_by(Area.key).limit(1))
-    spec = await db.scalar(select(Specialty).where(Specialty.name == "Cardiology"))
-    doc_user = await _user(
-        db, email="doctor@healthhub.local", password="Doctor@12345", name="Ahmed Hassan",
-        roles=[Role.PATIENT, Role.DOCTOR], area=area, phone="01012345678", national_id="29001011234567",
-    )
-    if await db.scalar(select(Doctor).where(Doctor.user_id == doc_user.id)) is None:
-        doctor = Doctor(
-            user_id=doc_user.id, specialty_id=spec.id, area_id=area.id, college_name="Cairo University",
-            summary_career="Consultant cardiologist", address_description="12 Tahrir St.", accepted=True,
-            price_session=Decimal("300"), date_of_join=datetime.now(timezone.utc), graduation_year=date(2012, 6, 1),
-        )
-        db.add(doctor)
-        await db.flush()
-        for day in ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"]:
-            db.add(DoctorSchedule(doctor_id=doctor.id, day_name=day, time_from=time(9), time_to=time(17)))
-    await _user(
-        db, email="patient@healthhub.local", password="Patient@12345", name="Sara Ali",
-        roles=[Role.PATIENT], area=area, phone="01112345678", national_id="29505051234567", male=False,
-    )
-    ph_user = await _user(
-        db, email="pharmacy@healthhub.local", password="Pharmacy@12345", name="Nour Pharmacy Owner",
-        roles=[Role.PATIENT, Role.PHARMACY], area=area, phone="01212345678", national_id="28803031234567",
-    )
-    if await db.scalar(select(Pharmacy).where(Pharmacy.owner_id == ph_user.id)) is None:
-        ph = Pharmacy(owner_id=ph_user.id, name="El Nour Pharmacy", area_id=area.id, address_description="5 Nile St.",
-                      phone="0223456789", accepted=True)
-        db.add(ph)
-        await db.flush()
-        for drug_id, qty, price in [("DB00316", 120, 25), ("DB01050", 80, 40), ("DB00682", 30, 95)]:
-            db.add(PharmacyDrug(pharmacy_id=ph.id, drug_id=drug_id, quantity=qty, price=Decimal(price)))
-    h_user = await _user(
-        db, email="hospital@healthhub.local", password="Hospital@12345", name="Dar El Shifa Manager",
-        roles=[Role.PATIENT, Role.HOSPITAL], area=area, phone="01512345678", national_id="28504041234567",
-    )
-    if await db.scalar(select(Hospital).where(Hospital.owner_id == h_user.id)) is None:
-        h = Hospital(owner_id=h_user.id, name="Dar El Shifa Hospital", area_id=area.id, address_description="1 Ramses St.",
-                     phone="0221234567", description="General hospital with 24/7 emergency", accepted=True)
-        db.add(h)
-        await db.flush()
-        doctor = await db.scalar(select(Doctor).where(Doctor.user_id == doc_user.id))
-        db.add(HospitalDoctor(hospital_id=h.id, doctor_id=doctor.id, department="Cardiology"))
-    await db.commit()
-    print("Demo users (password = Role@12345): doctor@, patient@, pharmacy@, hospital@healthhub.local")
+    from app.demo import seed_demo as rich_demo
+
+    await rich_demo(db)
 
 
 def ensure_default_avatar() -> None:

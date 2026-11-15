@@ -6,8 +6,15 @@ from fastapi import APIRouter, HTTPException, Query
 from sqlalchemy import func, select
 
 from app.core.deps import DB, AdminUser
-from app.models import Area, Drug, Governorate, Specialty
-from app.schemas.v1 import AreaOut, DrugOut, GovernorateOut, SpecialtyIn, SpecialtyOut
+from app.models import Area, Drug, Governorate, Product, Specialty
+from app.schemas.v1 import (
+    AreaOut,
+    DrugOut,
+    GovernorateOut,
+    ProductOut,
+    SpecialtyIn,
+    SpecialtyOut,
+)
 
 router = APIRouter()
 
@@ -49,3 +56,35 @@ async def get_drug(drug_id: str, db: DB):
     if drug is None:
         raise HTTPException(404, "Drug not found")
     return drug
+
+
+@router.get("/products", response_model=list[ProductOut], tags=["drugs"])
+async def search_products(
+    db: DB,
+    q: str | None = Query(None, min_length=2, description="brand or active ingredient"),
+    drug_id: str | None = None,
+    category: str | None = None,
+    limit: int = Query(30, le=100),
+):
+    """Branded products on the Egyptian market. Search by brand ("Panadol") or ingredient ("acetaminophen")."""
+    stmt = select(Product, Drug.name).join(Drug, Drug.id == Product.drug_id)
+    if q:
+        like = q.strip().lower()
+        stmt = stmt.where(func.lower(Product.brand).contains(like) | func.lower(Drug.name).contains(like))
+    if drug_id:
+        stmt = stmt.where(Product.drug_id == drug_id)
+    if category:
+        stmt = stmt.where(func.lower(Product.category) == category.strip().lower())
+    rows = (await db.execute(stmt.order_by(Product.brand, Product.strength).limit(limit))).all()
+    return [
+        ProductOut(
+            id=p.id, brand=p.brand, drug_id=p.drug_id, active_ingredient=name, strength=p.strength, form=p.form, pack=p.pack,
+            manufacturer=p.manufacturer, category=p.category, price_egp=float(p.price_egp or 0), prescription_only=p.prescription_only,
+        )
+        for p, name in rows
+    ]
+
+
+@router.get("/products/categories", response_model=list[str], tags=["drugs"])
+async def product_categories(db: DB):
+    return list((await db.scalars(select(Product.category).distinct().order_by(Product.category))).all())

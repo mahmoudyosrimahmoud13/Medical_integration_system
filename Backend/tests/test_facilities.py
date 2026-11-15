@@ -20,8 +20,9 @@ async def _new_user(client, refs, n: int):
 async def test_find_pharmacy_with_drug_and_fill_by_code(client, refs):
     # demo pharmacy stocks Acetaminophen (DB00316)
     found = (await client.get("/api/v1/pharmacies", params={"drug_id": "DB00316"})).json()
-    assert found[0]["name"] == "El Nour Pharmacy" and found[0]["item"]["quantity"] == 120
-    assert (await client.get("/api/v1/pharmacies", params={"drug_id": "DB00807"})).json() == []
+    nour = next(p for p in found if p["name"] == "El Nour Pharmacy")
+    assert nour["item"]["quantity"] == 120 and nour["item"]["price"] == 25
+    assert (await client.get("/api/v1/pharmacies", params={"drug_id": "DB99999"})).json() == []
 
     # doctor prescribes, patient makes a share code, pharmacy reads the prescription with it
     doctor = await _login(client, "doctor@healthhub.local", "Doctor@12345")
@@ -65,7 +66,7 @@ async def test_pharmacy_application_and_stock(client, refs):
 async def test_hospital_flow(client, refs):
     listed = (await client.get("/api/v1/hospitals")).json()
     demo = next(h for h in listed if h["name"] == "Dar El Shifa Hospital")
-    assert demo["doctors"][0]["department"] == "Cardiology"
+    assert any(d["department"] == "Cardiology" for d in demo["doctors"])
 
     owner = await _new_user(client, refs, 2)
     r = await client.post("/api/v1/hospitals/apply", headers=owner,

@@ -35,6 +35,7 @@ class NotificationType(str, enum.Enum):
     DOCTOR_REQUEST_RESULT = "Doctor_Result"
     NEW_PRESCRIPTION = "New_Prescription"
     REQUEST_RESULT = "Request_Result"
+    NEW_MESSAGE = "New_Message"
 
 
 class Notification(UUIDMixin, Base):
@@ -48,18 +49,6 @@ class Notification(UUIDMixin, Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
 
     user: Mapped["User"] = relationship()
-
-
-class Message(UUIDMixin, Base):
-    """Direct chat message. WebSocket delivery comes in a later phase."""
-
-    __tablename__ = "messages"
-
-    sender_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    receiver_id: Mapped[uuid.UUID] = mapped_column(Uuid, ForeignKey("users.id", ondelete="CASCADE"), index=True)
-    text: Mapped[str] = mapped_column(Text, nullable=False)
-    sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
-    seen: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 class Pharmacy(UUIDMixin, Base):

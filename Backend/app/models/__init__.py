@@ -2,13 +2,13 @@
 
 from app.models.address import Area, Governorate
 from app.models.appointment import Appointment, DoctorSchedule
+from app.models.chat import ChatMessage, Conversation
 from app.models.doctor import Doctor, DoctorCertificate, Review, Specialty
-from app.models.drug import Drug, DrugInteraction
+from app.models.drug import Drug, DrugInteraction, Product
 from app.models.facility import Hospital, HospitalDoctor
 from app.models.medical import CTScan, Disease, MedicalSession, Prescription
 from app.models.misc import (
     AdminLog,
-    Message,
     Notification,
     NotificationType,
     Pharmacy,
@@ -27,6 +27,7 @@ __all__ = [
     "Specialty",
     "Drug",
     "DrugInteraction",
+    "Product",
     "Hospital",
     "HospitalDoctor",
     "CTScan",
@@ -34,7 +35,8 @@ __all__ = [
     "MedicalSession",
     "Prescription",
     "AdminLog",
-    "Message",
+    "ChatMessage",
+    "Conversation",
     "Notification",
     "NotificationType",
     "Pharmacy",

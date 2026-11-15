@@ -1,0 +1,166 @@
+brand,active_ingredient,strength,form,pack,manufacturer,category,price_egp,rx
+Panadol,acetaminophen,500 mg,tablet,24 tablets,GSK Egypt,Pain & fever,36,0
+Panadol Extra,acetaminophen,500 mg + caffeine 65 mg,tablet,24 tablets,GSK Egypt,Pain & fever,45,0
+Abimol,acetaminophen,500 mg,tablet,20 tablets,Glaxo Egypt,Pain & fever,18,0
+Cetal,acetaminophen,500 mg,tablet,20 tablets,EIPICO,Pain & fever,15,0
+Paramol,acetaminophen,500 mg,tablet,20 tablets,Misr Pharma,Pain & fever,14,0
+Adol,acetaminophen,500 mg,tablet,24 tablets,Julphar Egypt,Pain & fever,25,0
+Brufen,ibuprofen,400 mg,tablet,30 tablets,Abbott Egypt,Pain & fever,48,0
+Brufen,ibuprofen,600 mg,tablet,30 tablets,Abbott Egypt,Pain & fever,60,0
+Cataflam,diclofenac,50 mg,tablet,20 tablets,Novartis Egypt,Pain & fever,52,0
+Voltaren,diclofenac,75 mg,ampoule,3 ampoules,Novartis Egypt,Pain & fever,45,1
+Olfen,diclofenac,75 mg,capsule,20 capsules,Mepha / Acino,Pain & fever,70,0
+Ketolac,ketoprofen,100 mg,tablet,20 tablets,Amriya Pharma,Pain & fever,38,0
+Mobic,meloxicam,15 mg,tablet,10 tablets,Boehringer Ingelheim,Pain & fever,65,1
+Celebrex,celecoxib,200 mg,capsule,20 capsules,Pfizer Egypt,Pain & fever,135,1
+Tramal,tramadol,50 mg,capsule,20 capsules,Grünenthal / Minapharm,Pain & fever,90,1
+Augmentin,amoxicillin,1 g,tablet,14 tablets,GSK Egypt,Antibiotics,160,1
+Augmentin,amoxicillin,625 mg,tablet,20 tablets,GSK Egypt,Antibiotics,130,1
+Hibiotic,amoxicillin,1 g,tablet,14 tablets,Amoun,Antibiotics,120,1
+E-Mox,amoxicillin,500 mg,capsule,16 capsules,EIPICO,Antibiotics,45,1
+Zithromax,azithromycin,500 mg,tablet,3 tablets,Pfizer Egypt,Antibiotics,95,1
+Zisrocin,azithromycin,500 mg,capsule,3 capsules,EIPICO,Antibiotics,55,1
+Xithrone,azithromycin,500 mg,tablet,3 tablets,Amoun,Antibiotics,60,1
+Ciprobay,ciprofloxacin,500 mg,tablet,10 tablets,Bayer Egypt,Antibiotics,80,1
+Ciprofar,ciprofloxacin,500 mg,tablet,10 tablets,Pharco,Antibiotics,40,1
+Tavanic,levofloxacin,500 mg,tablet,7 tablets,Sanofi Egypt,Antibiotics,140,1
+Levoxin,levofloxacin,500 mg,tablet,7 tablets,EVA Pharma,Antibiotics,75,1
+Klacid,clarithromycin,500 mg,tablet,14 tablets,Abbott Egypt,Antibiotics,170,1
+Flagyl,metronidazole,500 mg,tablet,20 tablets,Sanofi Egypt,Antibiotics,30,1
+Amrizole,metronidazole,500 mg,tablet,20 tablets,Amriya Pharma,Antibiotics,18,1
+Zinnat,cefuroxime,500 mg,tablet,10 tablets,GSK Egypt,Antibiotics,150,1
+Suprax,cefixime,400 mg,capsule,5 capsules,Sanofi Egypt,Antibiotics,110,1
+Ceporex,cephalexin,500 mg,capsule,20 capsules,GSK Egypt,Antibiotics,60,1
+Cefotrix,ceftriaxone,1 g,vial,1 vial,EIPICO,Antibiotics,35,1
+Vibramycin,doxycycline,100 mg,capsule,10 capsules,Pfizer Egypt,Antibiotics,40,1
+Uvamin Retard,nitrofurantoin,100 mg,capsule,20 capsules,Mepha / Acino,Antibiotics,85,1
+Diflucan,fluconazole,150 mg,capsule,1 capsule,Pfizer Egypt,Antifungal & antiviral,70,1
+Flucoral,fluconazole,150 mg,capsule,1 capsule,Pharco,Antifungal & antiviral,30,1
+Lamisil,terbinafine,250 mg,tablet,14 tablets,Novartis Egypt,Antifungal & antiviral,160,1
+Canesten,clotrimazole,1%,cream,20 g,Bayer Egypt,Antifungal & antiviral,40,0
+Zovirax,acyclovir,400 mg,tablet,30 tablets,GSK Egypt,Antifungal & antiviral,120,1
+Tamiflu,oseltamivir,75 mg,capsule,10 capsules,Roche Egypt,Antifungal & antiviral,250,1
+Fucidin,fusidic acid,2%,cream,15 g,LEO Pharma,Skin,45,0
+Bactroban,mupirocin,2%,ointment,15 g,GSK Egypt,Skin,55,0
+Glucophage,metformin,1000 mg,tablet,30 tablets,Merck Serono / Minapharm,Diabetes,60,1
+Glucophage XR,metformin,750 mg,tablet,30 tablets,Merck Serono / Minapharm,Diabetes,75,1
+Cidophage,metformin,850 mg,tablet,30 tablets,CID,Diabetes,30,1
+Amaryl,glimepiride,3 mg,tablet,30 tablets,Sanofi Egypt,Diabetes,85,1
+Amaryl,glimepiride,4 mg,tablet,30 tablets,Sanofi Egypt,Diabetes,95,1
+Diamicron MR,gliclazide,60 mg,tablet,30 tablets,Servier Egypt,Diabetes,110,1
+Januvia,sitagliptin,100 mg,tablet,28 tablets,MSD Egypt,Diabetes,330,1
+Jardiance,empagliflozin,10 mg,tablet,30 tablets,Boehringer Ingelheim,Diabetes,420,1
+Jardiance,empagliflozin,25 mg,tablet,30 tablets,Boehringer Ingelheim,Diabetes,480,1
+Actos,pioglitazone,30 mg,tablet,30 tablets,Takeda,Diabetes,150,1
+Concor,bisoprolol,5 mg,tablet,30 tablets,Merck / Minapharm,Heart & blood pressure,90,1
+Concor,bisoprolol,10 mg,tablet,30 tablets,Merck / Minapharm,Heart & blood pressure,120,1
+Norvasc,amlodipine,5 mg,tablet,30 tablets,Pfizer Egypt,Heart & blood pressure,95,1
+Norvasc,amlodipine,10 mg,tablet,30 tablets,Pfizer Egypt,Heart & blood pressure,130,1
+Amlodipine Pharco,amlodipine,5 mg,tablet,30 tablets,Pharco,Heart & blood pressure,40,1
+Cozaar,losartan,50 mg,tablet,30 tablets,MSD Egypt,Heart & blood pressure,120,1
+Losartan Sandoz,losartan,50 mg,tablet,30 tablets,Sandoz Egypt,Heart & blood pressure,60,1
+Diovan,valsartan,160 mg,tablet,28 tablets,Novartis Egypt,Heart & blood pressure,210,1
+Micardis,telmisartan,80 mg,tablet,28 tablets,Boehringer Ingelheim,Heart & blood pressure,230,1
+Aprovel,irbesartan,150 mg,tablet,28 tablets,Sanofi Egypt,Heart & blood pressure,180,1
+Tritace,ramipril,5 mg,tablet,30 tablets,Sanofi Egypt,Heart & blood pressure,100,1
+Capoten,captopril,25 mg,tablet,30 tablets,Bristol / Amoun,Heart & blood pressure,35,1
+Coversyl,perindopril,5 mg,tablet,30 tablets,Servier Egypt,Heart & blood pressure,140,1
+Lasix,furosemide,40 mg,tablet,20 tablets,Sanofi Egypt,Heart & blood pressure,25,1
+Aldactone,spironolactone,25 mg,tablet,20 tablets,Pfizer Egypt,Heart & blood pressure,45,1
+Natrilix SR,indapamide,1.5 mg,tablet,30 tablets,Servier Egypt,Heart & blood pressure,95,1
+Carvid,carvedilol,25 mg,tablet,30 tablets,Multi-Apex,Heart & blood pressure,70,1
+Nebilet,nebivolol,5 mg,tablet,28 tablets,Berlin-Chemie / Menarini,Heart & blood pressure,160,1
+Inderal,propranolol,10 mg,tablet,50 tablets,AstraZeneca / Alexandria,Heart & blood pressure,30,1
+Betaloc ZOK,metoprolol,50 mg,tablet,28 tablets,AstraZeneca,Heart & blood pressure,110,1
+Epilat Retard,nifedipine,20 mg,tablet,30 tablets,EIPICO,Heart & blood pressure,40,1
+Cordarone,amiodarone,200 mg,tablet,30 tablets,Sanofi Egypt,Heart & blood pressure,120,1
+Lanoxin,digoxin,0.25 mg,tablet,30 tablets,GSK Egypt,Heart & blood pressure,30,1
+Procoralan,ivabradine,5 mg,tablet,56 tablets,Servier Egypt,Heart & blood pressure,350,1
+Entresto,sacubitril,97/103 mg,tablet,28 tablets,Novartis Egypt,Heart & blood pressure,900,1
+Lipitor,atorvastatin,20 mg,tablet,30 tablets,Pfizer Egypt,Cholesterol,190,1
+Lipitor,atorvastatin,40 mg,tablet,30 tablets,Pfizer Egypt,Cholesterol,260,1
+Ator,atorvastatin,20 mg,tablet,30 tablets,EIPICO,Cholesterol,80,1
+Crestor,rosuvastatin,10 mg,tablet,28 tablets,AstraZeneca,Cholesterol,220,1
+Rosuvast,rosuvastatin,20 mg,tablet,28 tablets,Pharco,Cholesterol,120,1
+Ezetrol,ezetimibe,10 mg,tablet,28 tablets,MSD Egypt,Cholesterol,260,1
+Lipanthyl,fenofibrate,145 mg,tablet,30 tablets,Abbott Egypt,Cholesterol,160,1
+Plavix,clopidogrel,75 mg,tablet,28 tablets,Sanofi Egypt,Blood thinners,280,1
+Myogrel,clopidogrel,75 mg,tablet,30 tablets,Multi-Apex,Blood thinners,120,1
+Ezacard,acetylsalicylic acid,75 mg,tablet,30 tablets,Amoun,Blood thinners,20,0
+Jusprin,acetylsalicylic acid,81 mg,tablet,30 tablets,Julphar Egypt,Blood thinners,25,0
+Marevan,warfarin,5 mg,tablet,30 tablets,GSK / Amoun,Blood thinners,35,1
+Xarelto,rivaroxaban,20 mg,tablet,28 tablets,Bayer Egypt,Blood thinners,750,1
+Eliquis,apixaban,5 mg,tablet,60 tablets,Pfizer Egypt,Blood thinners,1100,1
+Losec,omeprazole,20 mg,capsule,14 capsules,AstraZeneca,Stomach,70,0
+Omez,omeprazole,20 mg,capsule,14 capsules,Dr. Reddy's,Stomach,45,0
+Controloc,pantoprazole,40 mg,tablet,14 tablets,Takeda,Stomach,110,0
+Pantoloc,pantoprazole,40 mg,tablet,14 tablets,Marcyrl,Stomach,60,0
+Nexium,esomeprazole,40 mg,tablet,14 tablets,AstraZeneca,Stomach,150,0
+Zantac,ranitidine,150 mg,tablet,20 tablets,GSK Egypt,Stomach,35,0
+Motilium,domperidone,10 mg,tablet,30 tablets,Janssen Egypt,Stomach,55,0
+Zofran,ondansetron,8 mg,tablet,10 tablets,GSK Egypt,Stomach,140,1
+Imodium,loperamide,2 mg,capsule,6 capsules,Janssen Egypt,Stomach,30,0
+Duphalac,lactulose,3.35 g/5 ml,syrup,300 ml,Abbott Egypt,Stomach,80,0
+Dulcolax,bisacodyl,5 mg,tablet,20 tablets,Sanofi Egypt,Stomach,35,0
+Pentasa,mesalazine,500 mg,tablet,100 tablets,Ferring,Stomach,900,1
+Zyrtec,cetirizine,10 mg,tablet,20 tablets,UCB / GSK,Allergy & cold,60,0
+Alerid,cetirizine,10 mg,tablet,20 tablets,Cipla / Medical Union,Allergy & cold,25,0
+Claritine,loratadine,10 mg,tablet,20 tablets,Bayer Egypt,Allergy & cold,65,0
+Lorano,loratadine,10 mg,tablet,20 tablets,Hexal / Sandoz,Allergy & cold,30,0
+Aerius,desloratadine,5 mg,tablet,20 tablets,MSD Egypt,Allergy & cold,95,0
+Comtrex,chlorpheniramine,2 mg + acetaminophen 500 mg,tablet,20 tablets,GSK Egypt,Allergy & cold,40,0
+Congestal,pseudoephedrine,60 mg + acetaminophen 650 mg,tablet,20 tablets,SIGMA,Allergy & cold,28,0
+Flurest,pseudoephedrine,60 mg + chlorpheniramine 4 mg,tablet,20 tablets,EIPICO,Allergy & cold,22,0
+Tussilar,dextromethorphan,15 mg/5 ml,syrup,120 ml,Amoun,Allergy & cold,30,0
+Mucosol,ambroxol,30 mg/5 ml,syrup,120 ml,Pharco,Allergy & cold,25,0
+Ventolin,salbutamol,100 mcg/dose,inhaler,200 doses,GSK Egypt,Asthma & breathing,55,0
+Farcolin,salbutamol,2 mg/5 ml,syrup,120 ml,Pharco,Asthma & breathing,18,0
+Singulair,montelukast,10 mg,tablet,28 tablets,MSD Egypt,Asthma & breathing,230,1
+Pulmicort,budesonide,0.5 mg/2 ml,nebule,20 nebules,AstraZeneca,Asthma & breathing,180,1
+Nasonex,mometasone,50 mcg/dose,nasal spray,140 doses,MSD Egypt,Asthma & breathing,150,0
+Solupred,prednisolone,20 mg,tablet,20 tablets,Sanofi Egypt,Hormones & steroids,50,1
+Hostacortin H,prednisolone,5 mg,tablet,20 tablets,Sanofi Egypt,Hormones & steroids,15,1
+Dexamethasone Amriya,dexamethasone,8 mg/2 ml,ampoule,6 ampoules,Amriya Pharma,Hormones & steroids,30,1
+Diprofos,betamethasone,7 mg/ml,ampoule,1 ampoule,MSD Egypt,Hormones & steroids,90,1
+Eltroxin,levothyroxine,100 mcg,tablet,100 tablets,Aspen / GSK,Hormones & steroids,95,1
+Euthyrox,levothyroxine,50 mcg,tablet,100 tablets,Merck Serono,Hormones & steroids,80,1
+Lustral,sertraline,50 mg,tablet,30 tablets,Pfizer Egypt,Mental health & nerves,190,1
+Moodapex,sertraline,50 mg,tablet,20 tablets,Multi-Apex,Mental health & nerves,60,1
+Cipralex,escitalopram,10 mg,tablet,28 tablets,Lundbeck / Minapharm,Mental health & nerves,260,1
+Depram,escitalopram,10 mg,tablet,20 tablets,EVA Pharma,Mental health & nerves,80,1
+Xanax,alprazolam,0.5 mg,tablet,30 tablets,Pfizer Egypt,Mental health & nerves,55,1
+Tryptizol,amitriptyline,25 mg,tablet,30 tablets,Kahira Pharma,Mental health & nerves,25,1
+Cymbalta,duloxetine,60 mg,capsule,28 capsules,Lilly Egypt,Mental health & nerves,320,1
+Zyprexa,olanzapine,10 mg,tablet,28 tablets,Lilly Egypt,Mental health & nerves,350,1
+Risperdal,risperidone,2 mg,tablet,20 tablets,Janssen Egypt,Mental health & nerves,110,1
+Seroquel,quetiapine,100 mg,tablet,30 tablets,AstraZeneca,Mental health & nerves,220,1
+Lyrica,pregabalin,75 mg,capsule,28 capsules,Pfizer Egypt,Mental health & nerves,210,1
+Neurontin,gabapentin,300 mg,capsule,50 capsules,Pfizer Egypt,Mental health & nerves,260,1
+Tegretol,carbamazepine,200 mg,tablet,50 tablets,Novartis Egypt,Mental health & nerves,80,1
+Depakine Chrono,valproic acid,500 mg,tablet,30 tablets,Sanofi Egypt,Mental health & nerves,120,1
+Lamictal,lamotrigine,100 mg,tablet,30 tablets,GSK Egypt,Mental health & nerves,240,1
+Keppra,levetiracetam,500 mg,tablet,30 tablets,UCB,Mental health & nerves,330,1
+Aricept,donepezil,10 mg,tablet,28 tablets,Pfizer / Eisai,Mental health & nerves,350,1
+Ebixa,memantine,10 mg,tablet,28 tablets,Lundbeck,Mental health & nerves,300,1
+Zyloric,allopurinol,300 mg,tablet,30 tablets,GSK / Amoun,Joints & gout,45,1
+Colchicine Amoun,colchicine,0.5 mg,tablet,30 tablets,Amoun,Joints & gout,25,1
+Feburic,febuxostat,80 mg,tablet,30 tablets,EVA Pharma,Joints & gout,180,1
+Plaquenil,hydroxychloroquine,200 mg,tablet,30 tablets,Sanofi Egypt,Joints & gout,110,1
+Methotrexate Minapharm,methotrexate,2.5 mg,tablet,30 tablets,Minapharm,Joints & gout,60,1
+Salazopyrin,sulfasalazine,500 mg,tablet,50 tablets,Pfizer Egypt,Joints & gout,130,1
+Arava,leflunomide,20 mg,tablet,30 tablets,Sanofi Egypt,Joints & gout,420,1
+Imuran,azathioprine,50 mg,tablet,50 tablets,Aspen / GSK,Joints & gout,180,1
+Omnic,tamsulosin,0.4 mg,capsule,30 capsules,Astellas,Men's health,190,1
+Proscar,finasteride,5 mg,tablet,28 tablets,MSD Egypt,Men's health,160,1
+Viagra,sildenafil,50 mg,tablet,4 tablets,Pfizer Egypt,Men's health,120,1
+Nolvadex,tamoxifen,20 mg,tablet,30 tablets,AstraZeneca,Cancer care,120,1
+Femara,letrozole,2.5 mg,tablet,30 tablets,Novartis Egypt,Cancer care,650,1
+Arimidex,anastrozole,1 mg,tablet,28 tablets,AstraZeneca,Cancer care,700,1
+Sandimmun Neoral,cyclosporine,100 mg,capsule,50 capsules,Novartis Egypt,Transplant,1800,1
+Prograf,tacrolimus,1 mg,capsule,50 capsules,Astellas,Transplant,1400,1
+Cellcept,mycophenolic acid,500 mg,tablet,50 tablets,Roche Egypt,Transplant,1200,1
+Folic Acid Nile,folic acid,5 mg,tablet,20 tablets,Nile Pharma,Vitamins & supplements,10,0
+Depovit B12,cyanocobalamin,1000 mcg,ampoule,3 ampoules,Amoun,Vitamins & supplements,30,0
+Vidrop,cholecalciferol,2800 IU/ml,drops,15 ml,Medical Union Pharma,Vitamins & supplements,35,0
+Devarol-S,cholecalciferol,200000 IU,ampoule,1 ampoule,Memphis,Vitamins & supplements,25,0
+Calcimate,calcium carbonate,600 mg,tablet,30 tablets,SEDICO,Vitamins & supplements,40,0

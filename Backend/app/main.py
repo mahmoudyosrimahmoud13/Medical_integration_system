@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.core.config import settings
 from app.routers import legacy
-from app.routers.v1 import admin, auth, catalog, doctors, facilities, patients
+from app.routers.v1 import admin, auth, catalog, chat, doctors, facilities, patients
 from app.services.common import ServiceError
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -43,7 +43,7 @@ async def health():
     return {"status": "ok"}
 
 
-for r in (auth.router, catalog.router, doctors.router, patients.router, facilities.router, admin.router):
+for r in (auth.router, catalog.router, doctors.router, patients.router, facilities.router, chat.router, admin.router):
     app.include_router(r, prefix="/api/v1")
 app.include_router(legacy.router)
 

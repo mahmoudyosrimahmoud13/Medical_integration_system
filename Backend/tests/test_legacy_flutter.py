@@ -21,7 +21,7 @@ async def test_address_and_specialties(client):
     assert areas and {"id", "key"} <= areas[0].keys()
     assert (await client.get("/Adress/GetAreas", params={"GovermentKey": cairo["id"]})).json() == areas
     specs = (await client.get("/Hospital/Specialties")).json()
-    assert len(specs) == 42 and {"id", "name"} <= specs[0].keys()
+    assert len(specs) >= 42 and {"id", "name"} <= specs[0].keys()
 
 
 async def test_register_login_getuser(client, refs):
@@ -67,7 +67,7 @@ async def test_search_details_book_list_cancel(client, refs):
     assert found.status_code == 200, found.text
     doctors = found.json()["doctors"]
     assert found.json()["count"] >= 1
-    doc = doctors[0]
+    doc = next(d for d in doctors if d["email"] == "doctor@healthhub.local")
     assert {"id", "area", "drImg", "name", "phone", "addressDescrption", "rate"} <= doc.keys()
 
     by_name = await client.get(

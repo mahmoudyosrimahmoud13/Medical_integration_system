@@ -510,6 +510,20 @@ class DrugOut(Out):
     name: str
 
 
+class ProductOut(Out):
+    id: int
+    brand: str
+    drug_id: str
+    active_ingredient: str
+    strength: str
+    form: str
+    pack: str
+    manufacturer: str
+    category: str
+    price_egp: float
+    prescription_only: bool
+
+
 class NotificationOut(Out):
     id: uuid.UUID
     type: str
@@ -656,3 +670,48 @@ class MedicalRecordOut(Out):
     current_prescriptions: list[PrescriptionOut]
     sessions: list[SessionOut]
     ct_scans: list[CTScanOut]
+
+
+# ---------------------------------------------------------------- chat
+
+
+class ContactOut(Out):
+    user_id: uuid.UUID
+    name: str
+    image_url: str | None
+    role: str
+    context: str
+
+
+class StartConversationIn(BaseModel):
+    user_id: uuid.UUID
+    subject: str = ""
+    first_message: str | None = None
+
+
+class ChatMessageOut(Out):
+    id: uuid.UUID
+    sender_id: uuid.UUID
+    sender_name: str
+    text: str
+    sent_at: datetime
+    read_at: datetime | None
+    mine: bool
+
+
+class ConversationOut(Out):
+    id: uuid.UUID
+    other: PersonOut
+    other_role: str
+    subject: str
+    last_message: ChatMessageOut | None
+    unread: int
+    last_message_at: datetime
+
+
+class SendMessageIn(BaseModel):
+    text: str = Field(min_length=1, max_length=2000)
+
+
+class UnreadOut(Out):
+    unread: int

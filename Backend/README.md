@@ -23,15 +23,32 @@ After `dev` starts, open **http://localhost:8000/docs** for the interactive API 
 
 You need Python 3.11 or newer. Docker is only needed for the `docker` option.
 
-### Demo accounts (created by `dev`, `reset`, and `seed --demo`)
+### Demo data (created by `dev`, `reset`, and `seed --demo`)
+
+The demo database is meant to look like a real deployment: 12 doctors across 12 specialties in Cairo,
+Giza and Alexandria with weekly schedules, 3 hospitals with departments, 6 pharmacies (El Nour, El Ezaby,
+Seif, 19011, Roshdy, Misr) with stock, 20 patients with conditions, past visits, prescriptions, reviews,
+upcoming appointments and a few conversations. See `app/demo.py` for the full list.
+
+The product catalogue (`seed_data/egypt_products.csv`) holds 165 branded medicines sold in Egypt
+(Panadol, Cataflam, Augmentin, Glucophage, Concor, Lipitor, Amaryl, Zithromax, Flagyl, ...) with
+manufacturer, strength, form, pack, category, indicative EGP price and whether a prescription is needed.
+Each product links to its active ingredient in the 1,700-drug DrugBank list, so prescriptions,
+pharmacy stock and the interaction check all work on ingredients while people search by brand.
+Prices are approximate and for demo use only.
+
+Main logins (password is the role name + `@12345`):
 
 | Role | Email | Password |
 |---|---|---|
 | Admin | admin@healthhub.local | Admin@12345 |
-| Doctor (Cardiology, Cairo) | doctor@healthhub.local | Doctor@12345 |
-| Patient | patient@healthhub.local | Patient@12345 |
-| Pharmacy owner | pharmacy@healthhub.local | Pharmacy@12345 |
-| Hospital manager | hospital@healthhub.local | Hospital@12345 |
+| Doctor (Dr. Ahmed Hassan, Cardiology, Maadi) | doctor@healthhub.local | Doctor@12345 |
+| Patient (Sara Ali) | patient@healthhub.local | Patient@12345 |
+| Pharmacy (El Nour Pharmacy, Maadi) | pharmacy@healthhub.local | Pharmacy@12345 |
+| Hospital (Dar El Shifa) | hospital@healthhub.local | Hospital@12345 |
+
+Other demo doctors: mona.elsayed@, khaled.mostafa@, yasmin.fouad@, omar.abdel@, nour.ibrahim@,
+mahmoud.adel@, dina.samir@, tarek.nabil@, heba.mahmoud@, amr.lotfy@, salma.youssef@healthhub.local.
 
 ## Roles and what each one can do
 
@@ -46,6 +63,22 @@ You need Python 3.11 or newer. Docker is only needed for the `docker` option.
 - **Admin / Customer Service**: accept or reject doctor, pharmacy and hospital requests, add or remove roles,
   block users, add specialties.
 
+## Messaging
+
+`/api/v1/chat`. There is no cold messaging; every conversation comes from a real relationship:
+
+| Who | Can start a conversation with |
+|---|---|
+| Patient | a doctor they booked with; any accepted pharmacy or hospital; support |
+| Doctor | their patients; hospitals they work at; other doctors at the same hospital; support |
+| Hospital | its own doctors; support |
+| Pharmacy | nobody (patients start, the pharmacy replies); support |
+| Admin | anyone |
+
+Once a conversation exists both sides can keep writing. Reading a conversation marks the other side's
+messages as read, and every new message creates a notification for the other person.
+`GET /chat/contacts` lists the people the current user may write to, with the reason (e.g. "visit on 2026-01-05").
+
 ## Project layout
 
 ```
@@ -59,10 +92,11 @@ app/
     v1/        the clean API
     legacy.py  the old ASP.NET routes
   ml/          client for the drug interaction model
-  seed.py      loads governorates, areas, specialties, 1,700 drugs, the admin and demo users
+  seed.py      loads governorates, areas, specialties, 1,700 drugs and the admin
+  demo.py      the rich demo: products, doctors, hospitals, pharmacies, patients, records, chats
 alembic/       database migrations
 seed_data/     reference data copied from the 2024 project
-tests/         API tests (legacy Flutter calls, doctor flows, pharmacies, hospitals)
+tests/         API tests (legacy Flutter calls, doctor flows, pharmacies, hospitals, chat, products)
 ```
 
 ## Settings

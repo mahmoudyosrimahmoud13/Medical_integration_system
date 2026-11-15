@@ -9,7 +9,6 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
-import '../../auth/domain/auth.dart';
 import '../../auth/presentation/session_cubit.dart';
 import '../../doctor_portal/presentation/doctor_apply_page.dart';
 import '../../hospital/presentation/hospital_home_page.dart';

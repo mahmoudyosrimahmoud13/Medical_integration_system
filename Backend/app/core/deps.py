@@ -76,8 +76,14 @@ CurrentDoctor = Annotated[Doctor, Depends(get_current_doctor)]
 
 
 def public_base_url(request: Request) -> str:
+    """The address people reach the API on. Behind a proxy or a Cloudflare tunnel, that is the
+    forwarded https address, not the http://localhost one the API sees."""
     if settings.public_base_url:
         return settings.public_base_url.rstrip("/")
+    proto = request.headers.get("x-forwarded-proto", "").split(",")[0].strip()
+    host = request.headers.get("x-forwarded-host", "").split(",")[0].strip()
+    if proto or host:
+        return f"{proto or request.url.scheme}://{host or request.headers.get('host', request.url.netloc)}"
     return str(request.base_url).rstrip("/")
 
 

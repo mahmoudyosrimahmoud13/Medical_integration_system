@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 160">
+  <g transform="translate(24,20)"><g transform="scale(0.9375)">
+  <rect width="128" height="128" rx="30" fill="#1B1F3B"/>
+  <g fill="#FFFFFF">
+    <rect x="22" y="26" width="14" height="76" rx="7"/>
+    <rect x="22" y="57" width="42" height="14" rx="7"/>
+    <rect x="57" y="26" width="14" height="76" rx="7"/>
+  </g>
+  <g fill="#FFC53D">
+    <rect x="92" y="26" width="14" height="76" rx="7"/>
+    <rect x="64" y="57" width="42" height="14" rx="7"/>
+  </g>
+</g></g>
+  <text x="170" y="99" font-family="Instrument Sans" font-weight="700" font-size="60" fill="#1B1F3B" letter-spacing="-2">HealthHub</text>
+</svg>

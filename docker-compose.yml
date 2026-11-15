@@ -1,4 +1,4 @@
-# Runs the whole HealthHub stack: database, API and web app.
+# Runs the whole HealthHub stack: database, API, drug interaction service and web app.
 #   docker compose up --build      then open http://localhost:8080
 services:
   db:
@@ -19,15 +19,25 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      ai:
+        condition: service_started
     environment:
       DATABASE_URL: postgresql+asyncpg://healthhub:healthhub@db:5432/healthhub
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production-please-use-a-long-random-string}
       SEED_ARGS: ${SEED_ARGS:---demo}
-      ML_SERVICE_URL: ${ML_SERVICE_URL:-}
+      ML_SERVICE_URL: ${ML_SERVICE_URL:-http://ai:8001}
     ports:
       - "8000:8000"
     volumes:
       - media:/app/media
+
+  ai:
+    build:
+      context: ./AI
+      args:
+        WITH_MODEL: ${WITH_MODEL:-0}   # WITH_MODEL=1 adds the MVN-DDI model (PyTorch, big image)
+    ports:
+      - "8001:8001"
 
   web:
     build: ./Web

@@ -106,7 +106,7 @@ Copy `.env.example` to `.env` (setup does this for you). The main ones:
 - `DATABASE_URL`: SQLite by default. Use `postgresql+asyncpg://...` for PostgreSQL.
 - `JWT_SECRET`: change it in production, at least 32 random characters.
 - `SMTP_*`: leave `SMTP_HOST` empty and emails (password reset codes) are printed in the console.
-- `ML_SERVICE_URL`: address of the drug interaction model service. Empty means interaction checks answer "unknown".
+- `ML_SERVICE_URL`: address of the drug interaction service in `../AI` (for example `http://localhost:8001`). Empty means interaction checks answer "unknown".
 
 ## Booking rules (same as the old backend)
 

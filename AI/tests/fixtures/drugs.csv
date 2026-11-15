@@ -1,0 +1,9 @@
+drug_id,smiles
+DB00945,CC(=O)OC1=CC=CC=C1C(O)=O
+DB00682,CC(=O)CC(C1=CC=CC=C1)C1=C(O)C2=C(OC1=O)C=CC=C2
+DB01211,[H][C@@]1(C[C@@](C)(OC)[C@@H](O)[C@H](C)O1)O[C@H]1[C@H](C)[C@@H](O[C@]2([H])O[C@H](C)C[C@@H]([C@H]2O)N(C)C)[C@@](C)(C[C@@H](C)C(=O)[C@H](C)[C@@H](O)[C@](C)(O)[C@@H](CC)OC(=O)[C@@H]1C)OC
+DB00641,[H][C@]12[C@H](C[C@@H](C)C=C1C=C[C@H](C)[C@@H]2CC[C@@H]1C[C@@H](O)CC(=O)O1)OC(=O)C(C)(C)CC
+DB00203,CCCC1=NN(C)C2=C1NC(=NC2=O)C1=C(OCC)C=CC(=C1)S(=O)(=O)N1CCN(C)CC1
+DB00727,[O-][N+](=O)OCC(CO[N+]([O-])=O)O[N+]([O-])=O
+DB00316,CC(=O)NC1=CC=C(O)C=C1
+DB01060,[H][C@]12SC(C)(C)[C@@H](N1C(=O)[C@H]2NC(=O)[C@H](N)C1=CC=C(O)C=C1)C(O)=O

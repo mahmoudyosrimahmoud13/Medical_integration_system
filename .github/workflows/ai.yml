@@ -1,0 +1,40 @@
+name: AI (drug interactions)
+
+on:
+  push:
+    paths: ["AI/**", ".github/workflows/ai.yml"]
+  pull_request:
+    paths: ["AI/**", ".github/workflows/ai.yml"]
+  workflow_dispatch:
+
+jobs:
+  service:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: AI/requirements-dev.txt
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check ddi_service tests tools
+      - run: pytest -q
+
+  model:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AI
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+      - run: pip install -r requirements-model.txt -r requirements-dev.txt
+      - name: Model loads and scores (tests/test_model.py)
+        run: pytest -q tests/test_model.py

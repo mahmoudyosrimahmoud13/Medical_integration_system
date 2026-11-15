@@ -140,11 +140,8 @@ async def test_v1_full_patient_flow(client, refs):
     slots = (await client.get(f"/api/v1/doctors/{doc['id']}/booked-slots", params={"day": day.isoformat()})).json()
     assert any(s["time_from"] == "09:00 AM" for s in slots)
 
-    # the demo data books some afternoons too, so move to the first free afternoon hour
-    busy = {s["time_from"] for s in slots}
-    free = next(t for t in ("01:00 PM", "02:00 PM", "03:00 PM", "04:00 PM") if t not in busy)
-    moved = await client.put(f"/api/v1/appointments/{appt.json()['id']}", json={"day": day.isoformat(), "time_from": free}, headers=h)
-    assert moved.json()["time_from"] == free
+    moved = await client.put(f"/api/v1/appointments/{appt.json()['id']}", json={"day": day.isoformat(), "time_from": "03:00 PM"}, headers=h)
+    assert moved.json()["time_from"] == "03:00 PM"
 
     review = await client.post(f"/api/v1/doctors/{doc['id']}/reviews", json={"rate": 4, "message": "Great"}, headers=h)
     assert review.status_code == 200, review.text

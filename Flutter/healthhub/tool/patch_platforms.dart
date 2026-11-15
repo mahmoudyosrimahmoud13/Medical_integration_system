@@ -12,6 +12,7 @@ void main() {
   ]);
   _replace('android/app/build.gradle.kts', [(RegExp(r'applicationId = "[^"]*"'), 'applicationId = "com.healthhub.app"')]);
   _replace('android/app/build.gradle', [(RegExp(r'applicationId "[^"]*"'), 'applicationId "com.healthhub.app"')]);
+  _raisePluginCompileSdk();
   _replace('ios/Runner/Info.plist', [
     (RegExp(r'<key>CFBundleDisplayName</key>\s*<string>[^<]*</string>'), '<key>CFBundleDisplayName</key>\n\t<string>HealthHub</string>'),
     (RegExp(r'<key>CFBundleName</key>\s*<string>[^<]*</string>'), '<key>CFBundleName</key>\n\t<string>HealthHub</string>'),
@@ -34,6 +35,35 @@ void main() {
   _replace('windows/runner/main.cpp', [(RegExp(r'L"healthhub"'), 'L"HealthHub"')]);
   _replace('linux/my_application.cc', [(RegExp(r'"healthhub"'), '"HealthHub"')]);
   stdout.writeln('Platform folders patched.');
+}
+
+// Some plugins (file_picker) still compile against an older Android SDK, while newer Flutter
+// libraries need 36. Raise every Android subproject below 36 to 36 before it builds.
+const _compileSdkFix = r'''
+// HealthHub: raise plugins that compile against an old Android SDK to 36 (added by tool/patch_platforms.dart)
+subprojects {
+    val raise: Project.() -> Unit = {
+        val android = extensions.findByName("android")
+        if (android != null) {
+            val get = android.javaClass.methods.firstOrNull { it.name == "getCompileSdk" && it.parameterCount == 0 }
+            val set = android.javaClass.methods.firstOrNull { it.name == "setCompileSdk" && it.parameterCount == 1 }
+            val current = (get?.invoke(android) as? Int) ?: 0
+            if (current in 1..35) set?.invoke(android, 36)
+        }
+    }
+    if (state.executed) raise() else afterEvaluate { raise() }
+}
+
+''';
+
+void _raisePluginCompileSdk() {
+  final file = File('android/build.gradle.kts');
+  if (!file.existsSync()) return;
+  var text = file.readAsStringSync();
+  if (text.contains('HealthHub: raise plugins')) return;
+  final at = text.indexOf('subprojects {');
+  text = at < 0 ? text + _compileSdkFix : text.substring(0, at) + _compileSdkFix + text.substring(at);
+  file.writeAsStringSync(text);
 }
 
 void _replace(String path, List<(RegExp, String)> edits) {

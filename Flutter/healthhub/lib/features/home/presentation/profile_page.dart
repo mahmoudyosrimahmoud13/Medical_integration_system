@@ -15,6 +15,8 @@ import '../../hospital/presentation/hospital_home_page.dart';
 import '../../notifications/presentation/notifications_page.dart';
 import '../../pharmacy/presentation/pharmacy_home_page.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/server/server_settings.dart';
+import '../../server/server_page.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -114,6 +116,21 @@ class ProfilePage extends StatelessWidget {
                   onSelectionChanged: (s) => AppSettings.setLang(s.first),
                 ),
               ]),
+            ).entrance(1),
+            const SectionTitle('Server'),
+            AppCard(
+              padding: EdgeInsets.zero,
+              child: ValueListenableBuilder<String?>(
+                valueListenable: ServerSettings.url,
+                builder: (context, url, _) => ListTile(
+                  key: const Key('profile-server'),
+                  leading: const Icon(Icons.dns_outlined),
+                  title: Text(tr('Server address'), style: const TextStyle(fontWeight: FontWeight.w600)),
+                  subtitle: Text(url ?? tr('Not set'), textDirection: TextDirection.ltr),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push(const ServerPage()),
+                ),
+              ),
             ).entrance(1),
             const SectionTitle('Account'),
             AppCard(

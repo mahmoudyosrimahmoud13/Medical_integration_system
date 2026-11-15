@@ -12,6 +12,8 @@ import 'forgot_password_page.dart';
 import 'register_page.dart';
 import 'session_cubit.dart';
 import '../../../core/i18n/i18n.dart';
+import '../../../core/server/server_settings.dart';
+import '../../server/server_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -48,6 +50,17 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) setState(() => _error = e.message);
     } finally {
       if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// Opens the server screen. After a new address is saved, the saved login is checked again
+  /// against the new address, so a returning user may go straight in.
+  Future<void> _changeServer() async {
+    final session = context.read<SessionCubit>();
+    final changed = await context.push<bool>(const ServerPage());
+    if (changed == true && mounted) {
+      setState(() => _error = null);
+      await session.restore();
     }
   }
 
@@ -146,6 +159,16 @@ class _LoginPageState extends State<LoginPage> {
                     Text(tr('New to HealthHub?'), style: t.bodyMedium),
                     TextButton(onPressed: () => context.push(const RegisterPage()), child: Text(tr('Create an account'))),
                   ]).animate().fadeIn(delay: 400.ms),
+                  // Which server the app talks to, with a way to change it (the Cloudflare link changes on restart).
+                  ValueListenableBuilder<String?>(
+                    valueListenable: ServerSettings.url,
+                    builder: (context, url, _) => TextButton.icon(
+                      key: const Key('change-server'),
+                      onPressed: _changeServer,
+                      icon: const Icon(Icons.dns_outlined, size: 18),
+                      label: Text(url == null ? tr('Set the server address') : tr('Server: {server} (change)', {'server': ServerSettings.shortName(url)})),
+                    ),
+                  ).animate().fadeIn(delay: 450.ms),
                 ]),
               ),
             ),

@@ -38,7 +38,10 @@ async def service_error_handler(_: Request, exc: ServiceError):
     return JSONResponse({"detail": exc.message}, status_code=exc.status_code)
 
 
+# Also under /api/v1: the website port (and the Cloudflare link) only forwards /api and /Image to this
+# server, and the Android app checks this address when someone types in the server address.
 @app.get("/health", tags=["health"])
+@app.get("/api/v1/health", tags=["health"])
 async def health():
     return {"status": "ok"}
 

@@ -175,6 +175,7 @@ async def test_v1_admin_guard(client):
 
 async def test_drug_search_and_health(client):
     assert (await client.get("/health")).json() == {"status": "ok"}
+    assert (await client.get("/api/v1/health")).json() == {"status": "ok"}  # what the Android app checks
     drugs = (await client.get("/api/v1/drugs", params={"q": "parac"})).json()
     assert drugs and all("parac" in d["name"].lower() for d in drugs)
     assert any(d["name"] == "Acetaminophen" for d in (await client.get("/api/v1/drugs", params={"q": "acetamin"})).json())

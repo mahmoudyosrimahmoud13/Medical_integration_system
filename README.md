@@ -60,7 +60,7 @@ pharmacy waiting for the admin to accept them. `./run.sh accounts` lists every l
 
 - You get a free https address like `https://blue-sky-123.trycloudflare.com`. No account needed.
 - Open it on any phone or computer.
-- In the Android app, paste it as the server address.
+- In the Android app, paste it as the server address. The app asks for it the first time it opens; later, tap "Server" on the login screen or the profile page to change it.
 - The address changes every time you start. For a fixed address on your own domain:
   1. Make a free Cloudflare account and add your domain.
   2. In the Cloudflare dashboard go to Zero Trust, then Networks, then Tunnels, and create a tunnel. Copy its token.

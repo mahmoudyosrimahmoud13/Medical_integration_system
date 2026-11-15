@@ -60,6 +60,9 @@ class DioApiClient implements ApiClient {
 
   String get baseUrl => _dio.options.baseUrl;
 
+  /// Switches every following request to another server (the address can change in the app).
+  set baseUrl(String value) => _dio.options.baseUrl = value;
+
   Future<dynamic> _run(Future<Response<dynamic>> Function() call) async {
     try {
       final response = await call();

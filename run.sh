@@ -28,8 +28,8 @@ show_help() { cat <<EOF
 
   PUT IT ON THE INTERNET WITHOUT A SERVER (Cloudflare Tunnel)
     ./run.sh --tunnel            free temporary https address (*.trycloudflare.com), no account needed.
-                                 The address changes every start. Paste it into the Android app's
-                                 "Server address" on the login screen.
+                                 The address changes every start. Paste it into the Android app: it asks
+                                 on first start, and "Server" on the login screen or profile changes it.
     ./run.sh --tunnel-token <token>   your own fixed address (needs a free Cloudflare account and a domain).
                                  Saved, so next time ./run.sh --tunnel is enough. See README "Cloudflare Tunnel".
     ./run.sh tunnel off          forget the saved tunnel token
@@ -433,6 +433,7 @@ print_box() {
   row "API docs" "http://localhost:$API_PORT/docs"
   [ "$NO_AI" = 1 ] || row "AI service" "http://localhost:$AI_PORT/docs"
   row "Android app" "$(app_url)"
+  echo "  │                 paste it in the app (first screen, or Server on the login screen)"
   [ "$LAN" = 1 ] && firewall_hint
   if has_demo; then
     echo "  │"

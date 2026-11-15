@@ -10,6 +10,8 @@ import 'features/auth/presentation/session_cubit.dart';
 import 'features/auth/presentation/splash_page.dart';
 import 'features/home/presentation/home_shell.dart';
 import 'core/i18n/i18n.dart';
+import 'core/server/server_settings.dart';
+import 'features/server/server_page.dart';
 
 /// Lets the network layer reach the session after the app is built.
 class UnauthorizedHook {
@@ -19,10 +21,13 @@ class UnauthorizedHook {
 }
 
 class HealthHubApp extends StatelessWidget {
-  const HealthHubApp({super.key, required this.deps, this.unauthorizedHook});
+  const HealthHubApp({super.key, required this.deps, this.unauthorizedHook, this.askForServer = false});
 
   final Deps deps;
   final UnauthorizedHook? unauthorizedHook;
+
+  /// Show the server screen first until a server address is saved (the real app does; tests don't).
+  final bool askForServer;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +62,12 @@ class HealthHubApp extends StatelessWidget {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              home: const AppGate(),
+              home: askForServer
+                  ? ValueListenableBuilder<String?>(
+                      valueListenable: ServerSettings.url,
+                      builder: (context, url, _) => url == null ? const ServerPage(firstRun: true) : const AppGate(),
+                    )
+                  : const AppGate(),
             ),
           ),
         ),

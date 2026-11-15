@@ -140,7 +140,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ).animate().fadeIn(delay: 250.ms, duration: 400.ms).slideY(begin: .08, end: 0),
                   const SizedBox(height: 16),
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  // Wrap, not Row: on narrow phones or with large text the link moves to its own line.
+                  Wrap(alignment: WrapAlignment.center, crossAxisAlignment: WrapCrossAlignment.center, children: [
                     Text('New to HealthHub?', style: t.bodyMedium),
                     TextButton(onPressed: () => context.push(const RegisterPage()), child: const Text('Create an account')),
                   ]).animate().fadeIn(delay: 400.ms),

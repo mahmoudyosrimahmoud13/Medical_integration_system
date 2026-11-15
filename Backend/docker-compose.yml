@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: healthhub
+      POSTGRES_PASSWORD: healthhub
+      POSTGRES_DB: healthhub
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healthhub"]
+      interval: 3s
+      retries: 20
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://healthhub:healthhub@db:5432/healthhub
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production-please-use-a-long-random-string}
+      SEED_ARGS: ${SEED_ARGS:---demo}
+      ML_SERVICE_URL: ${ML_SERVICE_URL:-}
+    ports:
+      - "8000:8000"
+    volumes:
+      - media:/app/media
+
+volumes:
+  pgdata:
+  media:

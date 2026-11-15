@@ -33,6 +33,7 @@ Doctor doctorFromJson(Map<String, dynamic> j) {
     price: s.price,
     ratingStars: s.ratingStars,
     reviewCount: s.reviewCount,
+    userId: str(j['user_id']),
     email: str(j['email']),
     gender: str(j['gender'], 'male'),
     college: str(j['college_name']),

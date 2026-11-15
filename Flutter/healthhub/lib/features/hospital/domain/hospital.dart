@@ -26,8 +26,10 @@ class Hospital extends Equatable {
     this.phone,
     this.status = 'accepted',
     this.doctors = const [],
+    this.ownerId = '',
   });
 
+  final String ownerId;
   final String id;
   final String name;
   final String area;

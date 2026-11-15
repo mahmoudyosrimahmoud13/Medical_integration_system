@@ -10,6 +10,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../../appointments/presentation/booking_sheet.dart';
+import '../../chat/presentation/new_message_page.dart';
 import '../domain/doctors.dart';
 import 'doctor_card.dart';
 
@@ -52,6 +53,14 @@ class _DetailsView extends StatelessWidget {
           pinned: true,
           stretch: true,
           foregroundColor: Colors.white,
+          actions: [
+            if (full != null && full.userId.isNotEmpty)
+              IconButton(
+                tooltip: 'Message',
+                icon: const Icon(Icons.chat_bubble_outline),
+                onPressed: () => NewMessagePage.open(context, userId: full.userId, subject: 'Question for Dr. ${full.name}'),
+              ),
+          ],
           flexibleSpace: FlexibleSpaceBar(
             stretchModes: const [StretchMode.zoomBackground],
             background: Container(

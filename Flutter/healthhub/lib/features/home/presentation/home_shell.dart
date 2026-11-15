@@ -5,6 +5,7 @@ import '../../admin/presentation/admin_page.dart';
 import '../../appointments/presentation/appointments_page.dart';
 import '../../auth/domain/auth.dart';
 import '../../auth/presentation/session_cubit.dart';
+import '../../chat/presentation/inbox_page.dart';
 import '../../doctor_portal/presentation/doctor_home_page.dart';
 import '../../doctor_portal/presentation/doctor_patients_page.dart';
 import '../../doctor_portal/presentation/doctor_schedule_page.dart';
@@ -41,25 +42,30 @@ class _HomeShellState extends State<HomeShell> {
             _Tab('Doctors', Icons.search, Icons.search, FindDoctorsPage()),
             _Tab('Visits', Icons.calendar_today_outlined, Icons.calendar_today_rounded, AppointmentsPage()),
             _Tab('Record', Icons.folder_outlined, Icons.folder_rounded, RecordsPage()),
+            _Tab('Messages', Icons.chat_bubble_outline, Icons.chat_bubble_rounded, InboxPage()),
             _Tab('Profile', Icons.person_outline, Icons.person_rounded, ProfilePage()),
           ],
         Workspace.doctor => const [
             _Tab('Today', Icons.dashboard_outlined, Icons.dashboard_rounded, DoctorHomePage()),
             _Tab('Patients', Icons.people_outline, Icons.people_rounded, DoctorPatientsPage()),
             _Tab('Schedule', Icons.schedule_outlined, Icons.schedule_rounded, DoctorSchedulePage()),
+            _Tab('Messages', Icons.chat_bubble_outline, Icons.chat_bubble_rounded, InboxPage()),
             _Tab('Profile', Icons.person_outline, Icons.person_rounded, ProfilePage()),
           ],
         Workspace.pharmacy => const [
             _Tab('Counter', Icons.local_pharmacy_outlined, Icons.local_pharmacy_rounded, PharmacyHomePage()),
             _Tab('Stock', Icons.inventory_2_outlined, Icons.inventory_2_rounded, PharmacyStockPage()),
+            _Tab('Messages', Icons.chat_bubble_outline, Icons.chat_bubble_rounded, InboxPage()),
             _Tab('Profile', Icons.person_outline, Icons.person_rounded, ProfilePage()),
           ],
         Workspace.hospital => const [
             _Tab('Hospital', Icons.local_hospital_outlined, Icons.local_hospital_rounded, HospitalHomePage()),
+            _Tab('Messages', Icons.chat_bubble_outline, Icons.chat_bubble_rounded, InboxPage()),
             _Tab('Profile', Icons.person_outline, Icons.person_rounded, ProfilePage()),
           ],
         Workspace.admin => const [
             _Tab('Requests', Icons.fact_check_outlined, Icons.fact_check_rounded, AdminPage()),
+            _Tab('Messages', Icons.chat_bubble_outline, Icons.chat_bubble_rounded, InboxPage()),
             _Tab('Profile', Icons.person_outline, Icons.person_rounded, ProfilePage()),
           ],
       };

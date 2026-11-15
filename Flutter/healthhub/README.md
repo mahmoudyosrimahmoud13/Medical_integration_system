@@ -79,8 +79,16 @@ A user can have several roles. The profile tab switches workspace; each workspac
 
 | Workspace | Tabs |
 |---|---|
-| Patient | Home, Doctors, Visits, Record, Profile |
-| Doctor | Today (bookings + stats), Patients (records, new visit, interaction check), Schedule, Profile |
-| Pharmacy | Counter (patient share codes), Stock, Profile |
-| Hospital | Hospital (doctors by department, appointments), Profile |
-| Admin | Requests (doctors, pharmacies, hospitals), Profile |
+| Patient | Home, Doctors, Visits, Record, Messages, Profile |
+| Doctor | Today (bookings + stats), Patients (records, new visit, interaction check), Schedule, Messages, Profile |
+| Pharmacy | Counter (patient share codes), Stock, Messages, Profile |
+| Hospital | Hospital (doctors by department, appointments), Messages, Profile |
+| Admin | Requests (doctors, pharmacies, hospitals), Messages, Profile |
+
+## Messaging
+
+Every workspace has an inbox. Who can start a conversation follows the backend rules: a patient can write to
+a doctor they booked with, to any pharmacy or hospital, and to support; doctors to their patients and
+hospitals; hospitals to their doctors. "Message" buttons sit on the doctor, pharmacy and hospital pages, and
+the "New message" screen lists everyone you may write to, grouped by relationship. Open threads refresh
+every few seconds.

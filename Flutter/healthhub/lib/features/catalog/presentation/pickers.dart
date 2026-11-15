@@ -197,3 +197,79 @@ class _DrugSearchFieldState extends State<DrugSearchField> {
     );
   }
 }
+
+
+/// Search-as-you-type for branded products ("Panadol", "Concor"). Returns the product; use `drugId` for stock lookups.
+class ProductSearchField extends StatefulWidget {
+  const ProductSearchField({super.key, required this.onPicked, this.label = 'Search by brand or ingredient'});
+
+  final ValueChanged<Product> onPicked;
+  final String label;
+
+  @override
+  State<ProductSearchField> createState() => _ProductSearchFieldState();
+}
+
+class _ProductSearchFieldState extends State<ProductSearchField> {
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<List<Product>> _search(String q) {
+    final completer = Completer<List<Product>>();
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () async {
+      try {
+        completer.complete(await context.read<Deps>().catalog.searchProducts(q));
+      } catch (_) {
+        completer.complete(const []);
+      }
+    });
+    return completer.future;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Autocomplete<Product>(
+      displayStringForOption: (p) => p.title,
+      optionsBuilder: (value) => value.text.trim().length < 2 ? const <Product>[] : _search(value.text),
+      optionsViewBuilder: (context, onSelected, options) => Align(
+        alignment: Alignment.topLeft,
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(16),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 320, maxWidth: 520),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              children: [
+                for (final p in options)
+                  ListTile(
+                    dense: true,
+                    title: Text(p.title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                    subtitle: Text('${p.activeIngredient} · ${p.manufacturer}'),
+                    trailing: Text(p.price > 0 ? '${p.price.toStringAsFixed(0)} EGP' : ''),
+                    onTap: () => onSelected(p),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      onSelected: (p) {
+        widget.onPicked(p);
+        FocusScope.of(context).unfocus();
+      },
+      fieldViewBuilder: (context, controller, focus, onSubmit) => TextField(
+        controller: controller,
+        focusNode: focus,
+        decoration: InputDecoration(labelText: widget.label, prefixIcon: const Icon(Icons.medication_outlined)),
+      ),
+    );
+  }
+}

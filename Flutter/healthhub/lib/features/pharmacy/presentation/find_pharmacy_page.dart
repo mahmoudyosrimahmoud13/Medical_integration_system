@@ -8,6 +8,7 @@ import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
 import '../../catalog/domain/catalog.dart';
 import '../../catalog/presentation/pickers.dart';
+import '../../chat/presentation/new_message_page.dart';
 import '../domain/pharmacy.dart';
 
 /// Patient side: pick a drug, see which pharmacies have it in stock and at what price.
@@ -19,7 +20,7 @@ class FindPharmacyPage extends StatefulWidget {
 }
 
 class _FindPharmacyPageState extends State<FindPharmacyPage> {
-  Drug? _drug;
+  Product? _product;
   String? _gov;
   String? _area;
   List<Pharmacy>? _results;
@@ -32,7 +33,7 @@ class _FindPharmacyPageState extends State<FindPharmacyPage> {
       _error = null;
     });
     try {
-      final r = await context.read<Deps>().pharmacy.find(drugId: _drug?.id, governorateId: _gov, areaId: _area);
+      final r = await context.read<Deps>().pharmacy.find(drugId: _product?.drugId, governorateId: _gov, areaId: _area);
       if (mounted) setState(() => _results = r);
     } on ApiException catch (e) {
       if (mounted) setState(() => _error = e.message);
@@ -53,27 +54,28 @@ class _FindPharmacyPageState extends State<FindPharmacyPage> {
     return Scaffold(
       appBar: AppBar(title: const Text('Find a pharmacy')),
       body: ListView(padding: const EdgeInsets.fromLTRB(16, 4, 16, 40), children: [
-        DrugSearchField(
-          label: 'Which medicine do you need?',
-          onPicked: (d) {
-            setState(() => _drug = d);
+        ProductSearchField(
+          label: 'Which medicine do you need? (e.g. Panadol)',
+          onPicked: (p) {
+            setState(() => _product = p);
             _search();
           },
         ),
-        if (_drug != null)
+        if (_product != null)
           Padding(
             padding: const EdgeInsets.only(top: 8),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: InputChip(
-                label: Text(_drug!.name),
+            child: Row(children: [
+              InputChip(
+                label: Text(_product!.title),
                 avatar: const Icon(Icons.medication, size: 18),
                 onDeleted: () {
-                  setState(() => _drug = null);
+                  setState(() => _product = null);
                   _search();
                 },
               ).popIn(),
-            ),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Showing pharmacies with ${_product!.activeIngredient}', style: Theme.of(context).textTheme.bodySmall)),
+            ]),
           ),
         const SizedBox(height: 12),
         AreaPicker(
@@ -96,10 +98,10 @@ class _FindPharmacyPageState extends State<FindPharmacyPage> {
                       ? EmptyView(
                           key: const ValueKey('none'),
                           image: 'assets/images/no_results.svg',
-                          title: _drug == null ? 'No pharmacies here yet' : 'No pharmacy has ${_drug!.name} in stock nearby',
+                          title: _product == null ? 'No pharmacies here yet' : 'No pharmacy has ${_product!.activeIngredient} in stock nearby',
                           message: 'Try another area.',
                         )
-                      : Column(key: ValueKey('r${results!.length}${_drug?.id}'), children: [
+                      : Column(key: ValueKey('r${results!.length}${_product?.id}'), children: [
                           for (var i = 0; i < results.length; i++)
                             Padding(padding: const EdgeInsets.only(top: 12), child: PharmacyCard(pharmacy: results[i]).entrance(i)),
                         ]),
@@ -139,6 +141,12 @@ class PharmacyCard extends StatelessWidget {
             Text(item.lowStock ? 'Only ${item.quantity} left' : 'In stock',
                 style: t.bodySmall?.copyWith(color: item.lowStock ? AppColors.warning : AppColors.accent, fontWeight: FontWeight.w700)),
           ]),
+        if (pharmacy.ownerId.isNotEmpty)
+          IconButton(
+            tooltip: 'Message the pharmacy',
+            icon: const Icon(Icons.chat_bubble_outline),
+            onPressed: () => NewMessagePage.open(context, userId: pharmacy.ownerId, subject: item == null ? '' : 'About ${item.drugName}'),
+          ),
       ]),
     );
   }

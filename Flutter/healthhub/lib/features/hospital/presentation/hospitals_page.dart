@@ -7,6 +7,7 @@ import '../../../core/state/load_cubit.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/animations.dart';
 import '../../../core/widgets/common.dart';
+import '../../chat/presentation/new_message_page.dart';
 import '../../doctors/presentation/doctor_card.dart';
 import '../domain/hospital.dart';
 
@@ -86,7 +87,17 @@ class HospitalDetailsPage extends StatelessWidget {
     final departments = hospital.departments;
     var i = 0;
     return Scaffold(
-      appBar: AppBar(title: Text(hospital.name)),
+      appBar: AppBar(
+        title: Text(hospital.name),
+        actions: [
+          if (hospital.ownerId.isNotEmpty)
+            IconButton(
+              tooltip: 'Message the hospital',
+              icon: const Icon(Icons.chat_bubble_outline),
+              onPressed: () => NewMessagePage.open(context, userId: hospital.ownerId, subject: 'Question about ${hospital.name}'),
+            ),
+        ],
+      ),
       body: ListView(padding: const EdgeInsets.all(16), children: [
         AppCard(
           child: Row(children: [

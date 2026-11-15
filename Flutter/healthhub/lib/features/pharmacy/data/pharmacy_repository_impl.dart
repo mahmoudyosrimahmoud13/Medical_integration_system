@@ -21,6 +21,7 @@ Pharmacy pharmacyFromJson(Map<String, dynamic> j) => Pharmacy(
       phone: strOrNull(j['phone']),
       status: str(j['status'], 'accepted'),
       item: j['item'] == null ? null : stockFromJson(map(j['item'])),
+      ownerId: str(j['owner_id']),
     );
 
 class PharmacyRepositoryImpl implements PharmacyRepository {

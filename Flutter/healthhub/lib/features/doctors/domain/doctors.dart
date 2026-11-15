@@ -62,8 +62,10 @@ class Doctor extends DoctorSummary {
     this.graduationYear,
     this.schedule = const [],
     this.certificates = const [],
+    this.userId = '',
   });
 
+  final String userId; // the doctor's account, used to start a chat
   final String email;
   final String gender;
   final String college;

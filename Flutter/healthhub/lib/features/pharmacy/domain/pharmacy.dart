@@ -28,8 +28,10 @@ class Pharmacy extends Equatable {
     this.phone,
     this.status = 'accepted',
     this.item,
+    this.ownerId = '',
   });
 
+  final String ownerId; // the pharmacy's account, used to start a chat
   final String id;
   final String name;
   final String area;

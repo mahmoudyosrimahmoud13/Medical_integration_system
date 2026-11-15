@@ -5,6 +5,7 @@ import '../features/auth/data/auth_repository_impl.dart';
 import '../features/auth/domain/auth.dart';
 import '../features/catalog/data/catalog_repository_impl.dart';
 import '../features/catalog/domain/catalog.dart';
+import '../features/chat/chat.dart';
 import '../features/doctor_portal/data/doctor_portal_repository_impl.dart';
 import '../features/doctor_portal/domain/doctor_portal.dart';
 import '../features/doctors/data/doctor_repository_impl.dart';
@@ -34,6 +35,7 @@ class Deps {
     required this.hospital,
     required this.notifications,
     required this.admin,
+    required this.chat,
   });
 
   factory Deps.fromApi(ApiClient api, TokenStorage tokens) => Deps(
@@ -48,6 +50,7 @@ class Deps {
         hospital: HospitalRepositoryImpl(api),
         notifications: NotificationRepositoryImpl(api),
         admin: AdminRepositoryImpl(api),
+        chat: ChatRepositoryImpl(api),
       );
 
   final TokenStorage tokens;
@@ -61,4 +64,5 @@ class Deps {
   final HospitalRepository hospital;
   final NotificationRepository notifications;
   final AdminRepository admin;
+  final ChatRepository chat;
 }

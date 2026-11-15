@@ -5,6 +5,7 @@ import 'package:healthhub/features/admin/admin_repository.dart';
 import 'package:healthhub/features/appointments/domain/appointments.dart';
 import 'package:healthhub/features/auth/domain/auth.dart';
 import 'package:healthhub/features/catalog/domain/catalog.dart';
+import 'package:healthhub/features/chat/chat.dart';
 import 'package:healthhub/features/doctor_portal/domain/doctor_portal.dart';
 import 'package:healthhub/features/doctors/domain/doctors.dart';
 import 'package:healthhub/features/hospital/domain/hospital.dart';
@@ -75,6 +76,9 @@ class FakeCatalog implements CatalogRepository {
   Future<List<Specialty>> specialties() async => const [cardiology];
   @override
   Future<List<Drug>> searchDrugs(String query) async => const [Drug(id: 'DB00316', name: 'Acetaminophen')];
+  @override
+  Future<List<Product>> searchProducts(String query) async =>
+      const [Product(id: 1, brand: 'Panadol', drugId: 'DB00316', activeIngredient: 'Acetaminophen', strength: '500 mg', price: 36)];
 }
 
 class FakeDoctors implements DoctorRepository {
@@ -191,6 +195,21 @@ class FakeAdmin implements AdminRepository {
   Future<void> review(String kind, String id, {required bool accept}) async {}
 }
 
+class FakeChat implements ChatRepository {
+  @override
+  Future<List<Contact>> contacts() async => const [];
+  @override
+  Future<List<Conversation>> conversations() async => const [];
+  @override
+  Future<Conversation> start(String userId, {String subject = '', String? firstMessage}) => throw UnimplementedError();
+  @override
+  Future<List<ChatMessage>> messages(String conversationId, {DateTime? after}) async => const [];
+  @override
+  Future<ChatMessage> send(String conversationId, String text) => throw UnimplementedError();
+  @override
+  Future<int> unreadCount() async => 0;
+}
+
 Deps fakeDeps({TokenStorage? tokens, bool sessionSaved = false}) => Deps(
       tokens: tokens ?? TokenStorage.memory(),
       auth: FakeAuthRepository(sessionSaved: sessionSaved),
@@ -203,4 +222,5 @@ Deps fakeDeps({TokenStorage? tokens, bool sessionSaved = false}) => Deps(
       hospital: FakeHospital(),
       notifications: FakeNotifications(),
       admin: FakeAdmin(),
+      chat: FakeChat(),
     );

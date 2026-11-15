@@ -12,6 +12,20 @@ Specialty specialtyFromJson(Map<String, dynamic> j) => Specialty(id: str(j['id']
 
 Drug drugFromJson(Map<String, dynamic> j) => Drug(id: str(j['id']), name: str(j['name']));
 
+Product productFromJson(Map<String, dynamic> j) => Product(
+      id: integer(j['id']),
+      brand: str(j['brand']),
+      drugId: str(j['drug_id']),
+      activeIngredient: str(j['active_ingredient']),
+      strength: str(j['strength']),
+      form: str(j['form']),
+      pack: str(j['pack']),
+      manufacturer: str(j['manufacturer']),
+      category: str(j['category']),
+      price: number(j['price_egp']),
+      prescriptionOnly: boolean(j['prescription_only'], true),
+    );
+
 class CatalogRepositoryImpl implements CatalogRepository {
   CatalogRepositoryImpl(this._api);
 
@@ -38,5 +52,11 @@ class CatalogRepositoryImpl implements CatalogRepository {
   Future<List<Drug>> searchDrugs(String query) async {
     if (query.trim().length < 2) return const [];
     return list(await _api.get('/drugs', query: {'q': query.trim()})).map(drugFromJson).toList();
+  }
+
+  @override
+  Future<List<Product>> searchProducts(String query) async {
+    if (query.trim().length < 2) return const [];
+    return list(await _api.get('/products', query: {'q': query.trim()})).map(productFromJson).toList();
   }
 }

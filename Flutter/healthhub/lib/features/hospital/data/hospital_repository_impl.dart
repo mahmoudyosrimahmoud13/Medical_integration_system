@@ -17,6 +17,7 @@ Hospital hospitalFromJson(Map<String, dynamic> j) => Hospital(
       address: str(j['address_description']),
       phone: strOrNull(j['phone']),
       status: str(j['status'], 'accepted'),
+      ownerId: str(j['owner_id']),
       doctors: list(j['doctors'])
           .map((d) => HospitalDoctor(doctor: doctorSummaryFromJson(map(d['doctor'])), department: str(d['department'])))
           .toList(),

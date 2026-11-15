@@ -24,7 +24,7 @@ show_help() { cat <<EOF
     ./run.sh --dev               the website reloads as you edit code
     ./run.sh --rebuild           rebuild the website first
     ./run.sh --no-ai             don't start the drug interaction service
-    ./run.sh --lan               let phones on the same Wi-Fi open it (http://<this PC's IP>:$WEB_PORT)
+    ./run.sh --local-only        only this computer can open it (by default phones on your Wi-Fi can too)
 
   PUT IT ON THE INTERNET WITHOUT A SERVER (Cloudflare Tunnel)
     ./run.sh --tunnel            free temporary https address (*.trycloudflare.com), no account needed.
@@ -40,10 +40,17 @@ show_help() { cat <<EOF
     ./run.sh --reset-empty       delete ALL data, then start empty (only the admin account)
                                  a backup is saved first; add --yes to skip the "type wipe" question
     ./run.sh demo                add the demo data to what you have now (nothing is deleted)
+    ./run.sh accounts            list every demo login with its password (doctors, hospitals, pharmacies, patients)
     ./run.sh backup [name]       save the database and uploaded files to one file now
     ./run.sh backups             list the saved backups
     ./run.sh restore <name|latest>   replace everything with a backup (asks first)
     ./run.sh reset [--demo]      delete ALL data without starting (backup first, asks first)
+
+  ANDROID APP ON YOUR PHONE (needs Flutter installed; the phone uses this computer over Wi-Fi)
+    ./run.sh app                 run the app on a phone plugged in by USB (or an emulator)
+    ./run.sh app apk             build an APK file you can copy to any phone on your Wi-Fi
+                                 both point the app at the tunnel address when one is open, otherwise at
+                                 http://<this PC's Wi-Fi address>:$WEB_PORT
 
   WHILE IT RUNS
     ./run.sh status              is it running, the public address, what is in the database
@@ -113,6 +120,39 @@ confirm_wipe() {
   printf "  Type \033[1mwipe\033[0m and press Enter to continue: "
   read -r ans || ans=""
   [ "$ans" = "wipe" ] || fail "Nothing was deleted."
+}
+
+# Every demo login with its password, grouped by role. Real accounts are listed without a password.
+accounts() {
+  [ -f "$DB_FILE" ] || { warn "No database yet. Start HealthHub once: ./run.sh"; return 0; }
+  python3 - "$DB_FILE" <<'PY'
+import sqlite3, sys
+db = sqlite3.connect(sys.argv[1])
+def rows(sql):
+    return db.execute(sql).fetchall()
+groups = [
+    ("Admin", "ADMIN", "Admin@12345", "select u.email, u.name, '' from users u join user_roles r on r.user_id=u.id where r.role='ADMIN'"),
+    ("Doctors", "DOCTOR", "Doctor@12345",
+     "select u.email, u.name, s.name || ', ' || a.key from users u join doctors d on d.user_id=u.id "
+     "left join specialties s on s.id=d.specialty_id left join areas a on a.id=d.area_id where d.accepted=1 order by u.email!='doctor@healthhub.local', u.name"),
+    ("Hospitals", "HOSPITAL", "Hospital@12345",
+     "select u.email, h.name, a.key from users u join hospitals h on h.owner_id=u.id left join areas a on a.id=h.area_id order by u.email!='hospital@healthhub.local', h.name"),
+    ("Pharmacies", "PHARMACY", "Pharmacy@12345",
+     "select u.email, p.name, a.key from users u join pharmacies p on p.owner_id=u.id left join areas a on a.id=p.area_id order by u.email!='pharmacy@healthhub.local', p.name"),
+    ("Patients", "PATIENT", "Patient@12345",
+     "select u.email, u.name, a.key from users u left join areas a on a.id=u.area_id where u.id in (select user_id from user_roles group by user_id having count(*)=1 and max(role)='PATIENT') "
+     "order by u.email!='patient@healthhub.local', u.name"),
+]
+for title, _, pw, sql in groups:
+    data = rows(sql)
+    if not data:
+        continue
+    print(f"\n  {title} ({len(data)})")
+    for email, name, where in data:
+        demo = email.endswith("@healthhub.local")
+        print(f"    {email:<38} {pw if demo else '(own password)':<16} {name}{' (' + where + ')' if where else ''}")
+print("\n  Every demo password is the role + @12345. Log in on the website or in the Android app.")
+PY
 }
 
 # ---------------------------------------------------------------- backups
@@ -361,33 +401,52 @@ stop_healthhub() {
   if running; then fail "Something still uses port $API_PORT or $WEB_PORT. See: ss -ltnp | grep -E ':($API_PORT|$WEB_PORT)'"; fi
 }
 
-lan_ip() { hostname -I 2>/dev/null | awk '{print $1}'; }
+# This computer's address on the Wi-Fi / home network (what phones use to reach it)
+lan_ip() {
+  local ip=""
+  ip="$(ip route get 1.1.1.1 2>/dev/null | grep -o 'src [0-9.]*' | awk '{print $2}')"
+  [ -z "$ip" ] && ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+  [ -z "$ip" ] && command -v ipconfig >/dev/null && ip="$(ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null)"
+  echo "${ip:-<this-PC-IP>}"
+}
+# The address the Android app should use: the tunnel when one is open, otherwise the Wi-Fi address
+app_url() {
+  if [ -f "$ROOT/logs/tunnel.url" ]; then cat "$ROOT/logs/tunnel.url"
+  elif [ -n "$(conf_get TUNNEL_TOKEN)" ] && [ -n "$(conf_get SITE_URL)" ] && port_up $WEB_PORT; then conf_get SITE_URL
+  else echo "http://$(lan_ip):$WEB_PORT"; fi
+}
+firewall_hint() {
+  if command -v ufw >/dev/null && ufw status 2>/dev/null | grep -q "Status: active" && ! ufw status 2>/dev/null | grep -q "^$WEB_PORT"; then
+    echo "  │  ! Your firewall may block phones. Open the port once: sudo ufw allow $WEB_PORT"
+  fi
+}
 
 print_box() {
+  row() { printf "  │  %-14s %s\n" "$1" "$2"; }
   echo
   echo "  ┌───────────────────────────────────────────────────────────"
   echo "  │  HealthHub is running"
   echo "  │"
-  echo "  │  Website      http://localhost:$WEB_PORT"
-  [ "$LAN" = 1 ] && echo "  │  Same Wi-Fi   http://$(lan_ip):$WEB_PORT"
-  [ -n "$TUNNEL_URL" ] && echo "  │  Internet     $TUNNEL_URL"
-  echo "  │  API docs     http://localhost:$API_PORT/docs"
-  [ "$NO_AI" = 1 ] || echo "  │  AI service   http://localhost:$AI_PORT/docs"
-  echo "  │"
-  if [ -n "$TUNNEL_URL" ]; then
-    echo "  │  Android app: on the login screen tap \"Server address\" and paste"
-    echo "  │    $TUNNEL_URL"
-  else
-    echo "  │  Android app: run with --tunnel to get an address the phone can use"
-  fi
+  [ -n "$TUNNEL_URL" ] && row "Website" "$TUNNEL_URL"
+  row "On this PC" "http://localhost:$WEB_PORT"
+  if [ "$LAN" = 1 ]; then row "On your Wi-Fi" "http://$(lan_ip):$WEB_PORT"; else row "On your Wi-Fi" "off (--local-only)"; fi
+  row "API docs" "http://localhost:$API_PORT/docs"
+  [ "$NO_AI" = 1 ] || row "AI service" "http://localhost:$AI_PORT/docs"
+  row "Android app" "$(app_url)"
+  [ "$LAN" = 1 ] && firewall_hint
   if has_demo; then
     echo "  │"
-    echo "  │  Demo accounts (password is the role + @12345, e.g. Doctor@12345)"
-    echo "  │    patient@  doctor@  pharmacy@  hospital@  admin@  support@  healthhub.local"
-    echo "  │    more in Backend/README.md"
+    echo "  │  Demo password = the role + @12345"
+    row "  Patient" "patient@healthhub.local    Patient@12345"
+    row "  Doctor" "doctor@healthhub.local     Doctor@12345"
+    row "  Pharmacy" "pharmacy@healthhub.local   Pharmacy@12345"
+    row "  Hospital" "hospital@healthhub.local   Hospital@12345"
+    row "  Admin" "admin@healthhub.local      Admin@12345"
+    echo "  │  All $(user_count) accounts: ./run.sh accounts"
   fi
   echo "  │"
-  echo "  │  Logs: ./run.sh logs     Status: ./run.sh status"
+  echo "  │  Logs:  ./run.sh logs        Status: ./run.sh status"
+  echo "  │  App on your phone: ./run.sh app   (APK file: ./run.sh app apk)"
   if [ "$BG" = 1 ]; then echo "  │  Runs in the background. Stop it with: ./run.sh stop"
   else echo "  │  Press Ctrl+C to stop."; fi
   echo "  └───────────────────────────────────────────────────────────"
@@ -445,11 +504,11 @@ start_healthhub() {
 # ---------------------------------------------------------------- read the command and options
 CMD="start"
 case "${1:-}" in
-  start|stop|restart|status|logs|backup|backups|restore|reset|demo|tunnel|update|test|help) CMD="$1"; shift ;;
+  start|stop|restart|status|logs|backup|backups|restore|reset|demo|tunnel|update|test|app|accounts|help) CMD="$1"; shift ;;
   -h|--help) CMD="help"; shift ;;
 esac
 
-MODE="prod"; REBUILD=0; RESET=""; KEEP=0; BG=0; YES=0; DEMO=0; NO_AI=0; LAN=0; TUNNEL=0; ARGS=()
+MODE="prod"; REBUILD=0; RESET=""; KEEP=0; BG=0; YES=0; DEMO=0; NO_AI=0; LAN=1; TUNNEL=0; ARGS=()
 [ -n "$(conf_get TUNNEL_TOKEN)" ] && [ "$(conf_get TUNNEL_ALWAYS)" = 1 ] && TUNNEL=1
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -463,6 +522,7 @@ while [ $# -gt 0 ]; do
     --yes|-y) YES=1 ;;
     --no-ai) NO_AI=1 ;;
     --lan) LAN=1 ;;
+    --local-only) LAN=0 ;;
     --tunnel) TUNNEL=1 ;;
     --tunnel-token)
       [ -n "${2:-}" ] || fail "--tunnel-token needs the token from the Cloudflare dashboard"
@@ -491,6 +551,9 @@ case "$CMD" in
     if port_up $API_PORT && port_up $WEB_PORT; then ok "Running (website $WEB_PORT, API $API_PORT$(port_up $AI_PORT && echo ", AI $AI_PORT"))"
     elif running; then warn "Only half running. Try ./run.sh restart"
     else warn "Not running. Start it with ./run.sh or ./run.sh --background"; fi
+    echo "  On this PC   http://localhost:$WEB_PORT"
+    echo "  On your Wi-Fi http://$(lan_ip):$WEB_PORT"
+    echo "  Android app  $(app_url)"
     if [ -f "$ROOT/logs/tunnel.url" ]; then echo "  Internet     $(cat "$ROOT/logs/tunnel.url")"
     elif [ -n "$(conf_get TUNNEL_TOKEN)" ]; then echo "  Tunnel       your own tunnel${SITE_URL:+ }$(conf_get SITE_URL)"
     else echo "  Tunnel       off (start with --tunnel to get a public address)"; fi
@@ -531,12 +594,30 @@ case "$CMD" in
     [ -x "$BPY" ] || fail "Run ./run.sh once first to set things up."
     has_demo && { ok "Demo data is already loaded"; exit 0; }
     say "Adding the demo data (nothing is deleted)"
-    (cd "$ROOT/Backend" && "$BPY" -m alembic upgrade head >/dev/null && "$BPY" -m app.seed --demo | tail -n 3) ;;
+    (cd "$ROOT/Backend" && "$BPY" -m alembic upgrade head >/dev/null && "$BPY" -m app.seed --demo | tail -n 3)
+    accounts ;;
 
   tunnel)
     case "${ARGS[0]:-}" in
       off) conf_set TUNNEL_TOKEN ""; conf_set TUNNEL_ALWAYS ""; ok "Saved tunnel token forgotten. ./run.sh --tunnel now uses a free temporary address." ;;
       *) echo "  Start with a tunnel: ./run.sh --tunnel     Forget your own tunnel: ./run.sh tunnel off" ;;
+    esac ;;
+
+  accounts) say "Accounts"; accounts ;;
+
+  app)
+    command -v flutter >/dev/null || fail "Flutter is missing. Install it from https://docs.flutter.dev/get-started/install, then run ./run.sh app again."
+    running || warn "HealthHub isn't running, so the app will have nothing to talk to. Start it first: ./run.sh --background"
+    url="$(app_url)"
+    say "Android app pointed at $url"
+    export API_BASE_URL="$url"
+    case "${ARGS[0]:-run}" in
+      run) (cd "$ROOT/Flutter/healthhub" && ./run.sh run) ;;
+      apk)
+        (cd "$ROOT/Flutter/healthhub" && ./run.sh apk)
+        apk="$ROOT/Flutter/healthhub/build/app/outputs/flutter-apk/app-release.apk"
+        [ -f "$apk" ] && { mkdir -p "$ROOT/dist"; cp "$apk" "$ROOT/dist/HealthHub.apk"; ok "APK ready: dist/HealthHub.apk (copy it to your phone and open it)"; } ;;
+      *) fail "Use ./run.sh app   or   ./run.sh app apk" ;;
     esac ;;
 
   test)

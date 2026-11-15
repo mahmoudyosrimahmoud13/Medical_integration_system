@@ -12,7 +12,11 @@ void main() {
   ]);
   _replace('android/app/build.gradle.kts', [(RegExp(r'applicationId = "[^"]*"'), 'applicationId = "com.healthhub.app"')]);
   _replace('android/app/build.gradle', [(RegExp(r'applicationId "[^"]*"'), 'applicationId "com.healthhub.app"')]);
+  _addAppLint('android/app/build.gradle.kts', _appLintKts);
+  _addAppLint('android/app/build.gradle', _appLintGroovy);
   _raisePluginCompileSdk();
+  _useJavaHomeForGradle();
+  if (Directory('android').existsSync()) _checkAndroidPatched();
   _replace('ios/Runner/Info.plist', [
     (RegExp(r'<key>CFBundleDisplayName</key>\s*<string>[^<]*</string>'), '<key>CFBundleDisplayName</key>\n\t<string>HealthHub</string>'),
     (RegExp(r'<key>CFBundleName</key>\s*<string>[^<]*</string>'), '<key>CFBundleName</key>\n\t<string>HealthHub</string>'),
@@ -37,6 +41,21 @@ void main() {
   stdout.writeln('Platform folders patched.');
 }
 
+// The release-time lint check ("lintVital") crashes on some plugins (image_picker, file_picker) with
+// "List.removeLast()". The app does not need it to build, so release builds skip it.
+const _appLintKts = '''    // HealthHub: no lint check inside release builds (added by tool/patch_platforms.dart)
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+''';
+const _appLintGroovy = '''    // HealthHub: no lint check inside release builds (added by tool/patch_platforms.dart)
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+''';
+
 // Some plugins (file_picker) still compile against an older Android SDK, while newer Flutter
 // libraries need 36. Raise every Android subproject below 36 to 36 before it builds.
 const _compileSdkFix = r'''
@@ -52,6 +71,13 @@ subprojects {
         }
     }
     if (state.executed) raise() else afterEvaluate { raise() }
+    // "lintVital" is a code checker that runs inside release builds. Its comment parser crashes on
+    // some plugins (image_picker); the app does not need it to build, so it is skipped.
+    tasks.matching { it.name.startsWith("lintVital") }.configureEach { enabled = false }
+}
+// The same, once Gradle knows every task it will run (catches tasks added late by plugins).
+gradle.taskGraph.whenReady {
+    allTasks.filter { it.name.startsWith("lintVital") }.forEach { it.enabled = false }
 }
 
 ''';
@@ -64,6 +90,34 @@ void _raisePluginCompileSdk() {
   final at = text.indexOf('subprojects {');
   text = at < 0 ? text + _compileSdkFix : text.substring(0, at) + _compileSdkFix + text.substring(at);
   file.writeAsStringSync(text);
+}
+
+void _addAppLint(String path, String block) {
+  final file = File(path);
+  if (!file.existsSync()) return;
+  final text = file.readAsStringSync();
+  if (text.contains('checkReleaseBuilds')) return; // already patched
+  file.writeAsStringSync(text.replaceFirst(RegExp(r'^android \{[ \t]*\r?\n', multiLine: true), 'android {\n$block'));
+}
+
+// Newer project templates can pin the Java version Gradle runs on (gradle-daemon-jvm.properties).
+// An older Java makes the lint crash above, so Gradle uses JAVA_HOME instead (CI sets Java 21).
+void _useJavaHomeForGradle() {
+  final pin = File('android/gradle/gradle-daemon-jvm.properties');
+  if (pin.existsSync()) pin.deleteSync();
+}
+
+// Fails loudly if a fix above did not land, instead of a confusing build error minutes later.
+void _checkAndroidPatched() {
+  final app = File('android/app/build.gradle.kts').existsSync() ? File('android/app/build.gradle.kts') : File('android/app/build.gradle');
+  final root = File('android/build.gradle.kts');
+  final missing = <String>[
+    if (!app.existsSync() || !app.readAsStringSync().contains('checkReleaseBuilds')) '${app.path}: release lint switch',
+    if (root.existsSync() && !root.readAsStringSync().contains('HealthHub: raise plugins')) '${root.path}: plugin SDK and lint fix',
+  ];
+  if (missing.isEmpty) return;
+  stderr.writeln('patch_platforms: could not apply ${missing.join(', ')}. The Flutter template changed; update tool/patch_platforms.dart.');
+  exit(1);
 }
 
 void _replace(String path, List<(RegExp, String)> edits) {

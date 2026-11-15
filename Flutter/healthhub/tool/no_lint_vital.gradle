@@ -1,0 +1,14 @@
+// Gradle "init script": CI copies it to ~/.gradle/init.d/ so it applies to every Android build there,
+// whatever the generated android/ folder looks like.
+//
+// "lintVital" is a code checker that Android runs inside release builds. Its comment parser crashes on
+// some plugins (image_picker, file_picker) with "List.removeLast()" when Gradle runs on an older Java.
+// The app does not need it to build, so it is switched off for every project, twice over.
+allprojects {
+    tasks.configureEach { task ->
+        if (task.name.startsWith('lintVital')) task.enabled = false
+    }
+}
+gradle.taskGraph.whenReady { graph ->
+    graph.allTasks.findAll { it.name.startsWith('lintVital') }.each { it.enabled = false }
+}

@@ -48,17 +48,29 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: "21"   # Android lint needs Java 21 (it calls List.removeLast)
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
+      # The release build used to crash in Android's "lintVital" checker. Four separate guards, any one
+      # of them is enough: Gradle on Java 21 (the crash only happens on older Java), an init script that
+      # switches lintVital off in every project, the same switch in the generated android/ folder, and
+      # checkReleaseBuilds = false in the app (see tool/patch_platforms.dart).
+      - name: Make Flutter and Gradle use Java 21, and switch off lintVital
+        run: |
+          flutter config --jdk-dir="$JAVA_HOME"
+          mkdir -p ~/.gradle/init.d
+          cp tool/no_lint_vital.gradle ~/.gradle/init.d/
       - name: Generate platform folders and apply the HealthHub identity
         run: |
           flutter create . --project-name healthhub --org com.healthhub --platforms=android,ios,web   # the icon tool also writes iOS and web icons
           dart run tool/patch_platforms.dart
+          printf "\norg.gradle.java.home=%s\n" "$JAVA_HOME" >> android/gradle.properties
           flutter pub get
           dart run flutter_launcher_icons
+      - name: Show the Java that Gradle runs on (should say 21)
+        run: (cd android && ./gradlew --version)
       - run: flutter build apk --release --dart-define=API_BASE_URL=${{ github.event.inputs.api_base_url || vars.API_BASE_URL || 'https://api.healthhub.example.com' }}
       - uses: actions/upload-artifact@v4
         with:

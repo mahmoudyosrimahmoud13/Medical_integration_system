@@ -1,6 +1,11 @@
-.run.conf
-.tools/
-logs/
-backups/
-.DS_Store
+__pycache__/
+*.pyc
+*.egg-info/
+build/
 dist/
+.venv/
+.pytest_cache/
+# Never commit personal data folders
+inPace/
+identity.key
+vault.db

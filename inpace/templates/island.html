@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Tempo's island") }}{% endblock %}
+{% macro goal_text(g) %}{% if g %}{{ T(g[2], n=g[1]) }}{% endif %}{% endmacro %}
+{% block main %}
+{% if not on %}
+<div class="page-head">
+  <h1>{% trans trimmed %}Tempo's island{% endtrans %}.</h1>
+  <p class="muted">{% trans trimmed %}A reward for studying, if you want one. It stays off until you turn it on.{% endtrans %}</p>
+</div>
+<section class="card isle-intro">
+  {{ mascot('water', 170) }}
+  <div class="story">
+    <p class="eyebrow">{{ T('Chapter {n}', n=1) }}</p>
+    <h2>{{ intro.title }}</h2>
+    {% for para in intro.paras %}<p dir="auto">{{ para }}</p>{% endfor %}
+  </div>
+</section>
+<section class="card stack">
+  <h2>{% trans trimmed %}How it works{% endtrans %}</h2>
+  <ul class="isle-how">
+    <li>{{ icon('island', 22) }}<span><b>{% trans trimmed %}Focus trips.{% endtrans %}</b> {% trans trimmed %}Pick a plant and how long you'll study. While you work, Tempo swims and the plant grows on his shell. When the time is up, it joins the island.{% endtrans %}</span></li>
+    <li>{{ icon('users', 22) }}<span><b>{% trans trimmed %}Friends.{% endtrans %}</b> {% trans trimmed %}Lessons, reviews, milestones, races and finished courses bring animal friends to live on the island, and open new kinds of plants.{% endtrans %}</span></li>
+    <li>{{ icon('check', 22) }}<span><b>{% trans trimmed %}Stopping early is fine.{% endtrans %}</b> {% trans trimmed %}Stop early and your sprout rests with the minutes it already has. Next time, you carry on. Slow and steady.{% endtrans %}</span></li>
+    <li>{{ icon('alert', 22) }}<span><b>{% trans trimmed %}The fog is real.{% endtrans %}</b> {% trans trimmed %}Stay away too long and the Fog of Someday comes for your island. After 10 days your plants start to wilt, and a wilting plant dies two weeks later. Every trip you finish waters two of them. If you need a softer sea, you can turn on gentle mode.{% endtrans %}</span></li>
+    <li>{{ icon('shell', 22) }}<span><b>{% trans trimmed %}Shells.{% endtrans %}</b> {% trans trimmed %}Everything you learn earns shells. Spend them on new ground, skies, seas and things to put on your island, or on a hat for your own turtle.{% endtrans %}</span></li>
+    <li>{{ icon('book', 22) }}<span><b>{% trans trimmed %}An adventure.{% endtrans %}</b> {% trans trimmed %}Tempo sails toward the Far Shore, and a new chapter opens as your island grows. Your real pace is the weather: stop for days and the fog rolls in; come back and it lifts.{% endtrans %}</span></li>
+    <li>{{ icon('library', 22) }}<span><b>{% trans trimmed %}Your courses pay off.{% endtrans %}</b> {% trans trimmed %}Every lesson, module and finished course gives shells. Each course hides treasure chests at 25%, 50% and 75%, and a finished course puts a trophy on your island.{% endtrans %}</span></li>
+    <li>{{ icon('users', 22) }}<span><b>{% trans trimmed %}Share it.{% endtrans %}</b> {% trans trimmed %}People you add can see your island, and you can see theirs. Share my island makes a picture of it to send anywhere.{% endtrans %}</span></li>
+  </ul>
+  <form method="post" action="/island/mode" data-nav-form><input type="hidden" name="on" value="1">
+    <button class="btn primary big">{{ icon('island', 20) }}{% trans trimmed %}Turn on Tempo's island{% endtrans %}</button></form>
+  <p class="small muted" style="margin:0">{% trans trimmed %}Everything stays on this device, like the rest of inPace.{% endtrans %}</p>
+</section>
+{% else %}
+<div class="page-head isle-head">
+  <h1>{% trans trimmed %}Tempo's island{% endtrans %}.</h1>
+  <p class="isle-facts">
+    <span class="chip">{{ T('{n} plants', n=st.plants) if st.plants != 1 else _('1 plant') }}</span>
+    <span class="chip">{{ T('{n} friends', n=have.friends|length) if have.friends|length != 1 else _('1 friend') }}</span>
+    <a class="chip shells" href="#shop">{{ icon('shell', 16) }}{{ T('{n} shells', n=wallet.balance) if wallet.balance != 1 else _('1 shell') }}</a>
+    {% if st.blooming %}<span class="chip good">{% trans trimmed %}Blooming this week{% endtrans %}</span>{% endif %}
+  </p>
+</div>
+
+<nav class="isle-modes" aria-label="{{ _('Island views') }}">
+  <a href="/island" class="on" aria-current="page">{{ icon('island', 18) }}{% trans trimmed %}The island{% endtrans %}</a>
+  <a href="/island/voyages">{{ icon('route', 18) }}{% trans trimmed %}Voyages{% endtrans %}</a>
+</nav>
+
+<div class="isle-weather tempo-say fog-{{ wx.fog }}">
+  {{ mascot({0: ('cheer' if wx.fair else 'happy'), 1: 'think', 2: 'sleepy', 3: 'sad'}[wx.fog], 84) }}
+  <p class="bubble">{% if wx.fog == 0 and wx.fair %}{% trans trimmed %}Fair winds! You kept your goal this week, and the current is carrying us forward.{% endtrans %}
+  {% elif wx.fog == 0 %}{% trans trimmed %}Clear sea today. Every trip you take pushes us closer to the Far Shore.{% endtrans %}
+  {% elif wx.fog == 1 %}{{ T("A light mist is rolling in. It's been {n} days. One small trip clears it.", n=wx.days) }}
+  {% elif wx.fog == 2 %}{{ T("Thick fog. It's been {n} days, and the friends fell asleep. The story waits until you come back.", n=wx.days) }}
+  {% else %}{{ T("I'm lost in the fog. It's been {n} days. I'm keeping your sprout under my scarf, but I can't hold the fog back alone. Come find me?", n=wx.days) }}{% endif %}</p>
+</div>
+
+{% if wx.threat %}
+<section class="isle-threat threat-{{ wx.threat }}">
+  <div class="isle-villain-say">
+    <span class="isle-villain-pic">{{ villain_svg }}</span>
+    <div><b class="isle-villain-name" dir="auto">{{ taunt.name }}</b>
+      <p class="bubble dark" dir="auto">{{ taunt.villain }}</p></div>
+  </div>
+  <div class="isle-meter" role="img" aria-label="{{ T('Danger: {n} of 4', n=wx.threat) }}">
+    {% for i in range(1, 5) %}<span class="pip {{ 'on' if i <= wx.threat }}"></span>{% endfor %}
+    <span class="small"><b>{{ [_('Far away'), _('Coming closer'), _('At the shore'), _('On your island')][wx.threat - 1] }}</b>{% if wx.gentle %} · {% trans trimmed %}gentle sea: it can't take plants{% endtrans %}{% endif %}</span>
+  </div>
+  <div class="isle-answer">
+    {{ mascot('think' if wx.threat < 3 else 'oops', 56) }}
+    <p class="bubble" dir="auto">{{ taunt.tempo }}</p>
+    {% if not trip or trip.state != 'running' %}<a class="btn primary" href="#start">{% trans trimmed %}Start a trip{% endtrans %}</a>{% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% if rot.wilted %}
+<section class="card isle-alert" role="alert">
+  {{ icon('alert', 22) }}
+  <p><b>{{ T('{n} plants are wilting.', n=rot.wilted) if rot.wilted != 1 else _('1 plant is wilting.') }}</b>
+  {% if death_in is not none %}{% if death_in == 0 %}{% trans trimmed %}The first one dies today unless you water it.{% endtrans %}{% elif death_in == 1 %}{% trans trimmed %}The first one dies tomorrow unless you water it.{% endtrans %}{% else %}{{ T('The first one dies in {n} days unless you water it.', n=death_in) }}{% endif %}{% endif %}
+  {% trans trimmed %}Every trip you finish waters two of them.{% endtrans %}</p>
+</section>
+{% endif %}
+{% if wx.fled %}
+<section class="card isle-alert soft">
+  {{ icon('users', 22) }}<p>{% trans trimmed %}The friends fled into the fog. They come back after your next trip.{% endtrans %}</p>
+</section>
+{% endif %}
+
+{% if tale.added %}
+{% for c in tale.chapters if c.new %}
+<section class="card isle-new-chapter {{ 'dark' if c.key in ('villain', 'loss') }}">
+  <p class="eyebrow">{{ _('Interlude') if c.interlude else _('New chapter') }}</p>
+  <h2>{{ c.title }}</h2>
+  {% for para in c.paras %}<p dir="auto">{{ para }}</p>{% endfor %}
+</section>
+{% endfor %}
+{% endif %}
+
+{% if just %}
+<section class="card isle-grown" role="status">
+  {{ plant_svg(just.kind, 1.0, just.goal >= 60, 96)|safe }}
+  <div><h2>{{ T('Your {plant} joined the island!', plant=_(coll.plants|selectattr('key', 'equalto', just.kind)|map(attribute='name')|first)) }}</h2>
+  <p class="muted" style="margin:0">{{ T('{n} minutes of focus, grown into something real.', n=just.goal) }}</p></div>
+</section>
+{% endif %}
+
+<figure class="isle-scene">
+  <figcaption class="isle-title">
+    <span><b dir="auto">{{ shown.title }}</b> <span class="small muted">{{ phase_label }}</span></span>
+    <details class="inline-more"><summary>{% trans trimmed %}Rename{% endtrans %}</summary>
+      <form method="post" action="/island/name" class="stack" data-nav-form>
+        <label>{% trans trimmed %}Island name{% endtrans %}<input name="title" value="{{ shown.title }}" maxlength="30" dir="auto"></label>
+        <button class="btn">{% trans trimmed %}Save{% endtrans %}</button></form></details>
+  </figcaption>
+  {{ picture|safe }}
+  {% if shown.dead %}<figcaption class="isle-caption"><span>{{ T('{n} plants here were taken by the fog.', n=shown.dead) if shown.dead != 1 else _('1 plant here was taken by the fog.') }}</span>
+    <form method="post" action="/island/clear" data-nav-form><button class="btn small">{% trans trimmed %}Clear them away{% endtrans %}</button></form></figcaption>{% endif %}
+  {% if st.blooming %}<figcaption>{% trans trimmed %}Your checker approved a milestone, so the island is blooming this week.{% endtrans %}</figcaption>{% endif %}
+  <figcaption class="isle-caption isle-share">
+    <span class="small muted">{% if sharing %}{% trans trimmed %}People you add can see your island.{% endtrans %}{% else %}{% trans trimmed %}Your island is private.{% endtrans %}{% endif %}</span>
+    <form method="post" action="/island/share.png" data-share-island><input type="hidden" name="png" value="">
+      <button class="btn small primary">{{ icon('send', 16) }}{% trans trimmed %}Share my island{% endtrans %}</button></form>
+  </figcaption>
+</figure>
+<p class="isle-friend-say bubble" data-friend-say hidden dir="auto"></p>
+<script type="application/json" id="friend-lines">{{ friend_lines|tojson }}</script>
+
+<section class="card stack isle-start" id="start">
+  {% if trip and trip.state == 'running' %}
+    <div class="row between wrap">
+      <span><b>{{ T('A trip is on: {plant}', plant=_(coll.plants|selectattr('key', 'equalto', trip.kind)|map(attribute='name')|first)) }}</b><br>
+      <span class="small muted">{{ T('{a} of {b} minutes', a=(elapsed // 60), b=trip.goal) }}</span></span>
+      <a class="btn primary" href="/island/trip">{% trans trimmed %}Back to the trip{% endtrans %}</a>
+    </div>
+  {% elif trip %}
+    <div class="isle-resting">
+      {{ plant_svg(trip.kind, 0.25, False, 64)|safe }}
+      <div class="grow"><b>{{ T('Your {plant} sprout is resting.', plant=_(coll.plants|selectattr('key', 'equalto', trip.kind)|map(attribute='name')|first)) }}</b>
+      <p class="small muted" style="margin:.2rem 0 0">{{ T('It has {a} of its {b} minutes. Carry on whenever you like.', a=(elapsed // 60), b=trip.goal) }}</p></div>
+    </div>
+    <div class="row wrap">
+      <form method="post" action="/island/start" data-nav-form><input type="hidden" name="mode" value="{{ trip.mode }}"><button class="btn primary big">{% trans trimmed %}Keep going{% endtrans %}</button></form>
+      <form method="post" action="/island/let-go" data-nav-form><button class="btn">{% trans trimmed %}Start fresh instead{% endtrans %}</button></form>
+    </div>
+  {% else %}
+  <h2>{% trans trimmed %}Start a focus trip{% endtrans %}</h2>
+  <form method="post" action="/island/start" class="stack" data-nav-form>
+    <fieldset class="isle-pick">
+      <legend>{% trans trimmed %}What will grow?{% endtrans %}</legend>
+      <div class="isle-seeds">
+      {% for p in coll.plants if p.have %}
+        <label class="isle-seed"><input type="radio" name="kind" value="{{ p.key }}" {{ 'checked' if p.key == last_kind or (loop.first and last_kind not in have.plants) }}>
+          <span>{{ plant_svg(p.key, 1.0, False, 54)|safe }}<b>{{ _(p.name) }}</b></span></label>
+      {% endfor %}
+      </div>
+    </fieldset>
+    <fieldset class="isle-pick">
+      <legend>{% trans trimmed %}For how long?{% endtrans %}</legend>
+      <div class="isle-lengths">
+      {% for m in lengths %}
+        <label class="isle-len"><input type="radio" name="minutes" value="{{ m }}" {{ 'checked' if m == 25 }}><span>{{ T('{n} min', n=m) }}</span></label>
+      {% endfor %}
+      </div>
+      <p class="small muted" style="margin:.4rem 0 0">{% trans trimmed %}Longer trips grow bigger plants. An hour or more, and it grows fruit or flowers.{% endtrans %}</p>
+    </fieldset>
+    {% if journeys %}
+    <label>{% trans trimmed %}What are you studying? (optional){% endtrans %}
+      <select name="journey"><option value="">{% trans trimmed %}Something else{% endtrans %}</option>
+        {% for j in journeys %}<option value="{{ j.id }}" dir="auto">{{ j.title }}</option>{% endfor %}</select></label>
+    {% endif %}
+    <fieldset class="isle-pick">
+      <legend>{% trans trimmed %}How should the clock count?{% endtrans %}</legend>
+      <label class="choice"><input type="radio" name="mode" value="anywhere" checked>
+        <span><b>{% trans trimmed %}Study anywhere{% endtrans %}</b><br><span class="small muted">{% trans trimmed %}The clock runs even if you switch to a book, another app, or close inPace.{% endtrans %}</span></span></label>
+      <label class="choice"><input type="radio" name="mode" value="phone">
+        <span><b>{% trans trimmed %}Phone down{% endtrans %}</b><br><span class="small muted">{% trans trimmed %}Time only counts while the trip screen is open. Leave it, and the plant waits for you.{% endtrans %}</span></span></label>
+    </fieldset>
+    <button class="btn primary big">{{ icon('island', 20) }}{% trans trimmed %}Start the trip{% endtrans %}</button>
+  </form>
+  {% endif %}
+</section>
+
+<section class="isle-stats">
+  <div class="pace-box"><b>{{ T('{n} min', n=st.week_min) }}</b><span>{% trans trimmed %}focus this week{% endtrans %}</span></div>
+  <div class="pace-box"><b>{{ T('{n} h', n=st.hours) }}</b><span>{% trans trimmed %}focus in total{% endtrans %}</span></div>
+  <div class="pace-box"><b>{{ st.streak }}</b><span>{% trans trimmed %}days in a row{% endtrans %}</span></div>
+  <div class="pace-box"><b>{{ T('{n} min', n=st.longest) }}</b><span>{% trans trimmed %}longest trip{% endtrans %}</span></div>
+</section>
+
+<section class="section" id="courses">
+  <h2>{% trans trimmed %}Your courses pay off{% endtrans %}</h2>
+  {% if rewards %}
+  <p class="muted">{% trans trimmed %}Lessons give 2 shells, modules 10, and a finished course 50 and a trophy on your island. Every course also hides treasure chests at 25%, 50% and 75%. Each course counts once, even if you start it again.{% endtrans %}</p>
+  <div class="isle-courses">
+    {% for c in rewards %}
+    <article class="card isle-course {{ 'done' if c.trophy }}">
+      <div class="row between wrap"><b dir="auto">{{ c.title }}</b><span class="chip shells">{{ icon('shell', 14) }}{{ T('{n} shells', n=c.shells) if c.shells != 1 else _('1 shell') }}</span></div>
+      <div class="isle-course-track" role="img" aria-label="{{ T('{n}% done', n=c.percent) }}">
+        <span class="bar"><span style="width: {{ c.percent }}%"></span></span>
+        {% for ch in c.chests %}<span class="isle-chest {{ 'open' if ch.open }}" style="inset-inline-start: {{ ch.at }}%" title="{{ T('{n}%: {s} shells', n=ch.at, s=ch.shells) }}">{{ chest(ch.open) }}</span>{% endfor %}
+        <span class="isle-chest trophy {{ 'open' if c.trophy }}" style="inset-inline-start: 100%" title="{{ _('A trophy for a finished course') }}">{{ chest(c.trophy, True) }}</span>
+      </div>
+      <p class="small muted" style="margin:0">{{ T('{n}% done', n=c.percent) }} · {{ T('{n} lessons', n=c.lessons) }}
+        {% if c.trophy %} · <b>{% trans trimmed %}Finished: the trophy is on your island.{% endtrans %}</b>
+        {% elif c.next %} · {{ T('Next chest at {n}%: {s} shells', n=c.next.at, s=c.next.shells) if c.next.at < 100 else T('Finish it for {s} shells and a trophy', s=c.next.shells) }}{% endif %}</p>
+      <a class="small" href="/learn/{{ c.journey }}">{% trans trimmed %}Continue the course{% endtrans %}</a>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">{% trans trimmed %}Start a course and it shows here, with the shells and chests it gives.{% endtrans %}</p>
+  {% endif %}
+</section>
+
+<section class="section" id="shop">
+  <div class="row between wrap">
+    <h2>{{ T('Decorate {name}', name=shown.title) }}</h2>
+    <span class="chip shells">{{ icon('shell', 16) }}{{ T('{n} shells', n=wallet.balance) if wallet.balance != 1 else _('1 shell') }}</span>
+  </div>
+  <p class="muted">{% trans trimmed %}Everything you learn earns shells: 1 for every 5 minutes of focus, 2 for a lesson, 3 for a daily review, 10 for a module, 15 for a milestone, 20 when your checker approves one, and 50 for a whole course, plus the treasure chests in your courses.{% endtrans %}</p>
+  {% for g in shop %}
+  <h3 class="shop-head">{{ g.title }}</h3>
+  <div class="shop-grid">
+    {% for it in g.rows %}
+    <article class="card shop-item {{ 'using' if it.using }}">
+      <span class="shop-pre">{{ it.preview }}</span>
+      <b dir="auto">{{ it.name }}</b>
+      {% if not it.owned %}
+        <form method="post" action="/island/buy" data-nav-form><input type="hidden" name="kind" value="{{ g.kind }}"><input type="hidden" name="key" value="{{ it.key }}">
+          <button class="btn small" {{ 'disabled' if not it.afford }}>{{ icon('shell', 14) }}{{ it.price }}</button></form>
+      {% elif g.kind == 'accessory' %}
+        <a class="btn small" href="/settings#turtle">{% trans trimmed %}Wear it{% endtrans %}</a>
+      {% elif g.kind == 'decor' %}
+        <form method="post" action="/island/look" data-nav-form><input type="hidden" name="kind" value="decor"><input type="hidden" name="key" value="{{ it.key }}">
+          <button class="btn small {{ '' if it.using else 'primary' }}">{{ _('Take it away') if it.using else _('Put it here') }}</button></form>
+      {% elif it.using %}
+        <span class="chip good">{% trans trimmed %}On this island{% endtrans %}</span>
+      {% else %}
+        <form method="post" action="/island/look" data-nav-form><input type="hidden" name="kind" value="{{ g.kind }}"><input type="hidden" name="key" value="{{ it.key }}">
+          <button class="btn small primary">{% trans trimmed %}Use it here{% endtrans %}</button></form>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+  {% if g.kind == 'decor' %}<p class="small muted">{% trans trimmed %}Up to 4 things on your island. The lanterns, the campfire, the hut and the lighthouse light up at night.{% endtrans %}</p>{% endif %}
+  {% endfor %}
+</section>
+
+<section class="section">
+  <h2>{% trans trimmed %}The way to the Far Shore{% endtrans %}</h2>
+  <p class="muted">{% trans trimmed %}Tempo moves with the story. Learners you check sail here too, by their progress, and your checkers wait at the lighthouse.{% endtrans %}</p>
+  <figure class="isle-chart">{{ chart|safe }}</figure>
+</section>
+
+<section class="section" id="logbook">
+  <div class="row between wrap">
+    <h2>{% trans trimmed %}Tempo's logbook{% endtrans %}</h2>
+    <form method="post" action="/island/world" class="row" data-nav-form>
+      <label class="small">{% trans trimmed %}Story world{% endtrans %}
+        <select name="world" data-autosubmit>
+          <option value="" {{ 'selected' if not world_setting }}>{% trans trimmed %}Match my language{% endtrans %}</option>
+          <option value="universal" {{ 'selected' if world_setting == 'universal' }}>{% trans trimmed %}The Sea of Things to Learn{% endtrans %}</option>
+          <option value="arab" {{ 'selected' if world_setting == 'arab' }}>{% trans trimmed %}Alexandria and the Great Green Sea{% endtrans %}</option>
+        </select></label>
+    </form>
+  </div>
+  <p class="muted">{{ T('Act {n} of 3.', n=tale.act) }} {% trans trimmed %}A new chapter opens as your island grows. In thick fog, the story waits for you.{% endtrans %}</p>
+  <div class="isle-log">
+  {% for c in tale.chapters|reverse %}
+    <details class="card isle-chapter {{ 'interlude' if c.interlude }}" {{ 'open' if loop.first }}>
+      <summary><b>{{ c.title }}</b>{% if c.interlude %}<span class="chip">{{ _('Interlude') }}</span>{% endif %}</summary>
+      {% for para in c.paras %}<p dir="auto">{{ para }}</p>{% endfor %}
+    </details>
+  {% endfor %}
+  {% for c in tale.locked[:3] %}
+    <div class="card isle-chapter locked"><b>{{ c.title }}</b>
+      <span class="small muted">{% if c.need.plants %}{{ T('Opens at {n} plants', n=c.need.plants) }}{% endif %}{% if c.need.streak %} · {{ T('and {n} days in a row', n=c.need.streak) }}{% endif %}</span></div>
+  {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2>{% trans trimmed %}Friends{% endtrans %}</h2>
+  <div class="isle-grid">
+  {% for f in coll.friends %}
+    <article class="card isle-card {{ '' if f.have else 'locked' }}">
+      {{ friend_svg(f.key, 72, _(f.name))|safe }}
+      <b>{{ _(f.name) if f.have else '?' }}</b>
+      {% if f.have %}<p class="small" dir="auto">{{ _(f.story) }}</p>
+      {% else %}<p class="small muted">{{ goal_text(f.goal) }}</p>
+        {% if f.goal[1] > 1 %}<span class="bar"><span style="width: {{ (100 * f.progress / f.goal[1])|round|int }}%"></span></span>{% endif %}{% endif %}
+    </article>
+  {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <h2>{% trans trimmed %}Plants{% endtrans %}</h2>
+  <div class="isle-grid">
+  {% for p in coll.plants %}
+    <article class="card isle-card {{ '' if p.have else 'locked' }}">
+      {{ plant_svg(p.key, 1.0, p.have and p.grown > 0, 64, _(p.name))|safe }}
+      <b>{{ _(p.name) }}</b>
+      {% if p.have %}<p class="small muted">{{ T('Grown {n} times', n=p.grown) if p.grown != 1 else _('Grown once') }}</p>
+      {% else %}<p class="small muted">{{ goal_text(p.goal) }}</p>
+        {% if p.goal[1] > 1 %}<span class="bar"><span style="width: {{ (100 * p.progress / p.goal[1])|round|int }}%"></span></span>{% endif %}{% endif %}
+    </article>
+  {% endfor %}
+  </div>
+</section>
+
+{% if friend_islands %}
+<section class="section" id="friends-islands">
+  <h2>{% trans trimmed %}Your friends' islands{% endtrans %}</h2>
+  <div class="isle-friends">
+    {% for f in friend_islands %}
+    <a class="card isle-friend-card" href="/people/{{ f.id }}/island">
+      <span class="isle-friend-pic">{{ f.picture }}</span>
+      <span class="row">{{ avatar(f.person, 28) }}<b dir="auto">{{ f.title }}</b></span>
+      <span class="small muted">{{ T('{name}, {n} plants', name=f.name, n=f.plants) }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<details class="more" style="margin-top:2rem">
+  <summary>{% trans trimmed %}Island settings{% endtrans %}</summary>
+  <form method="post" action="/island/sharing" class="row" data-nav-form style="margin-top:.6rem"><input type="hidden" name="on" value="{{ '0' if sharing else '1' }}">
+    <span class="small muted">{% if sharing %}{% trans trimmed %}Your contact card and the files you send carry a copy of your island, so people you add can see it.{% endtrans %}{% else %}{% trans trimmed %}Your island stays on this device. People you add don't see it.{% endtrans %}{% endif %}</span>
+    <button class="btn">{{ _('Stop sharing my island') if sharing else _('Share my island with people I add') }}</button></form>
+  <form method="post" action="/island/gentle" class="row" data-nav-form style="margin-top:.6rem"><input type="hidden" name="on" value="{{ '0' if wx.gentle else '1' }}">
+    <span class="small muted">{% if wx.gentle %}{% trans trimmed %}Gentle sea is on. The fog still comes, but it never takes your plants.{% endtrans %}{% else %}{% trans trimmed %}Gentle sea: the fog still comes, but it never takes your plants. For hard weeks.{% endtrans %}{% endif %}</span>
+    <button class="btn">{{ _('Turn off gentle sea') if wx.gentle else _('Turn on gentle sea') }}</button></form>
+  <form method="post" action="/island/mode" class="row" data-nav-form style="margin-top:.6rem"><input type="hidden" name="on" value="0">
+    <span class="small muted">{% trans trimmed %}Your island is kept, ready for when you come back.{% endtrans %}</span>
+    <button class="btn">{% trans trimmed %}Turn off{% endtrans %}</button></form>
+</details>
+{% endif %}
+{% endblock %}

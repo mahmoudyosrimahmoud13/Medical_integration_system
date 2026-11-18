@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% import "_roadmap.html" as R with context %}
+{% block title %}{{ _('Home') }}{% endblock %}
+{% set live_page = true %}
+{% block main %}
+<div class="hello">
+  {% set t = cards[0].tempo if cards else ('wave', "Hi! I'm Tempo. Pick a course and we'll go one step at a time.", []) %}
+  {% if welcome_back %}{% set t = ('cheer', "Welcome back! It's been %s days. I missed you. Let's take one small step today.", [welcome_back]) %}{% endif %}
+  {{ mascot(t[0], 104) }}
+  <div>
+    <h1>{{ _('Hi %s.')|format(me.name) }}</h1>
+    <p class="bubble">{{ say(t[1], t[2]) }}</p>
+  </div>
+</div>
+
+{% if island_on and island %}
+<section class="card isle-home threat-{{ island.wx.threat }}" aria-labelledby="isle-home-title">
+  <a class="isle-home-pic" href="/island" tabindex="-1" aria-hidden="true">{{ island.picture }}</a>
+  <div class="isle-home-body">
+    <div class="row between wrap">
+      <h2 id="isle-home-title"><a href="/island">{{ _("Tempo's island") }}</a></h2>
+      <a class="chip shells" href="/island#shop">{{ icon('shell', 16) }}{{ T('{n} shells', n=island.shells) if island.shells != 1 else _('1 shell') }}</a>
+    </div>
+    {% if island.wx.threat >= 1 %}
+    <p class="isle-home-say dark" dir="auto"><b>{{ island.taunt.name }}:</b> {{ island.taunt.villain }}</p>
+    {% elif island.wx.fair %}
+    <p class="isle-home-say">{% trans trimmed %}Fair winds! You kept your goal this week.{% endtrans %}</p>
+    {% else %}
+    <p class="isle-home-say">{% trans trimmed %}Clear sea today. Every trip you take pushes us closer to the Far Shore.{% endtrans %}</p>
+    {% endif %}
+    {% if island.rot.wilted %}<p class="isle-home-warn">{{ icon('alert', 18) }}{{ T('{n} plants are wilting.', n=island.rot.wilted) if island.rot.wilted != 1 else _('1 plant is wilting.') }} {% trans trimmed %}Every trip you finish waters two of them.{% endtrans %}</p>{% endif %}
+    <div class="isle-home-stats">
+      <span><b>{{ island.living }}</b> {{ _('plants') }}</span>
+      <span><b>{{ island.friends }}</b> {{ _('friends') }}</span>
+      <span><b>{{ T('{n} min', n=island.st.week_min) }}</b> {{ _('focus this week') }}</span>
+      <span><b>{{ island.st.streak }}</b> {{ _('days in a row') }}</span>
+    </div>
+    <div class="isle-home-story">
+      <span class="small"><b>{{ T('Chapter {a} of {b}', a=island.chapter, b=island.chapters) }}</b> · {{ _('The way to the Far Shore') }}{% if island.waiting %} · <a href="/island#logbook">{% trans trimmed %}A new chapter is waiting!{% endtrans %}</a>{% endif %}</span>
+      <span class="bar" role="progressbar" aria-label="{{ _('The way to the Far Shore') }}" aria-valuenow="{{ island.chapter }}" aria-valuemin="0" aria-valuemax="{{ island.chapters }}"><span style="width: {{ (100 * island.chapter / island.chapters)|round|int }}%"></span></span>
+    </div>
+    {% if island.next %}<p class="small muted isle-home-next">{{ T('Next to unlock: {name}', name=_(island.next.name)) }} · {{ T(island.next.goal[2], n=island.next.goal[1]) }}{% if island.next.goal[1] > 1 %} ({{ island.next.progress }}/{{ island.next.goal[1] }}){% endif %}</p>{% endif %}
+    <div class="row wrap">
+      {% if island_trip and island_trip.state == 'running' %}<a class="btn primary" href="/island/trip">{% trans trimmed %}Back to the trip{% endtrans %}</a>
+      {% elif island_trip %}<a class="btn primary" href="/island#start">{% trans trimmed %}Keep going{% endtrans %}</a>
+      {% else %}<a class="btn primary" href="/island#start">{{ icon('island', 18) }}{% trans trimmed %}Start a focus trip{% endtrans %}</a>{% endif %}
+      <a class="btn" href="/island">{% trans trimmed %}See the island{% endtrans %}</a>
+    </div>
+  </div>
+</section>
+{% elif island_on %}
+<a class="card tile rem-tip isle-tip" href="{{ '/island/trip' if island_trip and island_trip.state == 'running' else '/island#start' }}">
+  <span class="ico">{{ icon('island') }}</span>
+  <span><b>{% trans trimmed %}Start a focus trip{% endtrans %}</b>
+    <span>{% trans trimmed %}Study for a while and grow a plant on Tempo's island.{% endtrans %}</span></span>
+</a>
+{% endif %}
+
+{% if not cards %}
+<section class="card empty">
+  <h2>{% trans trimmed %}Let's start your first course{% endtrans %}</h2>
+  <p class="muted">{% trans trimmed %}Pick a free course from the library, or make your own from YouTube links, a book, a folder of class material, or with AI.{% endtrans %}</p>
+  <div class="row wrap">
+    <a class="btn primary big" href="/library">{{ icon('library', 18) }}{% trans trimmed %}Browse free courses{% endtrans %}</a>
+    <a class="btn big" href="/add">{% trans trimmed %}Add your own{% endtrans %}</a>
+  </div>
+  <p class="small" style="margin-block-start:1rem"><a href="/courses">{% trans trimmed %}Or try a sample course{% endtrans %}</a></p>
+</section>
+{% endif %}
+
+{% for c in cards %}
+{% set p = c.progress %}
+<section class="card">
+  <div class="hero">
+    <div>
+      <p class="eyebrow"><a href="/learn/{{ c.journey.id }}">{{ p.course.title }}</a>{% set on = rm_of.get(p.course.id) %}{% if on %}
+        <a class="rm-chip" href="/roadmaps/{{ on[0].id }}">{{ icon('route', 14) }}<span dir="auto">{{ T('Course {n} of {b} on “{name}”', n=on[1], b=on[0].steps|length, name=on[0].title) }}</span></a>{% endif %}</p>
+      <h2>{% if p.finished %}{{ _('You finished the course!') }}{% elif p.current_module %}{{ p.current_module.title }}{% endif %}</h2>
+    </div>
+    {% if c.chain_problems %}<span class="chip bad">{% trans trimmed %}Problem with your record{% endtrans %}</span>
+    {% elif c.last_ok %}<span class="chip good">{{ T('Approved by {name}', name=c.last_ok.checker_name) }}</span>
+    {% elif c.milestones %}<span class="chip warn">{% trans trimmed %}Waiting for your checker{% endtrans %}</span>{% endif %}
+  </div>
+  <div class="bar" role="progressbar" aria-label="{{ _('Course progress') }}" aria-valuenow="{{ p.percent }}" aria-valuemin="0" aria-valuemax="100"><span style="width: {{ p.percent }}%"></span></div>
+  {% if p.next and not c.paused %}
+  <div class="next next-top">
+    <div>
+      <p class="eyebrow">{% trans trimmed %}Next up{% endtrans %}</p>
+      <p class="next-title" dir="auto">{{ p.next.title if p.next.kind == 'lesson' else _('Finish the module tasks') }}{% if p.next.optional %} <span class="chip muted">{{ _('Optional') }}</span>{% endif %}</p>
+    </div>
+    {% if p.next.kind == 'lesson' %}
+      <a class="btn primary big" href="/learn/{{ c.journey.id }}/lesson/{{ p.next.id }}">{{ _("Continue") }} {{ icon('arrow', 18) }}</a>
+    {% else %}
+      <a class="btn primary big" href="/learn/{{ c.journey.id }}/module/{{ p.current_module.id }}">{{ _("Go to tasks") }} {{ icon('arrow', 18) }}</a>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% set rw = island_rewards.get(c.journey.id) if island_rewards else none %}
+  {% if rw %}<p class="small course-reward"><a href="/island#courses">{{ icon('shell', 14) }}{{ T('{n} shells from this course', n=rw.shells) }}</a>{% if rw.next and not rw.trophy %} · {{ T('Next chest at {n}%: {s} shells', n=rw.next.at, s=rw.next.shells) if rw.next.at < 100 else T('Finish it for {s} shells and a trophy', s=rw.next.shells) }}{% elif rw.trophy %} · {% trans trimmed %}Finished: the trophy is on your island.{% endtrans %}{% endif %}</p>{% endif %}
+  {% if not loop.first %}<details class="more card-more"><summary>{% trans trimmed %}Details and options{% endtrans %}</summary>{% endif %}
+  <div class="stats">
+    <div><b>{{ p.percent }}%</b><span>{% trans trimmed %}done{% endtrans %}</span></div>
+    <div><b>{{ p.lessons_done }}/{{ p.lessons_total }}</b><span>{% trans trimmed %}lessons{% endtrans %}</span></div>
+    <div><b>{{ p.modules_done }}/{{ p.modules_total }}</b><span>{% trans trimmed %}modules{% endtrans %}</span></div>
+    <div><b>{{ p.minutes }}m</b><span>{% trans trimmed %}time (your own count){% endtrans %}</span></div>
+  </div>
+
+  {% if c.exams_waiting %}
+  <div class="note warn row between">
+    <span>{{ _('%s sent you a verified exam.')|format(c.exams_waiting[0].checker_name) }}</span>
+    <a class="btn" href="/learn/{{ c.journey.id }}/exam/{{ c.exams_waiting[0].exam.id }}">{% trans trimmed %}Take the exam{% endtrans %}</a>
+  </div>
+  {% endif %}
+  {% if c.requests %}
+  <div class="note warn row between">
+    <span>{{ T('{name} asked to see {n} of your files.', name=c.requests[0].checker_name, n=c.requests|length) if c.requests|length > 1 else T('{name} asked to see one of your files.', name=c.requests[0].checker_name) }}</span>
+    <a class="btn" href="/milestones">{% trans trimmed %}Send them{% endtrans %}</a>
+  </div>
+  {% endif %}
+
+  <div class="pace-row">
+    {% if c.paused %}
+      <div class="pace-box warn"><b>{% trans trimmed %}On a break{% endtrans %}</b><span>{{ T('since {date}', date=c.paused.start|date) }}{% if c.paused.reason %} · {{ c.paused.reason }}{% endif %}</span>
+        <form method="post" action="/learn/{{ c.journey.id }}/do/resume"><button class="btn">{% trans trimmed %}I'm back{% endtrans %}</button></form></div>
+    {% elif c.pace.commitment %}
+      {% set tw = c.pace.this_week %}
+      <div class="pace-box {{ 'good' if tw and tw.count >= c.pace.commitment.per_week else '' }}">
+        <b>{{ tw.count if tw else 0 }} / {{ c.pace.commitment.per_week }}</b><span>{% trans trimmed %}milestones this week{% endtrans %}</span></div>
+      {% if c.pace.streak %}<div class="pace-box"><b>{{ c.pace.streak }}</b><span>{% trans trimmed %}on pace in a row{% endtrans %}</span></div>
+      {% else %}<div class="pace-box"><b>{{ _('Start a streak') }}</b><span>{{ _('Hit your goal this week') }}</span></div>{% endif %}
+    {% endif %}
+    {% if c.forecast and not c.paused %}<div class="pace-box"><b>{{ c.forecast }}</b><span>{% trans trimmed %}finish date at this pace{% endtrans %}</span></div>{% endif %}
+    {% if c.due %}<a class="pace-box link-box" href="/learn/{{ c.journey.id }}/practice"><b>{{ c.due }} to review</b><span>{% trans trimmed %}Quick review →{% endtrans %}</span></a>{% endif %}
+  </div>
+
+  <div class="row" style="margin-block-start: .9rem">
+    {% if not c.pace.commitment %}
+    <details class="more"><summary>{% trans trimmed %}Set a weekly goal{% endtrans %}</summary>
+      <form method="post" action="/learn/{{ c.journey.id }}/do/commit" class="row" style="margin-block-start:.5rem">
+        <label class="row" style="flex-direction:row;align-items:center">{% trans trimmed %}I'll save{% endtrans %} <input type="number" name="per_week" min="1" max="14" value="2" style="width:5rem"> {% trans trimmed %}milestones a week{% endtrans %}</label>
+        <button class="btn">{% trans trimmed %}Set goal{% endtrans %}</button></form></details>
+    {% endif %}
+    {% if not c.paused %}
+    <details class="more"><summary>{% trans trimmed %}Take a break{% endtrans %}</summary>
+      <form method="post" action="/learn/{{ c.journey.id }}/do/pause" class="row" style="margin-block-start:.5rem">
+        <input name="reason" placeholder="{{ _('Why? (optional, your checker sees it)') }}" style="max-width:320px"><button class="btn">{% trans trimmed %}Start break{% endtrans %}</button></form></details>
+    {% endif %}
+    <details class="more"><summary>{% trans trimmed %}Quick reflection{% endtrans %}</summary>
+      <form method="post" action="/learn/{{ c.journey.id }}/do/reflect" class="stack" style="margin-block-start:.5rem;min-width:min(560px,80vw)">
+        <label>{% trans trimmed %}What did I learn?{% endtrans %}<textarea name="learned" rows="2" dir="auto"></textarea></label>
+        <label>{% trans trimmed %}What was hard?{% endtrans %}<textarea name="hard" rows="2" dir="auto"></textarea></label>
+        <label>{% trans trimmed %}What's next?{% endtrans %}<textarea name="next" rows="2" dir="auto"></textarea></label>
+        <button class="btn">{% trans trimmed %}Save reflection{% endtrans %}</button></form></details>
+  </div>
+  {% if not loop.first %}</details>{% endif %}
+  {% if c.has_new %}
+  <p class="small muted" style="margin: .9rem 0 0">{% trans trimmed %}You've made progress since your last milestone.{% endtrans %} <a href="/milestones">{% trans trimmed %}Save a milestone{% endtrans %}</a> {% trans trimmed %}when you want your checker to see it.{% endtrans %}</p>
+  {% endif %}
+</section>
+{% endfor %}
+
+{% if road %}<div class="rm-strips">{% for x in road %}{{ R.strip(x.rm, x.st) }}{% endfor %}</div>{% endif %}
+
+{% if cards and not reminders_set %}
+<a class="card tile rem-tip" href="/reminders">
+  <span class="ico">{{ icon('bell') }}</span>
+  <span><b>{% trans trimmed %}Want a reminder to study?{% endtrans %}</b>
+  <span>{% trans trimmed %}Pick a time and Tempo will remind you, with a notification or an alarm.{% endtrans %}</span></span>
+</a>
+{% endif %}
+
+{% if cards and not checkers %}
+<section class="card soft">
+  <h3>{% trans trimmed %}Add someone to keep you on track{% endtrans %}</h3>
+  <p class="muted">{% trans trimmed %}A friend, parent or mentor installs inPace too. You swap contact cards, and they check your milestones. They don't need to know the subject.{% endtrans %}</p>
+  <a class="btn" href="/people">{% trans trimmed %}Add a checker{% endtrans %}</a>
+</section>
+{% endif %}
+{% endblock %}

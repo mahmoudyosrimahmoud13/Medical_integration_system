@@ -1,0 +1,7 @@
+2026-11-15 20:57:11,178 INFO healthhub: EMAIL (not sent, SMTP not configured) to=adham.shawky@healthhub.local subject=HealthHub doctor request
+Hello Dr. Adham Shawky,
+
+Your Request has been Accepted.
+
+/home/yosri/HealthHub/Backend/.venv/lib/python3.13/site-packages/fastapi/openapi/utils.py:295: UserWarning: Duplicate Operation ID forget_password_Auth_ForgetPassword_post for function forget_password at /home/yosri/HealthHub/Backend/app/routers/legacy.py
+  warnings.warn(message, stacklevel=1)

@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>inPace · Free open-source learning app with free courses in English and Arabic</title>
+<meta name="description" content="inPace is a free, open-source learning app for Windows, Mac, Linux and Android. Free courses and roadmaps, videos and code, quizzes, AI course maker, and signed milestones. No account, works offline.">
+<meta property="og:title" content="inPace · Learn at your pace. Prove you kept it.">
+<meta property="og:description" content="A free, open-source learning app with a library of free courses made by learners. Windows, Mac, Linux and Android.">
+<link rel="canonical" href="https://mahmoudyosrimahmoud13.github.io/inPace/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="inPace">
+<meta property="og:url" content="https://mahmoudyosrimahmoud13.github.io/inPace/">
+<meta property="og:image" content="https://mahmoudyosrimahmoud13.github.io/inPace/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="inPace · Learn at your pace. Prove you kept it.">
+<meta name="twitter:description" content="A free, open-source learning app with a library of free courses made by learners.">
+<meta name="twitter:image" content="https://mahmoudyosrimahmoud13.github.io/inPace/assets/og.jpg">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "inPace", "url": "https://mahmoudyosrimahmoud13.github.io/inPace/", "description": "A free, open-source learning app that runs on your own computer or phone. Follow courses with videos, code and quizzes, use free roadmaps, make your own courses with AI, and save signed milestones someone you trust can check.", "applicationCategory": "EducationalApplication", "operatingSystem": "Windows, macOS, Linux, Android", "offers": {"@type": "Offer", "price": 0, "priceCurrency": "USD"}, "downloadUrl": "https://mahmoudyosrimahmoud13.github.io/inPace/#download", "image": "https://mahmoudyosrimahmoud13.github.io/inPace/assets/og.jpg", "license": "https://opensource.org/licenses/MIT", "isAccessibleForFree": true, "inLanguage": ["en", "ar"], "sameAs": ["https://github.com/mahmoudyosrimahmoud13/inpace", "https://mahmoudyosrimahmoud13.github.io/inpace-library/"], "author": {"@type": "Person", "name": "Mahmoud Saad Mahmoud Yosri"}}</script>
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css?v=8">
+<script>
+  // Pick Arabic for Arabic-speaking visitors, or whatever they chose last time.
+  (function () {
+    var lang = null;
+    try { lang = localStorage.getItem("inpace-site-lang"); } catch (e) {}
+    var SPEAKS = ['en', 'ar', 'es', 'fr', 'de', 'pt', 'id', 'tr', 'vi', 'ru', 'hi', 'th', 'ja', 'zh'];
+    if (!lang) {
+      var want = (navigator.languages || [navigator.language || ""]);
+      for (var i = 0; i < want.length && !lang; i++) {
+        var c = String(want[i]).toLowerCase().replace("_", "-").split("-")[0];
+        if (SPEAKS.indexOf(c) >= 0) lang = c;
+      }
+    }
+    if (!lang) lang = "en";
+    if (location.hash === "#ar") lang = "ar";
+    document.documentElement.lang = lang;
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  })();
+</script>
+<script>
+  // Light or dark: the visitor's choice, or else their computer's setting.
+  (function () { var t = null; try { t = localStorage.getItem("inpace-site-theme"); } catch (e) {}
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); })();
+</script>
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#">
+    <img src="assets/icon.svg" alt="" width="36" height="36">
+    <span><span class="in">in</span><b>Pace</b></span>
+  </a>
+  <nav class="links" aria-label="Page">
+    <a href="#how"><span class="en">How it works</span><span class="ar">كيف يعمل</span></a>
+    <a href="guide.html"><span class="en">Guide</span><span class="ar">الدليل</span></a>
+    <a href="https://mahmoudyosrimahmoud13.github.io/inpace-library/"><span class="en">Courses</span><span class="ar">الدورات</span> <b class="nav-count" data-courses>29</b></a>
+    <a href="#features"><span class="en">Features</span><span class="ar">المزايا</span></a>
+    <a href="#phone"><span class="en">Android</span><span class="ar">أندرويد</span></a>
+    <a href="#download"><span class="en">Download</span><span class="ar">التحميل</span></a>
+    <a href="https://github.com/mahmoudyosrimahmoud13/inpace" title="Star inPace on GitHub">GitHub <b class="nav-count" data-stars hidden>★ <span></span></b></a>
+  </nav>
+  <a class="theme discord" href="discord.html" target="_blank" rel="noopener" aria-label="Discord" title="Discord: talk with us"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.317 4.37a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.865-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .078-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.3 12.3 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+  <a class="theme telegram" href="telegram.html" target="_blank" rel="noopener" aria-label="Telegram" title="Telegram: news and new courses"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+  <button class="theme" type="button" id="theme" aria-label="Light or dark mode" title="Light or dark mode"><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg></button>
+  <select class="lang" id="lang" aria-label="Language"><option value="en">English</option><option value="ar">العربية</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="id">Bahasa Indonesia</option><option value="tr">Türkçe</option><option value="vi">Tiếng Việt</option><option value="ru">Русский</option><option value="hi">हिन्दी</option><option value="th">ไทย</option><option value="ja">日本語</option><option value="zh">简体中文</option></select>
+</header>
+
+<main>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="tag-row"><p class="free-tag"><span class="en">Free · Open source · Works offline</span><span class="ar">مجاني · مفتوح المصدر · يعمل بدون إنترنت</span></p>
+      <a class="lib-pill" href="https://mahmoudyosrimahmoud13.github.io/inpace-library/"><b data-courses>29</b> <span class="en">free courses</span><span class="ar">دورة مجانية</span></a></div>
+    <h1>
+      <span class="en">Learn at your pace.<br>Prove you kept it.</span>
+      <span class="ar">تعلّم على راحتك.<br>وأثبت أنك التزمت.</span>
+    </h1>
+    <p class="lead">
+      <span class="en">inPace is a learning app that lives on your computer. Follow a course step by step, save signed milestones, and let a friend, parent or mentor check that you really did the work.</span>
+      <span class="ar">inPace تطبيق تعلّم يعيش على جهازك. تابع دورة خطوة بخطوة، واحفظ محطات موقّعة، ودع صديقًا أو أحد والديك أو مرشدك يتأكد أنك أنجزت العمل فعلًا.</span>
+    </p>
+    <div class="cta">
+      <a class="btn primary big" id="main-download" href="#download">
+        <span class="en">Download inPace</span><span class="ar">حمّل inPace</span>
+        <small id="main-os"></small>
+      </a>
+      <a class="btn big" href="guide.html"><span class="en">Read the guide</span><span class="ar">اقرأ الدليل</span></a>
+    </div>
+    <ul class="stats" id="stats" aria-live="polite">
+      <li id="st-courses" class="courses"><a href="https://mahmoudyosrimahmoud13.github.io/inpace-library/"><b data-courses>29</b><span class="en">free courses in the library</span><span class="ar">دورة مجانية في المكتبة</span></a></li>
+      <li id="st-roadmaps" class="courses" hidden><a href="https://mahmoudyosrimahmoud13.github.io/inpace-library/#roadmaps"><b data-roadmaps>10</b><span class="en">roadmaps to follow</span><span class="ar">مسار تعلّم تتابعه</span></a></li>
+      <li id="st-ver" hidden><b></b><span class="en">latest version</span><span class="ar">أحدث إصدار</span></li>
+      <li id="st-dl" hidden><b></b><span class="en">downloads</span><span class="ar">تحميل</span></li>
+      <li id="st-stars" hidden><a href="https://github.com/mahmoudyosrimahmoud13/inpace"><b></b><span class="en">stars on GitHub</span><span class="ar">نجمة على GitHub</span></a></li>
+      <li id="st-visits" hidden><b></b><span class="en">visits</span><span class="ar">زيارة</span></li>
+    </ul>
+  </div>
+  <div class="hero-art">
+    <figure class="frame tilt">
+      <img class="en" src="assets/shots/home.jpg" width="1920" height="1230" alt="The inPace home page: Tempo the turtle cheers Layla on, with her course progress and weekly goal.">
+      <img class="ar" src="assets/shots/home-ar.jpg" width="1920" height="1230" alt="الصفحة الرئيسية في inPace باللغة العربية والوضع الداكن.">
+    </figure>
+    <img class="hero-tempo" src="assets/tempo-wave.svg" width="300" height="216" alt="Tempo the turtle waving">
+    <p class="bubble"><span class="en">Slow and steady wins the race!</span><span class="ar">ببطء وثبات تفوز بالسباق!</span></p>
+  </div>
+</section>
+
+
+<!-- How it works: a real sequence, so it's numbered -->
+<section class="how" id="how">
+  <h2><span class="en">How it works.</span><span class="ar">كيف يعمل.</span></h2>
+  <ol class="steps">
+    <li class="step">
+      <span class="num">01</span>
+      <h3><span class="en">Follow a course</span><span class="ar">تابع دورة</span></h3>
+      <p><span class="en">Read the lessons, do the tasks, pass the quizzes. Every course is a trail, and Tempo walks it with you.</span><span class="ar">اقرأ الدروس، وأنجز المهام، واجتز الاختبارات. كل دورة طريق، ويمشيه معك Tempo.</span></p>
+    </li>
+    <li class="step">
+      <span class="num">02</span>
+      <h3><span class="en">Save a milestone</span><span class="ar">احفظ محطة</span></h3>
+      <p><span class="en">A milestone is a signed snapshot of your progress. Each one links to the one before, so history can't be quietly rewritten.</span><span class="ar">المحطة لقطة موقّعة من تقدّمك. كل محطة مرتبطة بالتي قبلها، فلا يمكن تغيير السجل في الخفاء.</span></p>
+    </li>
+    <li class="step">
+      <span class="num">03</span>
+      <h3><span class="en">Your checker approves</span><span class="ar">متابِعك يوافق</span></h3>
+      <p><span class="en">Send the file to someone you trust. They open it in their inPace, see exactly what you did, and send back their approval.</span><span class="ar">أرسل الملف لشخص تثق به. يفتحه في inPace عنده، ويرى ما فعلته بالضبط، ثم يرسل لك موافقته.</span></p>
+    </li>
+  </ol>
+  <div class="hood">
+    <h3><span class="en">What happens behind the scenes</span><span class="ar">ما يحدث خلف الكواليس</span></h3>
+    <dl>
+      <div><dt><span class="en">It's a tiny website on your computer</span><span class="ar">موقع صغير على جهازك</span></dt>
+        <dd><span class="en">inPace starts a small server that only your own computer can reach, and shows it in its own app window. No account, no cloud.</span><span class="ar">يشغّل inPace خادمًا صغيرًا لا يصل إليه إلا جهازك، ويعرضه في نافذة التطبيق الخاصة به. بدون حساب وبدون سحابة.</span></dd></div>
+      <div><dt><span class="en">Everything lives in one folder</span><span class="ar">كل شيء في مجلد واحد</span></dt>
+        <dd><span class="en">Your history, courses, uploaded work and settings are saved in <code>Documents/inPace</code>. Your own video folders stay where they are and are never copied.</span><span class="ar">سجلك ودوراتك وأعمالك المرفوعة وإعداداتك محفوظة في <code>Documents/inPace</code>. ومجلدات الفيديو عندك تبقى في مكانها ولا تُنسخ أبدًا.</span></dd></div>
+      <div><dt><span class="en">Your milestones are signed</span><span class="ar">محطاتك موقّعة</span></dt>
+        <dd><span class="en">Each one is signed with a key that never leaves your computer and linked to the one before. Change anything later and the signatures stop matching.</span><span class="ar">كل محطة موقّعة بمفتاح لا يغادر جهازك، ومرتبطة بالتي قبلها. وأي تغيير لاحق يجعل التوقيعات لا تتطابق.</span></dd></div>
+      <div><dt><span class="en">Checking is just swapping links</span><span class="ar">المتابعة مجرد تبادل روابط</span></dt>
+        <dd><span class="en">You send your progress as a link in any chat, your checker's app verifies every signature, and they send back a small approval link. Nothing goes through us.</span><span class="ar">ترسل تقدّمك كرابط في أي محادثة، فيتحقق تطبيق متابِعك من كل توقيع، ثم يرسل لك رابط موافقة صغيرًا. لا يمر شيء عبرنا.</span></dd></div>
+    </dl>
+    <p><a href="https://github.com/mahmoudyosrimahmoud13/inpace/blob/HEAD/docs/HOW-IT-WORKS.md"><span class="en">Read the full explanation of how inPace works</span><span class="ar">اقرأ الشرح الكامل لطريقة عمل inPace (بالإنجليزية)</span></a></p>
+  </div>
+  <p class="cta"><a class="btn" href="guide.html"><span class="en">The full guide, step by step</span><span class="ar">الدليل الكامل خطوة بخطوة</span></a></p>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+  <h2><span class="en">Everything you need to keep going.</span><span class="ar">كل ما تحتاجه لتستمر.</span></h2>
+
+  <div class="feature wide">
+    <div class="feature-text">
+      <h3><span class="en">Your course is a trail</span><span class="ar">دورتك طريق</span></h3>
+      <p><span class="en">Each lesson is a stepping stone. You always know where you are, what's next, and how close you are to the end of the module.</span><span class="ar">كل درس حجر على الطريق. تعرف دائمًا أين أنت، وما التالي، وكم بقي على نهاية الوحدة.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/trail.jpg" width="1920" height="1230" loading="lazy" alt="A course shown as a trail of lesson stones, with Tempo standing on the next lesson."></figure>
+  </div>
+
+  <div class="feature wide flip">
+    <div class="feature-text">
+      <h3><span class="en">Videos that remember where you stopped</span><span class="ar">فيديوهات تتذكر أين توقفت</span></h3>
+      <p><span class="en">Turn a folder of videos you already have into a course, or paste YouTube links. The player continues from the exact second you left, with speed, ±10 seconds and keyboard keys. Going somewhere without internet? Download a course's YouTube videos into your Downloads folder in the quality you choose, or point to the copies you already have.</span><span class="ar">حوّل مجلد فيديوهات عندك إلى دورة، أو الصق روابط يوتيوب. يكمل المشغّل من الثانية التي توقفت عندها بالضبط، مع التحكم في السرعة، والتقديم والرجوع 10 ثوانٍ، ومفاتيح لوحة المفاتيح. ستكون بدون إنترنت؟ حمّل فيديوهات يوتيوب الخاصة بالدورة في مجلد التنزيلات بالجودة التي تختارها، أو دلّ inPace على النسخ الموجودة عندك.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/player.jpg" width="1920" height="1230" loading="lazy" alt="The inPace video player."></figure>
+  </div>
+
+  <div class="feature wide">
+    <div class="feature-text">
+      <h3><span class="en">Make a course from a book, a playlist or a topic</span><span class="ar">اصنع دورة من كتاب أو قائمة تشغيل أو موضوع</span></h3>
+      <p><span class="en">Pick where to start and inPace writes the prompt for any AI chat. Attach your own book or files and they become part of the course: the AI is told their pages and chapters, so each lesson opens the right part. Or build it yourself: move things around, undo any change, and preview lessons as you write.</span><span class="ar">اختر من أين تبدأ وسيكتب inPace الطلب لأي محادثة ذكاء اصطناعي. أرفق كتابك أو ملفاتك فتصبح جزءًا من الدورة: يعرف الذكاء الاصطناعي صفحاتها وفصولها، فيفتح كل درس الجزء الصحيح. أو ابنها بنفسك: انقل الأشياء، وتراجع عن أي تغيير، وعاين الدروس أثناء الكتابة.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/ai.jpg" width="1920" height="1230" loading="lazy" alt="The AI course maker with a book chosen as the starting point."></figure>
+  </div>
+
+  <div class="feature wide flip">
+    <div class="feature-text">
+      <h3><span class="en">Lessons that read well</span><span class="ar">دروس مريحة للقراءة</span></h3>
+      <p><span class="en">Clear text, colour-coded code with a Copy button, and a calm dark mode for late nights.</span><span class="ar">نص واضح، وكود ملوّن مع زر نسخ، ووضع داكن هادئ للسهر.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/lesson.jpg" width="1920" height="1230" loading="lazy" alt="A lesson about printing in Python, in dark mode, with highlighted code."></figure>
+  </div>
+
+  <div class="feature wide">
+    <div class="feature-text">
+      <h3><span class="en">Turn a book into a course</span><span class="ar">حوّل كتابًا إلى دورة</span></h3>
+      <p><span class="en">Give inPace a PDF book. It reads the chapters and sections from the bookmarks: each chapter becomes a part of the course, and each section a lesson that opens only its own pages. Rename, reorder or leave out anything before you add it.</span><span class="ar">أعطِ inPace كتابًا بصيغة PDF. يقرأ الفصول والأقسام من علاماته: كل فصل يصبح جزءًا من الدورة، وكل قسم درسًا يفتح صفحاته فقط. غيّر الأسماء أو الترتيب أو استبعد ما تريد قبل الإضافة.</span></p>
+    </div>
+    <figure class="frame"><img class="en" src="assets/shots/sort-book.jpg" width="1920" height="1230" loading="lazy" alt="Sorting a book into a course: Chapter 1 with an Introduction and two sections, each showing its pages.">
+      <img class="ar" src="assets/shots/sort-book-ar.jpg" width="1920" height="1230" loading="lazy" alt="ترتيب كتاب في دورة: الفصل الأول مع مقدمة وقسمين، ولكل منها صفحاته."></figure>
+  </div>
+
+  <div class="feature wide flip">
+    <div class="feature-text">
+      <h3><span class="en">Read the book one part at a time</span><span class="ar">اقرأ الكتاب جزءًا جزءًا</span></h3>
+      <p><span class="en">A lesson can show a whole PDF or just pages 5 to 7. The built-in reader zooms from fit to width up to 400% (or with two fingers on a phone), rotates, has a night mode and full screen, works offline, and remembers the page you stopped on in each part. Pictures open big, to zoom and drag.</span><span class="ar">يمكن أن يعرض الدرس ملف PDF كاملًا أو الصفحات من 5 إلى 7 فقط. القارئ المدمج يكبّر من ملاءمة العرض حتى 400% (أو بإصبعين على الهاتف)، ويدوّر الصفحات، وفيه وضع ليلي وملء الشاشة، ويعمل بدون إنترنت، ويتذكر الصفحة التي توقفت عندها في كل جزء. والصور تُفتح كبيرة لتكبّرها وتسحبها.</span></p>
+    </div>
+    <figure class="frame"><img class="en" src="assets/shots/book.jpg" width="1920" height="1230" loading="lazy" alt="A lesson that opens page 3 of a book, with zoom and page buttons.">
+      <img class="ar" src="assets/shots/book-ar.jpg" width="1920" height="1230" loading="lazy" alt="درس يفتح الصفحة 3 من كتاب، مع أزرار التكبير والصفحات."></figure>
+  </div>
+
+  <div class="feature wide">
+    <div class="feature-text">
+      <h3><span class="en">Word, PowerPoint and Excel files too</span><span class="ar">ملفات Word وPowerPoint وExcel أيضًا</span></h3>
+      <p><span class="en">Class slides, notes and sheets open inside the lesson as a light preview: headings, lists, tables and pictures. Need to edit? One click opens the file in its own app. Nothing is sent anywhere.</span><span class="ar">شرائح المحاضرات والملاحظات والجداول تفتح داخل الدرس كمعاينة خفيفة: العناوين والقوائم والجداول والصور. تريد التعديل؟ ضغطة واحدة تفتح الملف في تطبيقه. لا يُرسَل شيء لأي مكان.</span></p>
+    </div>
+    <figure class="frame"><img class="en" src="assets/shots/sheet.jpg" width="1920" height="1230" loading="lazy" alt="A spreadsheet called study-plan.xlsx shown inside a lesson as a table.">
+      <img class="ar" src="assets/shots/slides-ar.jpg" width="1920" height="1230" loading="lazy" alt="عرض شرائح meet-inpace.pptx داخل درس."></figure>
+  </div>
+
+  <div class="feature wide flip">
+    <div class="feature-text">
+      <h3><span class="en">Jump anywhere in a second</span><span class="ar">انتقل لأي مكان في ثانية</span></h3>
+      <p><span class="en">Press Ctrl+K and type a few letters to open any lesson, course, task or person. The Continue card takes you back to where you were, and every lesson shows the whole course outline.</span><span class="ar">اضغط Ctrl+K واكتب بضعة أحرف لتفتح أي درس أو دورة أو مهمة أو شخص. وبطاقة "تابع" تعيدك حيث كنت، وكل درس يعرض مخطط الدورة كاملًا.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/search.jpg" width="1920" height="1230" loading="lazy" alt="The search box open over the home page, finding the lesson Printing and simple math, in the Ocean colors."></figure>
+  </div>
+
+  <div class="feature wide">
+    <div class="feature-text">
+      <h3><span class="en">Your courses, tidy</span><span class="ar">دوراتك مرتّبة</span></h3>
+      <p><span class="en">Give each course a picture, see how far along you are, and find any course or lesson with a quick search. Got a newer version? See what changed and update it without losing your progress.</span><span class="ar">أعطِ كل دورة صورة، واعرف أين وصلت فيها، واعثر على أي دورة أو درس ببحث سريع. وصلتك نسخة أحدث؟ شاهد ما تغيّر وحدّثها دون أن تفقد تقدّمك.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/courses.jpg" width="1920" height="1230" loading="lazy" alt="My courses: Python Basics, A tour of inPace and FastAPI as cards with their pictures, a progress bar and the next lesson."></figure>
+  </div>
+
+  <div class="feature wide" id="roadmaps">
+    <div class="feature-text">
+      <p class="new-badge"><span class="en">New in inPace 1.24</span><span class="ar">جديد في inPace 1.24</span></p>
+      <h3><span class="en">Roadmaps: the right courses, in the right order</span><span class="ar">مسارات التعلّم: الدورات المناسبة بالترتيب المناسب</span></h3>
+      <p><span class="en">Pick a goal like "data analyst", "machine learning" or "English from A1 to B1" and follow a path through the library's courses. inPace keeps your place, shows the next course, and adds each one when you get to it. Make your own from any courses there are (type a goal and inPace suggests them, in order), share it with a link, or publish it to the library. The library already has <a href="https://mahmoudyosrimahmoud13.github.io/inpace-library/#roadmaps"><span data-roadmaps>10</span> roadmaps</a>.</span><span class="ar">اختر هدفًا مثل «محلل بيانات» أو «تعلّم الآلة» أو «الإنجليزي من A1 إلى B1» واتبع طريقًا عبر دورات المكتبة. يحفظ inPace مكانك، ويريك الدورة التالية، ويضيف كل دورة عندما تصل إليها. اصنع مسارك من أي دورات موجودة (اكتب هدفًا فيقترحها inPace بالترتيب)، وشاركه برابط، أو انشره في المكتبة. وفي المكتبة الآن <a href="https://mahmoudyosrimahmoud13.github.io/inpace-library/#roadmaps"><span data-roadmaps>10</span> مسارات</a>.</span></p>
+      <p class="small-note"><span class="en">On Tempo's island, every roadmap becomes a voyage: each finished course lights a lighthouse, and a new friend, Nawras the seagull, flies in at the first port. Needs inPace 1.24 or newer.</span><span class="ar">على جزيرة تمبو يصير كل مسار رحلة بحرية: كل دورة تنهيها تضيء منارة، ويطير صديق جديد، نورس الطائر، إلى الجزيرة عند أول ميناء. يحتاج inPace 1.24 أو أحدث.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/roadmap.jpg" width="1920" height="1230" loading="lazy" alt="A roadmap in inPace: Become a data analyst, its voyage chart with Tempo's boat, and the courses in order with notes."></figure>
+  </div>
+
+  <div class="feature wide flip" id="notes">
+    <div class="feature-text">
+      <p class="new-badge"><span class="en">New in inPace 1.25</span><span class="ar">جديد في inPace 1.25</span></p>
+      <h3><span class="en">Take notes as you read</span><span class="ar">دوّن ملاحظاتك وأنت تقرأ</span></h3>
+      <p><span class="en">Select a sentence in a lesson and press <b>Take a note</b>, like a reply button. The sentence stays highlighted, your notes sit at the end of each lesson, and one page shows all your notes on a course, ready to download. Only you see them.</span><span class="ar">حدّد جملة في الدرس واضغط <b>دوّن ملاحظة</b>، مثل زر الرد. تبقى الجملة مظلَّلة، وملاحظاتك في آخر كل درس، وصفحة واحدة تعرض كل ملاحظاتك على الدورة جاهزة للتنزيل. لا يراها غيرك.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/notes.jpg" width="1920" height="1230" loading="lazy" alt="A lesson with two highlighted sentences and the Take a note box open on a selected sentence."></figure>
+  </div>
+
+  <div class="feature wide">
+    <div class="feature-text">
+      <p class="new-badge"><span class="en">New in inPace 1.25</span><span class="ar">جديد في inPace 1.25</span></p>
+      <h3><span class="en">Optional lessons, and videos you can skip</span><span class="ar">دروس اختيارية، وفيديوهات يمكنك تخطّيها</span></h3>
+      <p><span class="en">Extras like further reading or a long video can be optional: marked as such, with <b>Skip it</b> at the top, and the module finishes without them. The library's new courses put every video on top of a lesson whose text teaches the same thing, so watching is your choice.</span><span class="ar">الإضافات مثل القراءة الإضافية أو الفيديو الطويل يمكن أن تكون اختيارية: مكتوب عليها ذلك، وفي أعلاها زر <b>تخطَّه</b>، والوحدة تكتمل بدونها. ودورات المكتبة الجديدة تضع كل فيديو أعلى درس يشرح نصه الشيء نفسه، فتصبح المشاهدة اختيارك.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/optional.jpg" width="1920" height="1230" loading="lazy" alt="An optional lesson with its Optional label, a Skip it button at the top, and a PDF below."></figure>
+  </div>
+
+  <div class="feature wide flip">
+    <div class="feature-text">
+      <p class="new-badge"><span class="en">New in inPace 1.25</span><span class="ar">جديد في inPace 1.25</span></p>
+      <h3><span class="en">Zoom into PDFs and pictures</span><span class="ar">كبّر ملفات PDF والصور</span></h3>
+      <p><span class="en">The PDF reader fits a page to the width or the screen, zooms up to 400% with the mouse wheel or two fingers while keeping your place, rotates sideways scans and has a night mode. Pictures and charts in a lesson open full screen, to zoom and drag.</span><span class="ar">قارئ PDF يلائم الصفحة مع العرض أو الشاشة، ويكبّر حتى 400% بعجلة الفأرة أو بإصبعين مع الحفاظ على مكانك، ويدوّر الصفحات الممسوحة المائلة، وفيه وضع ليلي. والصور والرسوم البيانية في الدرس تُفتح بملء الشاشة لتكبّرها وتسحبها.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/pdf.jpg" width="1920" height="1230" loading="lazy" alt="The PDF reader at 125% with page buttons, a zoom list, fit to width, fit to page, rotate, night mode and full screen."></figure>
+  </div>
+
+  <div class="feature wide">
+    <div class="feature-text">
+      <h3><span class="en">Diagrams and charts in lessons</span><span class="ar">مخططات ورسوم بيانية في الدروس</span></h3>
+      <p><span class="en">Write a diagram as text in a <code>mermaid</code> block and inPace draws it, even offline, with zoom and full screen. Courses can carry their own pictures and charts, in English and in Arabic.</span><span class="ar">اكتب مخططًا كنص في كتلة <code>mermaid</code> فيرسمه inPace حتى بدون إنترنت، مع التكبير وملء الشاشة. ويمكن أن تحمل الدورات صورها ورسومها البيانية الخاصة، بالإنجليزية والعربية.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/diagram.jpg" width="1920" height="1230" loading="lazy" alt="A lesson with a drawn diagram: how an assistant language model is made, step by step."></figure>
+  </div>
+
+  <div class="feature wide flip">
+    <div class="feature-text">
+      <h3><span class="en">A library of <span data-courses>29</span> free courses</span><span class="ar">مكتبة فيها <span data-courses>29</span> دورة مجانية</span></h3>
+      <p><span class="en">Add courses other learners made with one click, or publish your own. Every course is signed by its author, and a course link always brings your friend the newest version. <a href="https://mahmoudyosrimahmoud13.github.io/inpace-library/">Browse the library</a>.</span><span class="ar">أضف دورات صنعها متعلمون آخرون بضغطة، أو انشر دورتك. كل دورة موقّعة من صاحبها، ورابط الدورة يحضر لصديقك أحدث نسخة دائمًا. <a href="https://mahmoudyosrimahmoud13.github.io/inpace-library/">تصفّح المكتبة</a>.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/library.jpg" width="1920" height="1230" loading="lazy" alt="The Course library in inPace with the FastAPI and Python Basics courses."></figure>
+  </div>
+
+  <ul class="grid">
+    <li class="card">
+      <h3><span class="en">Friend links</span><span class="ar">روابط الأصدقاء</span></h3>
+      <p><span class="en">Send your link on Telegram, WhatsApp or email. Your friend taps it, inPace opens and adds you, and one tap sends theirs back. No accounts.</span><span class="ar">أرسل رابطك على تيليجرام أو واتساب أو البريد. يضغطه صديقك فيفتح inPace ويضيفك، وبضغطة واحدة يرسل لك رابطه. بدون حسابات.</span></p>
+    </li>
+    <li class="card">
+      <h3><span class="en">Races with friends</span><span class="ar">سباقات مع الأصدقاء</span></h3>
+      <p><span class="en">Race on weekly goals or course progress. Only approved milestones count, so it stays fair.</span><span class="ar">تسابقوا على الأهداف الأسبوعية أو التقدّم في الدورة. تُحسب فقط المحطات الموافق عليها، فيبقى السباق عادلًا.</span></p>
+    </li>
+    <li class="card">
+      <h3><span class="en">Verified exams</span><span class="ar">اختبارات موثّقة</span></h3>
+      <p><span class="en">Your checker sends an exam shuffled just for you. You take it once, and only their app knows the answers.</span><span class="ar">يرسل لك متابِعك اختبارًا مرتّبًا خصيصًا لك. تؤديه مرة واحدة، وتطبيقه فقط يعرف الإجابات.</span></p>
+    </li>
+    <li class="card">
+      <h3><span class="en">A tour of every kind of lesson</span><span class="ar">جولة في كل أنواع الدروس</span></h3>
+      <p><span class="en">The sample course "A tour of inPace" shows them all: video, audio, pictures, code, an interactive page, part of a book, slides, a Word file, a spreadsheet, tasks and a quiz. Add it from the home page.</span><span class="ar">الدورة النموذجية «جولة في inPace» تعرضها كلها: فيديو وصوت وصور وكود وصفحة تفاعلية وجزء من كتاب وشرائح وملف Word وجدول وتمارين واختبار. أضفها من الصفحة الرئيسية.</span></p>
+    </li>
+    <li class="card">
+      <h3><span class="en">Make a course with AI</span><span class="ar">اصنع دورة بالذكاء الاصطناعي</span></h3>
+      <p><span class="en">Describe a topic, paste the answer from any AI chat, and inPace turns it into a course. Or build one by hand.</span><span class="ar">صِف موضوعًا، والصق الرد من أي محادثة ذكاء اصطناعي، وسيحوّله inPace إلى دورة. أو اصنعها بنفسك.</span></p>
+    </li>
+    <li class="card">
+      <h3><span class="en">Weekly goals and breaks</span><span class="ar">أهداف أسبوعية واستراحات</span></h3>
+      <p><span class="en">Set how many milestones a week you'll save. Take a planned break, and your streak survives.</span><span class="ar">حدّد عدد المحطات التي ستحفظها كل أسبوع. خذ استراحة مخططة، وتبقى سلسلتك.</span></p>
+    </li>
+    <li class="card">
+      <h3><span class="en">A record anyone can check</span><span class="ar">سجل يمكن لأي شخص التحقق منه</span></h3>
+      <p><span class="en">Share one web page with your whole learning history. It checks its own signatures, right in the browser.</span><span class="ar">شارك صفحة ويب واحدة فيها كل رحلة تعلّمك. تفحص توقيعاتها بنفسها داخل المتصفح.</span></p>
+    </li>
+    <li class="card">
+      <h3><span class="en">Your colors</span><span class="ar">ألوانك</span></h3>
+      <p><span class="en">Pick one of seven color profiles for the whole app, from sunny yellow to Nile teal. Each has its own light and dark shades.</span><span class="ar">اختر واحدًا من سبعة أنماط ألوان للتطبيق كله، من الأصفر المشمس إلى أزرق النيل. ولكل نمط درجاته الفاتحة والداكنة.</span></p>
+    </li>
+  </ul>
+
+  <div class="private">
+    <img src="assets/tempo-proud.svg" width="300" height="216" alt="">
+    <div>
+      <h3><span class="en">Your data never leaves your computer.</span><span class="ar">بياناتك لا تغادر جهازك أبدًا.</span></h3>
+      <p><span class="en">No account, no server, no tracking. inPace only talks to the internet for things you turn on: automatic updates, the AI course maker, or an online video you press play on. Files go to other people only when you send them yourself.</span><span class="ar">بدون حساب، وبدون خادم، وبدون تتبّع. لا يتصل inPace بالإنترنت إلا لما تفعّله أنت: التحديثات التلقائية، أو صانع الدورات بالذكاء الاصطناعي، أو فيديو على الإنترنت تضغط تشغيله. ولا تصل ملفاتك لأحد إلا إذا أرسلتها بنفسك.</span></p>
+    </div>
+  </div>
+
+  <div class="feature wide">
+    <div class="feature-text">
+      <h3><span class="en">English and Arabic</span><span class="ar">بالعربية والإنجليزية</span></h3>
+      <p><span class="en">The whole app works right to left in Arabic, with a font made for both languages and an Arabic starter course.</span><span class="ar">التطبيق كله يعمل من اليمين لليسار بالعربية، بخط مصمم للغتين، ومع دورة عربية للبداية.</span></p>
+    </div>
+    <figure class="frame"><img src="assets/shots/home-ar.jpg" width="1920" height="1230" loading="lazy" alt="inPace in Arabic, right to left, in dark mode."></figure>
+  </div>
+  <div class="feature wide flip">
+    <div class="feature-text">
+      <h3><span class="en">Reminders that actually ring</span><span class="ar">تذكيرات ترنّ فعلًا</span></h3>
+      <p><span class="en">Pick your study times. Each reminder is a notification or an alarm that rings until you stop it or snooze it, on your computer and your phone, even when inPace is closed. Tempo nudges you too, with his face on the notification: when he misses you after a week away, when your weekly goal is at risk, when it's time to review, and when the fog reaches your island.</span><span class="ar">اختر أوقات مذاكرتك. كل تذكير إشعار أو منبّه يرنّ حتى توقفه أو تؤجله، على الكمبيوتر والهاتف، حتى لو كان inPace مغلقًا. وينبّهك تمبو أيضًا، ووجهه على الإشعار: عندما يشتاق إليك بعد أسبوع غياب، وعندما يكون هدفك الأسبوعي في خطر، وعندما يحين وقت المراجعة، وعندما يصل الضباب إلى جزيرتك.</span></p>
+    </div>
+    <figure class="frame"><img class="en" src="assets/shots/reminders.jpg" width="1920" height="1230" loading="lazy" alt="The Reminders page: a weekend notification at 9:00 and a weekday alarm at 19:30 called FastAPI after dinner, and the form to add a reminder.">
+      <img class="ar" src="assets/shots/reminders-ar.jpg" width="1920" height="1230" loading="lazy" alt="صفحة التذكيرات: إشعار نهاية الأسبوع الساعة 9:00 ومنبّه أيام العمل الساعة 19:30 باسم «بايثون بعد العشاء»، ونموذج إضافة تذكير."></figure>
+  </div>
+  <div class="feature wide">
+    <div class="feature-text">
+      <h3><span class="en">Tempo's island: a reward with a story</span><span class="ar">جزيرة تمبو: مكافأة لها قصة</span></h3>
+      <p><span class="en">Turn on reward mode and Tempo carries an island on his shell. Every focus trip grows a plant on it, from 14 kinds. Lessons, reviews, milestones, races and roadmaps bring 9 animal friends to live there. Your courses pay off too: each one hides treasure chests of shells, and a trophy when you finish it.</span><span class="ar">شغّل وضع المكافآت فيحمل تمبو جزيرة على صدفته. كل رحلة تركيز تنمّي عليها نبتة من 14 نوعًا. والدروس والمراجعات والمحطات والسباقات ومسارات التعلّم تجلب 9 أصدقاء من الحيوانات ليعيشوا هناك. ودوراتك تكافئك أيضًا: في كل دورة صناديق كنز من الأصداف، وكأس حين تكملها.</span></p>
+      <p><span class="en">And there's an adventure: ten chapters toward the Far Shore, against the Fog of Someday. It's a real threat: the longer you stay away, the closer it comes, and after 10 days your plants start to wilt. Every trip you finish waters them again.</span><span class="ar">وهناك مغامرة: عشرة فصول نحو الشاطئ البعيد في مواجهة «ضباب بكرة». وهو تهديد حقيقي: كلما غبت اقترب، وبعد 10 أيام تبدأ نباتاتك في الذبول. وكل رحلة تكملها تسقيها من جديد.</span></p>
+      <p><span class="en">Learning earns shells. Name your island and decorate it: beaches, snow, lanterns, a lighthouse. The sky follows your real clock, from dawn to starry night. Friends you add can see your island, and you can share a picture of it.</span><span class="ar">التعلم يكسبك أصدافًا. سمِّ جزيرتك وزيّنها: شواطئ وثلج وفوانيس ومنارة. والسماء تتبع ساعتك الحقيقية، من الفجر حتى ليل النجوم. ومن تضيفهم يرون جزيرتك، ويمكنك مشاركة صورة لها.</span></p>
+    </div>
+    <figure class="frame"><img class="en" src="assets/shots/island.jpg" width="1920" height="1230" loading="lazy" alt="Tempo's island named Python Point in the daytime: Tempo carries a green island with blossoms, sunflowers, lanterns, a campfire and a flag with the island's name, a lighthouse stands in the sea, and a Share my island button sits below.">
+      <img class="ar" src="assets/shots/island-ar.jpg" width="1920" height="1230" loading="lazy" alt="جزيرة تمبو باسم «جزيرة بايثون» في النهار: سلحفاة تحمل جزيرة خضراء عليها أزهار وعباد شمس وفوانيس ونار وعلم باسم الجزيرة، ومنارة في البحر ومنطاد يطير."></figure>
+  </div>
+</section>
+
+<!-- On your phone -->
+<section class="phone" id="phone">
+  <div class="phone-head">
+    <h2><span class="en">On your phone too.</span><span class="ar">على هاتفك أيضًا.</span></h2>
+    <p><span class="en">The Android app is the whole of inPace, not a smaller version: the same courses, milestones, races and checkers. It runs completely on your phone, with no account and no internet needed.</span><span class="ar">تطبيق أندرويد هو inPace كاملًا، لا نسخة مصغّرة: الدورات نفسها والمحطات والسباقات والمتابِعون. يعمل كله على هاتفك، بلا حساب ولا حاجة للإنترنت.</span></p>
+  </div>
+  <ul class="phones">
+    <li><img class="en" src="assets/shots/phone-home.jpg" width="540" height="1100" loading="lazy" alt="inPace on a phone: the home page with a course 60% done, approved by a checker, and the tab bar at the bottom.">
+      <img class="ar" src="assets/shots/phone-home-ar.jpg" width="540" height="1100" loading="lazy" alt="inPace على الهاتف: الصفحة الرئيسية ودورة مكتملة بنسبة 60% وشريط التنقل في الأسفل.">
+      <b><span class="en">Pick up where you left off</span><span class="ar">أكمل من حيث توقفت</span></b>
+      <span><span class="en">The tab bar always shows where you are.</span><span class="ar">شريط الأسفل يوضح دائمًا أين أنت.</span></span></li>
+    <li><img class="en" src="assets/shots/phone-word.jpg" width="540" height="1100" loading="lazy" alt="A Word document shown inside a lesson on a phone, with headings and a list.">
+      <img class="ar" src="assets/shots/phone-word-ar.jpg" width="540" height="1100" loading="lazy" alt="ملف Word معروض داخل درس على الهاتف، مع عناوين وقائمة.">
+      <b><span class="en">Read, watch, practise</span><span class="ar">اقرأ وشاهد وتدرّب</span></b>
+      <span><span class="en">Videos, books, slides, Word files and code fit the screen.</span><span class="ar">الفيديوهات والكتب والشرائح وملفات Word والكود تناسب الشاشة.</span></span></li>
+    <li><img class="en" src="assets/shots/phone-sort.jpg" width="540" height="1100" loading="lazy" alt="Sorting a messy class folder on a phone: files grouped into General and Lecture 1, each with a Move to menu and arrows.">
+      <img class="ar" src="assets/shots/phone-sort-ar.jpg" width="540" height="1100" loading="lazy" alt="ترتيب مجلد مادة دراسية غير مرتب على الهاتف: ملفات مجمعة في «عام» و«المحاضرة 1» مع قائمة «انقل إلى».">
+      <b><span class="en">Sort your class material</span><span class="ar">رتّب مادتك الدراسية</span></b>
+      <span><span class="en">Pick a folder or some files; inPace sorts them by lecture or week.</span><span class="ar">اختر مجلدًا أو ملفات، ويرتبها inPace حسب المحاضرة أو الأسبوع.</span></span></li>
+    <li><img class="en" src="assets/shots/phone-trip.jpg" width="540" height="1100" loading="lazy" alt="A focus trip on a phone: a countdown, and a lemon tree growing on Tempo's shell as he swims under the real sky.">
+      <img class="ar" src="assets/shots/phone-trip-ar.jpg" width="540" height="1100" loading="lazy" alt="رحلة تركيز على الهاتف: عدّ تنازلي، وزهر الكرز ينمو على صدفة تمبو وهو يسبح.">
+      <b><span class="en">Focus, and watch it grow</span><span class="ar">ركّز وشاهدها تنمو</span></b>
+      <span><span class="en">Put the phone down. Your plant grows while you study.</span><span class="ar">ضع الهاتف جانبًا. تنمو نبتتك بينما تذاكر.</span></span></li>
+    <li><img class="en" src="assets/shots/phone-turtle.jpg" width="540" height="1100" loading="lazy" alt="Making your own turtle on a phone: a purple turtle with headphones, and rows of shells, scarves, skins and things to wear.">
+      <img class="ar" src="assets/shots/phone-turtle-ar.jpg" width="540" height="1100" loading="lazy" alt="صنع سلحفاتك على الهاتف: سلحفاة بنفسجية بسماعات، وصفوف من الأصداف والأوشحة وألوان الجلد وما ترتديه.">
+      <b><span class="en">Make your own turtle</span><span class="ar">اصنع سلحفاتك</span></b>
+      <span><span class="en">Your picture in inPace, on your contact card, and to share anywhere.</span><span class="ar">صورتك في inPace، وعلى بطاقة التواصل، ولتشاركها في أي مكان.</span></span></li>
+    <li><img class="en" src="assets/shots/phone-more.jpg" width="540" height="1100" loading="lazy" alt="The More menu on a phone: races, course library, people, open a file, settings, and dark mode.">
+      <img class="ar" src="assets/shots/phone-more-ar.jpg" width="540" height="1100" loading="lazy" alt="قائمة «المزيد» على الهاتف: السباقات ومكتبة الدورات والأشخاص وفتح ملف والإعدادات والوضع الداكن.">
+      <b><span class="en">Everything else in one tap</span><span class="ar">كل شيء آخر بلمسة</span></b>
+      <span><span class="en">Races, the library, people and settings live under More.</span><span class="ar">السباقات والمكتبة والأشخاص والإعدادات تحت «المزيد».</span></span></li>
+  </ul>
+  <dl class="phone-facts">
+    <div><dt><span class="en">Share from any app</span><span class="ar">شارك من أي تطبيق</span></dt>
+      <dd><span class="en">Send your progress to your checker on WhatsApp or Telegram, and inPace links open straight in the app.</span><span class="ar">أرسل تقدمك لمتابِعك على واتساب أو تيليجرام، وروابط inPace تفتح مباشرة في التطبيق.</span></dd></div>
+    <div><dt><span class="en">Big video courses</span><span class="ar">دورات الفيديو الكبيرة</span></dt>
+      <dd><span class="en">Videos can stay where they are on your phone. inPace only asks for file access when you choose a folder.</span><span class="ar">يمكن أن تبقى الفيديوهات في مكانها على هاتفك. يطلب inPace إذن الملفات فقط عندما تختار مجلدًا.</span></dd></div>
+    <div><dt><span class="en">Move between phone and computer</span><span class="ar">انتقل بين الهاتف والكمبيوتر</span></dt>
+      <dd><span class="en">Make a backup on one and restore it on the other. Your history, key and courses come with it.</span><span class="ar">اصنع نسخة احتياطية على أحدهما واستعدها على الآخر. ينتقل سجلك ومفتاحك ودوراتك معها.</span></dd></div>
+    <div><dt><span class="en">Reminders and alarms</span><span class="ar">تذكيرات ومنبّهات</span></dt>
+      <dd><span class="en">Pick your study times. A reminder or an alarm arrives even when inPace is closed, and Tempo nudges you if you've been away for a week.</span><span class="ar">اختر أوقات مذاكرتك. يصلك تذكير أو منبّه حتى لو كان inPace مغلقًا، وينبّهك تيمبو إذا غبت أسبوعًا.</span></dd></div>
+    <div><dt><span class="en">Updating</span><span class="ar">التحديث</span></dt>
+      <dd><span class="en">Download the new version and tap <b>Update</b>. Your courses and progress stay.</span><span class="ar">حمّل النسخة الجديدة واضغط <b>تحديث</b>. تبقى دوراتك وتقدمك.</span></dd></div>
+  </dl>
+  <p class="cta"><a class="btn primary" href="#download"><span class="en">Get it for Android</span><span class="ar">احصل عليه لأندرويد</span></a>
+    <a class="btn" href="guide.html#phone"><span class="en">Using inPace on a phone</span><span class="ar">استخدام inPace على الهاتف</span></a></p>
+</section>
+
+<!-- Download -->
+<section class="download" id="download">
+  <h2><span class="en">Download inPace.</span><span class="ar">حمّل inPace.</span></h2>
+  <p class="sub"><span class="en">Always the newest version. Free forever.</span><span class="ar">دائمًا أحدث نسخة. مجاني للأبد.</span> <bdi id="dl-ver"></bdi></p>
+  <ul class="os-list">
+    <li class="os" data-os="windows">
+      <h3>Windows</h3>
+      <p><span class="en">Windows 10 or 11. Run <b>inPace-setup.exe</b> and click through: no admin password needed, and inPace appears in your Start menu.</span><span class="ar">ويندوز 10 أو 11. شغّل <b>inPace-setup.exe</b> واتبع الخطوات: لا يحتاج كلمة مرور المدير، وسيظهر inPace في قائمة ابدأ.</span></p>
+      <a class="btn primary" href="https://github.com/mahmoudyosrimahmoud13/inpace/releases/latest/download/inPace-setup.exe"><span class="en">Download for Windows</span><span class="ar">حمّل لويندوز</span></a>
+    </li>
+    <li class="os" data-os="mac">
+      <h3>Mac</h3>
+      <p><span class="en">Apple Silicon (M1 or newer). Open it and drag <b>inPace</b> into Applications.</span><span class="ar">معالجات Apple (M1 أو أحدث). افتحه واسحب <b>inPace</b> إلى التطبيقات.</span></p>
+      <a class="btn primary" href="https://github.com/mahmoudyosrimahmoud13/inpace/releases/latest/download/inPace-mac.dmg"><span class="en">Download for Mac</span><span class="ar">حمّل لماك</span></a>
+    </li>
+    <li class="os" data-os="ubuntu">
+      <h3>Linux</h3>
+      <p><span class="en">Ubuntu, Debian, Mint, Zorin, Pop!_OS: get the <b>.deb</b>, double-click it to install, then find <b>inPace</b> in your apps. Any other Linux: get the <b>AppImage</b>, allow it to run (right-click, Properties, "Allow executing"), then double-click it. Small download: it uses the page engine your Linux already has.</span><span class="ar">أوبونتو، ديبيان، مينت، زورين، Pop!_OS: حمّل ملف <b>‎.deb</b> وانقر عليه مرتين للتثبيت، ثم ستجد <b>inPace</b> بين تطبيقاتك. أي لينكس آخر: حمّل ملف <b>AppImage</b>، واسمح بتشغيله (زر الفأرة الأيمن، الخصائص، "السماح بالتشغيل")، ثم انقر عليه مرتين. حجمه صغير: يستخدم محرك الصفحات الموجود في لينكس عندك.</span></p>
+      <a class="btn primary" href="https://github.com/mahmoudyosrimahmoud13/inpace/releases/latest/download/inPace-linux.deb"><span class="en">Download .deb</span><span class="ar">حمّل ملف ‎.deb</span></a>
+      <a class="btn" href="https://github.com/mahmoudyosrimahmoud13/inpace/releases/latest/download/inPace-linux.AppImage"><span class="en">Download AppImage</span><span class="ar">حمّل ملف AppImage</span></a>
+    </li>
+    <li class="os" data-os="android">
+      <h3>Android <span class="chip-new"><span class="en">new</span><span class="ar">جديد</span></span></h3>
+      <p><span class="en">Android 7 or newer. Open the file, allow installing from this source if asked, then open <b>inPace</b>.</span><span class="ar">أندرويد 7 أو أحدث. افتح الملف، واسمح بالتثبيت من هذا المصدر إذا طُلب منك، ثم افتح <b>inPace</b>.</span></p>
+      <a class="btn primary" href="https://github.com/mahmoudyosrimahmoud13/inpace/releases/latest/download/inPace-android-arm64-v8a.apk"><span class="en">Download for Android</span><span class="ar">حمّل لأندرويد</span></a>
+      <p class="small"><a href="https://github.com/mahmoudyosrimahmoud13/inpace/releases/latest"><span class="en">Older phone? Other versions</span><span class="ar">هاتف أقدم؟ نسخ أخرى</span></a></p>
+    </li>
+    <li class="os" data-os="linux-full">
+      <h3><span class="en">Linux, with its own engine</span><span class="ar">لينكس، بمحركه الخاص</span></h3>
+      <p><span class="en">The same inPace, with one difference: it brings its own page engine (Chromium, through Qt) instead of using your system's WebKit. So the window looks and works the same on every Linux, even if your system's WebKit is missing, too old or too new. The cost: it's about 150 MB bigger. Pick this one if the normal download shows a gray window or opens in Edge or Chrome.</span><span class="ar">نفس inPace، بفرق واحد: يأتي بمحرك صفحات خاص به (Chromium عبر Qt) بدلًا من استخدام WebKit الموجود في نظامك. لذلك تبدو النافذة وتعمل بنفس الطريقة على كل لينكس، حتى لو كان WebKit في نظامك غير موجود أو قديمًا أو أحدث من اللازم. الثمن: حجمه أكبر بحوالي 150 ميجابايت. اختره إذا ظهرت لك نافذة رمادية مع التحميل العادي أو فُتح في Edge أو Chrome.</span></p>
+      <a class="btn" href="https://github.com/mahmoudyosrimahmoud13/inpace/releases/latest/download/inPace-linux-full.deb"><span class="en">Download .deb</span><span class="ar">حمّل ملف ‎.deb</span></a>
+      <a class="btn" href="https://github.com/mahmoudyosrimahmoud13/inpace/releases/latest/download/inPace-linux-full.AppImage"><span class="en">Download AppImage</span><span class="ar">حمّل ملف AppImage</span></a>
+    </li>
+  </ul>
+  <div class="note">
+    <p><b><span class="en">First time opening it?</span><span class="ar">أول مرة تفتحه؟</span></b>
+      <span class="en">The app isn't signed yet, so your computer may warn you once. Windows: click <b>More info</b>, then <b>Run anyway</b>. Mac: right-click inPace, then <b>Open</b>.</span>
+      <span class="ar">التطبيق غير موقّع بعد، لذلك قد يحذّرك جهازك مرة واحدة. ويندوز: اضغط <b>More info</b> ثم <b>Run anyway</b>. ماك: انقر بالزر الأيمن على inPace ثم <b>Open</b>.</span></p>
+    <p><a href="https://github.com/mahmoudyosrimahmoud13/inpace/releases"><span class="en">All versions and what's new</span><span class="ar">كل الإصدارات وما الجديد</span></a></p>
+  </div>
+</section>
+
+<!-- What's new: filled from the latest GitHub release -->
+<section class="whatsnew" id="new" hidden>
+  <div class="wn-head">
+    <h2><span class="en">What's new in </span><span class="ar">الجديد في </span><bdi id="wn-ver"></bdi></h2>
+    <p class="wn-date" id="wn-date"></p>
+  </div>
+  <p class="ar small wn-lang">ملاحظات الإصدار مكتوبة بالإنجليزية.</p>
+  <div class="wn-notes" id="wn-notes" dir="ltr"></div>
+  <p class="wn-more"><a class="btn" id="wn-link" href="https://github.com/mahmoudyosrimahmoud13/inpace/releases"><span class="en">All releases</span><span class="ar">كل الإصدارات</span></a>
+</p>
+</section>
+
+<!-- Courses -->
+<section class="courses">
+  <div class="courses-text">
+    <h2><span class="en">Write a course in plain text.</span><span class="ar">اكتب دورة بنص عادي.</span></h2>
+    <p><span class="en">A course is a short YAML file plus lessons in Markdown. Questions and answers live in separate files, so you can share a version without answers. Ask any AI to write one, or start from the community library.</span><span class="ar">الدورة ملف YAML قصير مع دروس بصيغة Markdown. الأسئلة والإجابات في ملفات منفصلة، لتشارك نسخة بدون إجابات. اطلب من أي ذكاء اصطناعي أن يكتب واحدة، أو ابدأ من مكتبة الدورات المجتمعية.</span></p>
+    <div class="cta">
+      <a class="btn" href="https://github.com/mahmoudyosrimahmoud13/inpace/tree/HEAD/community-courses"><span class="en">Community courses</span><span class="ar">الدورات المجتمعية</span></a>
+      <a class="btn" href="https://github.com/mahmoudyosrimahmoud13/inpace/blob/HEAD/SPEC.md"><span class="en">Course format</span><span class="ar">صيغة الدورة</span></a>
+    </div>
+  </div>
+<pre class="yaml" dir="ltr"><code><span class="k">title</span>: Python Basics
+<span class="k">modules</span>:
+  - <span class="k">title</span>: Your first Python
+    <span class="k">lessons</span>:
+      - <span class="k">title</span>: What is Python?
+        <span class="k">file</span>: lessons/m1-l1.md
+    <span class="k">requires</span>:
+      - <span class="k">type</span>: practical
+        <span class="k">prompt</span>: Print your name and 7 * 6.
+      - <span class="k">type</span>: quiz
+        <span class="k">questions</span>: [q1, q2, q3]
+        <span class="k">pass</span>: 70</code></pre>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-top">
+    <img src="assets/tempo-cheer.svg" width="300" height="216" alt="">
+    <p><span class="en">Made with care, for people who learn on their own.</span><span class="ar">صُنع بحب، لمن يتعلّمون بأنفسهم.</span></p>
+  </div>
+  <p class="word"><span class="in">in</span>Pace</p>
+  <p class="small">
+    <a href="https://github.com/mahmoudyosrimahmoud13/inpace" title="Star inPace on GitHub">GitHub <b class="nav-count" data-stars hidden>★ <span></span></b></a> ·
+    <a href="discord.html">Discord</a> ·
+    <a href="telegram.html">Telegram</a> ·
+    <a href="feedback.html"><span class="en">Feedback and ideas</span><span class="ar">الملاحظات والأفكار</span></a> ·
+    <a href="https://mahmoudyosrimahmoud13.github.io/inpace-library/share.html"><span class="en">Share a course</span><span class="ar">شارك دورة</span></a> ·
+    <a href="https://github.com/mahmoudyosrimahmoud13/inpace/blob/main/LICENSE"><span class="en">MIT license</span><span class="ar">رخصة MIT</span></a> ·
+    <span class="en">© 2026 Mahmoud Saad Mahmoud Yosri</span><span class="ar">© 2026 محمود سعد محمود يسري</span>
+  </p>
+  <p class="small"><span class="en">Visits to this website are counted with GoatCounter: no cookies and nothing about you. The app itself never tracks you.</span><span class="ar">تُحسب زيارات هذا الموقع بـ GoatCounter: بدون ملفات تعريف ارتباط وبدون أي شيء عنك. والتطبيق نفسه لا يتتبعك أبدًا.</span></p>
+</footer>
+
+<script>
+
+  // Point the big button at the right download for this computer.
+  (function () {
+    var ua = navigator.userAgent, os = null, label = "";
+    if (/Android/i.test(ua)) { os = "android"; label = "Android"; }
+    else if (/Windows/i.test(ua)) { os = "windows"; label = "Windows"; }
+    else if (/Macintosh|Mac OS X/i.test(ua) && !/iPhone|iPad/i.test(ua)) { os = "mac"; label = "Mac"; }
+    else if (/Ubuntu|Debian|Mint|Zorin|Pop!_OS|elementary/i.test(ua)) { os = "ubuntu"; label = "Linux (.deb)"; }
+    else if (/Linux/i.test(ua) && !/Android/i.test(ua)) { os = "ubuntu"; label = "Linux"; }
+    if (!os) return;
+    var card = document.querySelector('.os[data-os="' + os + '"]');
+    if (!card) return;
+    card.classList.add("yours");
+    document.getElementById("main-download").href = card.querySelector("a").href;
+    document.getElementById("main-os").textContent = label;
+  })();
+</script>
+<script>
+  // Latest release, its notes, and total downloads, from GitHub (kept for an hour to stay under GitHub's limits).
+  (function () {
+    var API = "https://api.github.com/repos/mahmoudyosrimahmoud13/inpace/releases?per_page=100";
+    function esc(t) { return t.replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
+    function inline(t) {
+      return esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`([^`]+)`/g, "<code>$1</code>")
+        .replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g, '<a href="$2">$1</a>');
+    }
+    function md(text) {   // just the bits the changelog uses: bullets (nested by two spaces), bold, code, links
+      var out = "", depth = 0;
+      text.split("\n").forEach(function (line) {
+        var m = line.match(/^(\s*)[-*] (.*)$/);
+        if (m) {
+          var d = Math.floor(m[1].length / 2) + 1;
+          while (depth < d) { out += "<ul>"; depth++; }
+          while (depth > d) { out += "</ul>"; depth--; }
+          out += "<li>" + inline(m[2]) + "</li>";
+        } else if (line.trim()) {
+          while (depth > 0) { out += "</ul>"; depth--; }
+          out += "<p>" + inline(line.trim()) + "</p>";
+        }
+      });
+      while (depth > 0) { out += "</ul>"; depth--; }
+      return out;
+    }
+    function show(rels) {
+      var latest = rels.filter(function (r) { return !r.draft && !r.prerelease; })[0];
+      if (!latest) return;
+      var total = 0;
+      rels.forEach(function (r) { (r.assets || []).forEach(function (a) { total += a.download_count || 0; }); });
+      var ver = latest.tag_name, lang = document.documentElement.lang === "ar" ? "ar" : "en";
+      var date = new Date(latest.published_at).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US", {year: "numeric", month: "long", day: "numeric"});
+      var v = document.getElementById("st-ver"); v.querySelector("b").textContent = ver; v.hidden = false;
+      var d = document.getElementById("st-dl"); d.querySelector("b").textContent = total.toLocaleString(); d.hidden = false;
+      document.getElementById("dl-ver").textContent = "· " + ver;
+      // The Android app is new: until a release carries it, say it's coming instead of linking to a missing file.
+      var hasApk = (latest.assets || []).some(function (a) { return /^inPace-android/.test(a.name || ""); });
+      var card = document.querySelector('.os[data-os="android"]');
+      if (card && !hasApk) {
+        var btn = card.querySelector(".btn");
+        btn.removeAttribute("href"); btn.classList.remove("primary"); btn.setAttribute("aria-disabled", "true");
+        btn.innerHTML = '<span class="en">Coming soon</span><span class="ar">قريبًا</span>';
+        var more = card.querySelector(".small"); if (more) more.hidden = true;
+        var main = document.getElementById("main-download");
+        if (main && /android/.test(main.href)) { main.href = "#download"; document.getElementById("main-os").textContent = ""; }
+      }
+      var body = latest.body || "", at = body.indexOf("## What's new");
+      var notes = (at >= 0 ? body.slice(at + 13) : body).split(/\n## /)[0].split(/\n---/)[0].trim();
+      if (!notes) return;
+      document.getElementById("wn-ver").textContent = ver;
+      document.getElementById("wn-date").textContent = date;
+      document.getElementById("wn-notes").innerHTML = md(notes);
+      document.getElementById("wn-link").href = latest.html_url;
+      document.getElementById("new").hidden = false;
+    }
+    // Saved for 5 minutes, so a new release shows up quickly. (The name changes when this changes, so old saved copies are skipped.)
+    var KEY = "inpace-releases3", c = null;
+    try { c = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+    if (c && Date.now() - c.at < 5 * 60e3) { show(c.data); return; }
+    fetch(API, {headers: {Accept: "application/vnd.github+json"}}).then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (data) {
+        var slim = data.map(function (r) { return {tag_name: r.tag_name, draft: r.draft, prerelease: r.prerelease, published_at: r.published_at,
+          html_url: r.html_url, body: r.body, assets: (r.assets || []).map(function (a) { return {name: a.name, download_count: a.download_count}; })}; });
+        try { localStorage.setItem(KEY, JSON.stringify({at: Date.now(), data: slim})); } catch (e) {}
+        show(slim);
+      }).catch(function () { if (c) show(c.data); });  // GitHub busy or offline: show the last saved copy
+  })();
+  // How many courses the library has, read from the library's own website, so it updates by itself when a course is added.
+  (function () {
+    var LIB = "https://mahmoudyosrimahmoud13.github.io/inpace-library/", KEY = "inpace-library-count", c = null;
+    function show(n, r) {
+      if (n > 0) document.querySelectorAll("[data-courses]").forEach(function (el) { el.textContent = n.toLocaleString(); });
+      if (r > 0) {  // roadmaps (inPace 1.24): shown once the library has some
+        document.querySelectorAll("[data-roadmaps]").forEach(function (el) { el.textContent = r.toLocaleString(); });
+        var li = document.getElementById("st-roadmaps"); if (li) li.hidden = false;
+      }
+    }
+    try { c = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+    if (c) show(c.n, c.r);
+    if (c && Date.now() - c.at < 10 * 60e3) return;
+    function get(url, pick) { return fetch(url, {cache: "no-cache"}).then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(pick); }
+    get(LIB + "stats.json", function (j) { return [j.courses, j.roadmaps || 0]; })
+      .catch(function () { return get(LIB + "library.json", function (j) { return [(j.courses || []).length, (j.roadmaps || []).length]; }); })
+      .then(function (x) { show(x[0], x[1]); try { localStorage.setItem(KEY, JSON.stringify({at: Date.now(), n: x[0], r: x[1]})); } catch (e) {} })
+      .catch(function () {});   // offline: keep the numbers already on the page
+  })();
+  // GitHub stars, read live from GitHub (saved for an hour, so the page never hits GitHub's limit).
+  (function () {
+    var KEY = "inpace-stars", c = null;
+    function show(n) {
+      if (!(n > 0)) return;
+      document.querySelectorAll("[data-stars]").forEach(function (el) { el.querySelector("span").textContent = n.toLocaleString(); el.hidden = false; });
+      var li = document.getElementById("st-stars"); li.querySelector("b").textContent = n.toLocaleString(); li.hidden = false;
+    }
+    try { c = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) {}
+    if (c) show(c.n);
+    if (c && Date.now() - c.at < 60 * 60e3) return;
+    fetch("https://api.github.com/repos/mahmoudyosrimahmoud13/inpace", {headers: {Accept: "application/vnd.github+json"}})
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (j) { show(j.stargazers_count); try { localStorage.setItem(KEY, JSON.stringify({at: Date.now(), n: j.stargazers_count})); } catch (e) {} })
+      .catch(function () {});
+  })();
+  // Visits (GoatCounter: no cookies, nothing personal).
+  (function () {
+    var GC = "https://inpace.goatcounter.com";
+    fetch(GC + "/counter/TOTAL.json").then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(function (j) {
+      var el = document.getElementById("st-visits"); el.querySelector("b").textContent = j.count; el.hidden = false;
+    }).catch(function () {});
+  })();
+</script>
+<script data-goatcounter="https://inpace.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+<script>
+  (function () {
+    var b = document.getElementById("theme"), html = document.documentElement;
+    if (!b) return;
+    b.addEventListener("click", function () {
+      var now = html.getAttribute("data-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      var next = now === "dark" ? "light" : "dark";
+      html.setAttribute("data-theme", next);
+      try { localStorage.setItem("inpace-site-theme", next); } catch (e) {}
+    });
+  })();
+</script>
+<script src="lang.js?v=2"></script>
+</body>
+</html>

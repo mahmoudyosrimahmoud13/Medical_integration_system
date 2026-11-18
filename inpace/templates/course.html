@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+{% block title %}{{ prog.course.title }}{% endblock %}
+{% set live_page = true %}
+{% block main %}
+{% set xs = [28, 70, 38, 76, 24, 62] %}
+{% set step = 104 %}
+<div class="page-head{{ ' head-with-cover' if prog.course.extra.image }}">
+  {% if prog.course.extra.image %}{{ cover(prog.course, True) }}{% endif %}
+  <div class="head-text">
+  <p class="eyebrow"><a data-up href="/courses">{{ _('My courses') }}</a>{% for rm, n in on_rm[:2] %}
+    <a class="rm-chip" href="/roadmaps/{{ rm.id }}">{{ icon('route', 14) }}<span dir="auto">{{ T('Course {n} of {b} on “{name}”', n=n, b=rm.steps|length, name=rm.title) }}</span></a>{% endfor %}</p>
+  <h1 dir="auto">{{ prog.course.title }}.</h1>
+  <div class="row" style="margin-block-start: .9rem">
+    <div class="bar grow" style="max-width: 460px"><span style="width: {{ prog.percent }}%"></span></div>
+    <b>{{ prog.percent }}%</b>
+  </div>
+  {% set nx = prog.next %}
+  {% if nx %}
+  <a class="btn primary big continue-btn" href="/learn/{{ j.id }}/{{ 'lesson/' ~ nx.id if nx.kind == 'lesson' else 'module/' ~ nx.mid }}">
+    <span><span class="small">{% trans trimmed %}Continue{% endtrans %}</span><b dir="auto">{{ nx.title if nx.kind == 'lesson' else T('{name} tasks', name=nx.module) }}</b></span>{{ icon('arrow', 18) }}</a>
+  {% elif prog.finished %}<p><span class="chip good">{% trans trimmed %}Course finished{% endtrans %}</span></p>{% endif %}
+  <p class="course-notes-link">{% if note_count %}<a href="/learn/{{ j.id }}/notes">{{ icon('pen', 16) }} {{ _('Your notes') }} <span class="chip plain">{{ note_count }}</span></a>{% endif %}
+    <a class="btn small course-share" href="/courses/{{ j.course_id }}/share" data-course-share>{{ icon('send', 16) }}{% trans trimmed %}Share this course{% endtrans %}</a></p>
+  {% if offline %}{% set qjob = offline.job %}
+  <div class="offline-quick">
+    {% if qjob and qjob.state == 'running' %}
+    <a class="quick-run" href="#offline" data-offline-open><span class="spin" aria-hidden="true"></span>{% trans trimmed %}Downloading videos{% endtrans %} <b dir="ltr" data-offline-quick-num>{{ qjob.done }} / {{ qjob.total or '…' }}</b></a>
+    {% elif offline.total and offline.have >= offline.total %}
+    <a class="small muted" href="#offline" data-offline-open>{{ icon('check', 16) }} {% trans trimmed %}Videos saved for offline{% endtrans %}</a>
+    {% else %}
+    <form method="post" action="/courses/{{ j.course_id }}/offline/download">
+      <input type="hidden" name="from" value="top">
+      <button class="btn small" data-busy="{{ _('Starting…') }}">{{ icon('download', 16) }}{% if offline.have %}{% trans trimmed %}Download the rest for offline{% endtrans %}{% else %}{% trans trimmed %}Download for offline{% endtrans %}{% endif %}</button>
+      <span class="small muted">{% if offline.need %}{{ T('about {size}', size=nice_size(offline.need[quality])) }} · {% endif %}<a href="#offline" data-offline-open>{% trans trimmed %}Options{% endtrans %}</a></span>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
+  </div>
+</div>
+
+{% if book %}
+{% set bi = book.info %}
+{% if not book.path %}
+<section class="card note-card warn-card" id="book">
+  <h2>{% trans trimmed %}This course reads a book you get yourself{% endtrans %}</h2>
+  <p dir="auto">{% if bi.title %}<b>{{ bi.title }}</b>. {% endif %}{% trans trimmed %}The book isn't inside the course: its lessons open the right pages of your own copy. Show inPace where it is on this device, once.{% endtrans %}</p>
+  {% if bi.download or bi.url %}<p class="row wrap">
+    {% if bi.download %}<a class="btn primary" href="{{ bi.download }}" target="_blank" rel="noopener">{{ icon('download', 18) }}{% trans trimmed %}Download the book (PDF){% endtrans %}</a>{% endif %}
+    {% if bi.url %}<a class="btn" href="{{ bi.url }}" target="_blank" rel="noopener">{{ icon('link', 18) }}{% trans trimmed %}The book's website{% endtrans %}</a>{% endif %}
+    <span class="small muted">{% trans trimmed %}After it downloads, press Find it for me.{% endtrans %}</span></p>{% endif %}
+  <form method="post" action="/courses/{{ j.course_id }}/book" style="margin-block:.6rem">
+    <button class="btn primary" name="search" value="1" data-busy="{{ _('Looking…') }}">{% trans trimmed %}Find it for me{% endtrans %}</button>
+    <span class="small muted">{% trans trimmed %}Looks in Downloads, Documents and Desktop (on a phone, the Download folder).{% endtrans %}</span>
+  </form>
+  <form method="post" action="/courses/{{ j.course_id }}/book" class="row pick-row">
+    <input name="path" id="book-path" required dir="ltr" placeholder="{{ _('Full path of the PDF, or of the folder it is in') }}">
+    <button type="button" class="btn" data-pick-folder="#book-path">{% trans trimmed %}Choose folder{% endtrans %}</button>
+    <button class="btn">{% trans trimmed %}Use this{% endtrans %}</button>
+  </form>
+  <p class="small muted">{% trans trimmed %}The file can have any name: inPace recognizes the book by the title inside it and its number of pages. Nothing is copied.{% endtrans %}</p>
+</section>
+{% else %}
+<p class="small muted" id="book">{{ icon('book', 16) }} {% trans trimmed %}Your book:{% endtrans %} <code dir="ltr">{{ book.path }}</code>
+  <details class="inline-more"><summary>{% trans trimmed %}Change{% endtrans %}</summary>
+  <form method="post" action="/courses/{{ j.course_id }}/book" class="row pick-row">
+    <input name="path" id="book-path" required dir="ltr" value="{{ book.path }}">
+    <button type="button" class="btn" data-pick-folder="#book-path">{% trans trimmed %}Choose folder{% endtrans %}</button>
+    <button class="btn primary">{% trans trimmed %}Use this{% endtrans %}</button>
+  </form></details></p>
+{% if book.warning %}<p class="note warn small">{{ book.warning }}</p>{% endif %}
+{% endif %}
+{% endif %}
+
+{% if missing %}
+<section class="card note-card warn-card files-steps" id="files">
+  {% set dls = prog.course.extra.downloads %}
+  <h2>{% trans trimmed %}Get this course's files{% endtrans %}</h2>
+  <p>{{ T('{n} of its slides, videos or files are not on this device yet. Three steps, once:', n=missing|length) }}</p>
+  <ol class="steps">
+    <li><b>{% trans trimmed %}Download them.{% endtrans %}</b>
+      {% if dls %}<span class="row wrap" style="margin-block:.4rem">{% for d in dls %}<a class="btn primary" href="{{ d.url }}" target="_blank" rel="noopener">{{ icon('download', 18) }}{{ d.title }}{% if d.size %} · {{ d.size }}{% endif %}</a>{% endfor %}</span>
+      <span class="small muted">{% trans trimmed %}Save them in your Downloads folder. A .zip is fine: inPace unzips it.{% endtrans %}</span>
+      {% else %}<span class="small muted">{% trans trimmed %}From wherever the course maker shared them. A .zip is fine: inPace unzips it.{% endtrans %}</span>{% endif %}</li>
+    <li><b>{% trans trimmed %}Let inPace find them.{% endtrans %}</b>
+      <form method="post" action="/courses/{{ j.course_id }}/find-files" style="margin-block:.4rem">
+        <button class="btn primary" data-busy="{{ _('Looking…') }}">{{ icon('search', 18) }}{% trans trimmed %}Find them for me{% endtrans %}</button></form>
+      <span class="small muted">{% trans trimmed %}Looks in Downloads, Documents and Desktop, inside folders too, and unzips a .zip that has them.{% endtrans %}</span></li>
+    <li><b>{% trans trimmed %}Saved them somewhere else?{% endtrans %}</b> {% trans trimmed %}Choose that folder, or the .zip itself.{% endtrans %}
+      <form method="post" action="/courses/{{ j.course_id }}/media-folder" class="row pick-row" style="margin-block-start:.4rem">
+        <input name="folder" id="course-folder" required dir="ltr" value="{{ media_root or '' }}" placeholder="{{ _('Full path of the folder or the .zip') }}">
+        <button type="button" class="btn" data-pick-folder="#course-folder">{% trans trimmed %}Choose folder{% endtrans %}</button>
+        <button class="btn">{% trans trimmed %}Use this{% endtrans %}</button>
+      </form></li>
+  </ol>
+  <details class="more"><summary>{% trans trimmed %}Which files?{% endtrans %}</summary>
+    <ul class="small" dir="ltr">{% for f in missing[:12] %}<li><code>{{ f }}</code></li>{% endfor %}{% if missing|length > 12 %}<li>…</li>{% endif %}</ul></details>
+</section>
+{% elif media_root %}
+{% if prog.course.extra.downloads %}<p class="small muted">{{ icon('link', 16) }} {% trans trimmed %}Official sources:{% endtrans %} {% for d in prog.course.extra.downloads %}<a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+<p class="small muted">{% trans trimmed %}Course files:{% endtrans %} <code dir="ltr">{{ media_root }}</code>
+  <details class="inline-more"><summary>{% trans trimmed %}Change{% endtrans %}</summary>
+  <form method="post" action="/courses/{{ j.course_id }}/media-folder" class="row pick-row">
+    <input name="folder" id="course-folder" required dir="ltr" value="{{ media_root }}">
+    <button type="button" class="btn" data-pick-folder="#course-folder">{% trans trimmed %}Choose folder{% endtrans %}</button>
+    <button class="btn primary">{% trans trimmed %}Use this folder{% endtrans %}</button>
+  </form></details></p>
+{% endif %}
+{% if not missing and not media_root and prog.course.extra.downloads %}<p class="small muted">{{ icon('link', 16) }} {% trans trimmed %}Official sources:{% endtrans %} {% for d in prog.course.extra.downloads %}<a href="{{ d.url }}" target="_blank" rel="noopener">{{ d.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}</p>{% endif %}
+
+
+
+{% set ns = namespace(here_given=false) %}
+{% for m in prog.modules %}
+{% set treq = m.requires|rejectattr('optional')|list %}{% set tdone = treq|selectattr('done')|list|length %}
+{% set lessons_left = m.lessons|rejectattr('optional')|rejectattr('done')|list|length %}
+{% set count = m.lessons|length + 1 %}
+{% set h = count * step + 24 %}
+<section class="trail-module {{ m.status }}">
+  <div class="signpost">
+    <span class="row"><span class="num">{{ '%02d'|format(loop.index) }}</span><h2 dir="auto">{{ m.title }}.</h2></span>
+    {% if m.status == 'done' %}<span class="chip good">{{ _('Done') }}</span>
+    {% elif m.status == 'open' %}<span class="chip warn">{{ _('In progress') }}</span>
+    {% else %}<span class="chip muted">{{ _('Locked') }}</span>{% endif %}
+  </div>
+  {% if m.status == 'locked' %}<p class="small muted" style="margin:.4rem 0 0">{{ _('Opens when you finish the module before.') }}</p>{% endif %}
+
+  {% set trail %}
+  <div class="trail" style="height: {{ h }}px">
+    <svg class="path" viewBox="0 0 100 {{ h }}" preserveAspectRatio="none" aria-hidden="true">
+      <path class="path-line" vector-effect="non-scaling-stroke" d="{% for i in range(count) %}{% set x = xs[i % 6] %}{% set y = i * step + step // 2 + 12 %}{% if loop.first %}M {{ x }} {{ y }}{% else %}{% set px = xs[(i - 1) % 6] %}{% set py = y - step %} C {{ px }} {{ py + step // 2 }} {{ x }} {{ y - step // 2 }} {{ x }} {{ y }}{% endif %}{% endfor %}"/>
+    </svg>
+
+    {% for l in m.lessons %}
+      {% set i = loop.index0 %}{% set x = xs[i % 6] %}{% set y = i * step + step // 2 + 12 %}
+      {# The same rule as "Continue": optional lessons you already opened and left are passed over. #}
+      {% set is_here = m.status == 'open' and not l.done and not (l.optional and l.opened) and not ns.here_given %}
+      {% if is_here %}{% set ns.here_given = true %}{% endif %}
+      <a class="stone {{ 'done' if l.done }} {{ 'here' if is_here }} {{ 'opt' if l.optional }} {{ 'locked' if m.status == 'locked' }} {{ 'left' if x > 50 else 'right' }}"
+         style="inset-inline-start: {{ x }}%; top: {{ y }}px" {% if m.status != 'locked' %}href="/learn/{{ j.id }}/lesson/{{ l.id }}"{% endif %}>
+        <span class="rock">{% if l.done %}{{ icon('check', 22) }}{% else %}{{ loop.index }}{% endif %}</span>
+        <span class="label" dir="auto">{{ l.title }}{% set pt = (parts or {}).get(l.id) %}{% if l.minutes or l.optional or pt %}<small>{% if pt %}<span class="part-mark" title="{{ _('Plays only part of a long video') }}">✂ {{ T('part {n}/{total}', n=pt[0], total=pt[1]) }}</span>{% if l.minutes or l.optional %} · {% endif %}{% endif %}{% if l.optional %}{{ _('Optional') }}{% if l.minutes %} · {% endif %}{% endif %}{% if l.minutes %}{{ T('{n} min', n=l.minutes) }}{% endif %}</small>{% endif %}</span>
+        {% if is_here %}<span class="walker">{{ mascot('wave', 64) }}</span>{% endif %}
+      </a>
+    {% endfor %}
+
+    {% set i = m.lessons|length %}{% set x = xs[i % 6] %}{% set y = i * step + step // 2 + 12 %}
+    {% set flag_here = m.status == 'open' and lessons_left == 0 and not ns.here_given %}
+    {% if flag_here %}{% set ns.here_given = true %}{% endif %}
+    <a class="stone flag {{ 'done' if m.status == 'done' }} {{ 'here' if flag_here }} {{ 'locked' if m.status == 'locked' }} {{ 'left' if x > 50 else 'right' }}"
+       style="inset-inline-start: {{ x }}%; top: {{ y }}px" {% if m.status != 'locked' %}href="/learn/{{ j.id }}/module/{{ m.id }}"{% endif %}>
+      <span class="rock">{{ icon('check' if m.status == 'done' else 'flag', 22) }}</span>
+      <span class="label">{{ _('Module tasks') }}<small>{{ _('%s of %s done')|format(tdone, treq|length) }}</small></span>
+      {% if flag_here %}<span class="walker">{{ mascot('cheer', 64) }}</span>{% endif %}
+    </a>
+  </div>
+  {% endset %}
+  {% if m.status == 'open' %}{{ trail }}
+  {% else %}
+  <details class="trail-fold">
+    <summary>{{ T('{n} lessons', n=m.lessons|length) }}{% set nopt = m.lessons|selectattr('optional')|list|length %}{% if nopt %} ({{ T('{n} of them optional', n=nopt) }}){% endif %}{% if treq %} · {{ _('Module tasks') }}{% endif %}</summary>
+    {{ trail }}
+  </details>
+  {% endif %}
+</section>
+{% endfor %}
+
+{% if offline %}
+{% set job = offline.job %}
+<details class="card offline-card offline-fold" id="offline" data-offline="/courses/{{ j.course_id }}/offline/status"{% if job and (job.state in ('running', 'failed') or job.note or job.failed) %} open{% endif %}>
+  <summary class="row wrap">
+    <span class="grow fold-title">{{ icon('download', 20) }}<b>{% trans trimmed %}Watch offline{% endtrans %}</b></span>
+    <span class="chip {{ 'good' if offline.have and offline.have >= offline.total else 'muted' }}" data-offline-count>{{ T('{have} of {total} videos on this computer', have=offline.have, total=offline.total) }}</span>
+  </summary>
+  <p class="small muted">{% trans trimmed %}This course's videos are on YouTube. Keep a copy on this computer to watch them without internet. Lessons still play only their own part, and continue where you stopped.{% endtrans %}</p>
+
+  <div data-offline-job {% if not job or job.state != 'running' %}hidden{% endif %}>
+    <div class="row"><div class="bar grow"><span data-offline-bar style="width:{{ ((job.done / job.total * 100) if job and job.total else 0)|round }}%"></span></div>
+      <b dir="ltr" data-offline-num>{{ job.done if job else 0 }} / {{ job.total if job else 0 }}</b></div>
+    <p class="small" dir="auto" data-offline-now>{{ _(job.title) if job and job.title else '' }}</p>
+    <form method="post" action="/courses/{{ j.course_id }}/offline/stop"><button class="btn">{% trans trimmed %}Stop downloading{% endtrans %}</button></form>
+  </div>
+  {% if job and job.note %}<p class="note warn small">{{ T(job.note, folder=job.note_folder) }}</p>{% endif %}
+  {% if job and job.state == 'failed' %}<p class="note warn small" data-offline-done>{{ _(job.error) }}</p>{% endif %}
+  {% if job and job.failed %}<details class="more"><summary>{{ T('{n} videos didn’t download', n=job.failed|length) }}</summary>
+    <ul class="small">{% for f in job.failed %}<li dir="auto"><b>{{ f.title }}</b>: <span dir="ltr">{{ f.why }}</span></li>{% endfor %}</ul>
+    <p class="small muted">{% trans trimmed %}Try again later, or update yt-dlp in Settings: YouTube changes often.{% endtrans %}</p></details>{% endif %}
+
+  <div data-offline-idle {% if job and job.state == 'running' %}hidden{% endif %}>
+    <form method="post" action="/courses/{{ j.course_id }}/offline/download" class="row wrap" style="margin-block:.6rem;align-items:flex-end">
+      <label class="small">{% trans trimmed %}Video quality{% endtrans %}
+        <select name="quality">{% for q in qualities %}<option value="{{ q }}" {{ 'selected' if quality == q }}>{{ _('Best available') if q == 'best' else q ~ 'p' }}{% if offline.need %} · {{ T('about {size}', size=nice_size(offline.need[q])) }}{% endif %}</option>{% endfor %}</select></label>
+      {% set short = offline.need and offline.free >= 0 and offline.free < offline.need[quality] + keep_free %}
+      {% if short %}<label class="check small"><input type="checkbox" name="anyway" value="1"> <span>{% trans trimmed %}Download anyway{% endtrans %}</span></label>{% endif %}
+      <button class="btn primary" data-busy="{{ _('Starting…') }}">{{ icon('download', 18) }}{% if offline.have %}{% trans trimmed %}Download the rest{% endtrans %}{% else %}{% trans trimmed %}Download the videos{% endtrans %}{% endif %}</button>
+    </form>
+    {% if offline.free >= 0 %}<p class="small {{ 'note warn' if short else 'muted' }}">{% if short %}<b>{% trans trimmed %}Not enough space.{% endtrans %}</b> {% endif %}{{ T('{free} free where the videos are saved.', free=nice_size(offline.free)) }}{% if offline.need %} {{ T('The videos still to download need about {size} at {q}.', size=nice_size(offline.need[quality]), q=(_('Best available') if quality == 'best' else quality ~ 'p')) }}{% endif %}{% if short %} {% trans trimmed %}inPace always leaves 300 MB free so your device keeps working. Choose a lower quality or another folder, or free some space.{% endtrans %}{% endif %}</p>{% endif %}
+    <details class="more"><summary>{% trans trimmed %}Saving to:{% endtrans %} <code dir="ltr">{{ job.folder if job and job.folder else offline.folder }}</code></summary>
+      <form method="post" action="/courses/{{ j.course_id }}/offline/folder" class="stack">
+        <label class="small">{% trans trimmed %}Save this course's videos in{% endtrans %}
+          <div class="row pick-row"><input name="base" id="offline-base" dir="ltr" value="{{ offline.own_base }}" placeholder="{{ offline.default_base }}">
+            <button type="button" class="btn" data-pick-folder="#offline-base">{% trans trimmed %}Choose folder{% endtrans %}</button></div></label>
+        <p class="small muted" style="margin:0">{% trans trimmed %}Leave it empty to use the folder from Settings.{% endtrans %} <a href="/settings#videos">{% trans trimmed %}Settings{% endtrans %}</a></p>
+        <label class="small">{% trans trimmed %}Folder name{% endtrans %}
+          <input name="name" dir="auto" value="{{ offline.folder_name }}" placeholder="{{ prog.course.title }}"></label>
+        <p class="small muted" style="margin:0">{% trans trimmed %}The course name by default. Videos you already downloaded stay where they are and keep working.{% endtrans %}</p>
+        <button class="btn">{% trans trimmed %}Save{% endtrans %}</button>
+      </form></details>
+    <p class="small muted">{% trans trimmed %}Higher quality looks sharper but takes more space: an hour of video is roughly 150 MB at 360p, 300 MB at 480p, 600 MB at 720p and 1.2 GB at 1080p. Videos already downloaded keep their quality; delete them first to download again in another quality.{% endtrans %}{% if not has_ffmpeg %} {% trans trimmed %}Without ffmpeg on this computer, most YouTube videos download at up to 720p.{% endtrans %}{% endif %}</p>
+    <p class="small muted">{% trans trimmed %}Downloads use yt-dlp, a free open-source tool. inPace gets it the first time (about 3 MB). Download only videos you're allowed to keep, and check the video's license if you share them.{% endtrans %}</p>
+
+    <details class="more"{% if not offline.have %} open{% endif %}><summary>{% trans trimmed %}I already have these videos{% endtrans %}</summary>
+      <p class="small">{% trans trimmed %}Choose the folder they're in. inPace finds which file is which video, even when the names are a bit different, and shows you before it saves anything.{% endtrans %}</p>
+      <form method="post" action="/courses/{{ j.course_id }}/offline/match" class="stack">
+        <div class="row pick-row">
+          <input name="folder" id="offline-folder" required dir="ltr" placeholder="{{ _('Full path of the folder with the videos') }}">
+          <button type="button" class="btn" data-pick-folder="#offline-folder">{% trans trimmed %}Choose folder{% endtrans %}</button>
+        </div>
+        <label class="check small"><input type="checkbox" name="lookup" value="1" checked> <span>{% trans trimmed %}Look up the videos' titles and lengths on YouTube first (better matches, needs internet){% endtrans %}</span></label>
+        <button class="btn primary" data-busy="{{ _('Looking…') }}">{% trans trimmed %}Find my videos{% endtrans %}</button>
+      </form>
+    </details>
+    {% if offline.have %}
+    <details class="more"><summary>{% trans trimmed %}Stop using the copies{% endtrans %}</summary>
+      <form method="post" action="/courses/{{ j.course_id }}/offline/forget"><button class="btn">{% trans trimmed %}Play from YouTube again{% endtrans %}</button></form>
+      <p class="small muted">{% trans trimmed %}Your files stay where they are.{% endtrans %}</p>
+      <details class="more"><summary>{% trans trimmed %}Delete downloaded videos{% endtrans %}</summary>
+        <p class="small">{% trans trimmed %}This deletes the videos inPace downloaded for this course, to free space. Videos in your own folders are never touched.{% endtrans %}</p>
+        <form method="post" action="/courses/{{ j.course_id }}/offline/forget"><button class="btn danger-solid" name="delete" value="1">{% trans trimmed %}Delete them{% endtrans %}</button></form>
+      </details></details>
+    {% endif %}
+  </div>
+</details>
+{% endif %}
+{% endblock %}

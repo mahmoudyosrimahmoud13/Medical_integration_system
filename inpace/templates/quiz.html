@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}{{ _('Verified exam') if verified else (_('Review') if review else _('Quiz')) }}{% endblock %}
+{% block width %}read{% endblock %}
+{% block main %}
+<div class="page-head">
+  <p class="eyebrow">{% if module.id %}<a data-replace href="/learn/{{ j.id }}/module/{{ module.id }}" dir="auto">{{ module.title }}</a>{% else %}<a data-up href="/learn/{{ j.id }}">{{ course.title }}</a>{% endif %}</p>
+  <h1>{{ _('Verified exam') if verified else (_('Review') if review else _('Practice quiz')) }}</h1>
+  {% if review %}
+    <p class="muted">{% trans trimmed %}Questions you've seen before come back over days and weeks, so they stick. Right answers come back later, wrong ones sooner.{% endtrans %}</p>
+  {% elif verified %}
+    <p class="muted">{{ T("From {name}. {n} questions. You can take it once, and you won't see the answers. {name} will see your score.", name=checker_name, n=exam|length) }}</p>
+  {% else %}
+    <p class="muted">{{ T("{n} questions · {p}% to pass. You'll see the answers at the end.", n=exam|length, p=req.pass) }}</p>
+  {% endif %}
+</div>
+<form method="post" data-nav-form>
+  <input type="hidden" name="seed" value="{{ seed }}">
+  {% if review %}<input type="hidden" name="qids" value="{{ qids }}">{% endif %}
+  {% for q in exam %}
+  <fieldset class="card question">
+    <legend class="sr">{{ T('Question {n}', n=loop.index) }}</legend>
+    <p class="eyebrow">{{ T('Question {n} of {total}', n=loop.index, total=exam|length) }}{% if q.note %} · {{ _(q.note) }}{% endif %}</p>
+    <p class="q-text" dir="auto">{{ q.text }}</p>
+    <div class="choices">
+      {% for c in q.choices %}
+      <label class="choice"><input type="radio" name="{{ q.id }}" value="{{ c.id }}" required><span dir="auto">{{ c.text }}</span></label>
+      {% endfor %}
+    </div>
+  </fieldset>
+  {% endfor %}
+  <button class="btn primary big wide">{{ _('Submit my answers') if verified else _('Finish quiz') }}</button>
+</form>
+{% endblock %}

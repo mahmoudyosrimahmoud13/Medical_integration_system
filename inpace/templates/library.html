@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% import "_roadmap.html" as R with context %}
+{% block title %}{{ _('Course library') }}{% endblock %}
+{% block main %}
+<div class="lib-hero">
+  <div class="lib-hero-main">
+    <span class="lib-tempo" title="{{ _('Tempo the librarian') }}">{{ mascot('librarian', 130, _('Tempo the librarian')) }}</span>
+    <div>
+    <h1>{% trans trimmed %}Course library{% endtrans %}.</h1>
+    <p class="lead">{% trans trimmed %}Free courses made and shared by other learners. Look inside any course first, then add it with a click: it's checked on the way, and your progress stays on this computer.{% endtrans %}</p>
+  </div>
+  </div>
+  {% if not problem and entries %}
+  <div class="lib-stats">
+    <div><b>{{ entries|length }}</b><span>{% trans trimmed %}courses{% endtrans %}</span></div>
+    {% if lib_roadmaps %}<div><b>{{ lib_roadmaps|length }}</b><span>{% trans trimmed %}roadmaps{% endtrans %}</span></div>{% endif %}
+    <div><b>{{ entries|sum(attribute='hours') }}</b><span>{% trans trimmed %}hours of lessons{% endtrans %}</span></div>
+  </div>
+  {% endif %}
+</div>
+{% if not problem %}
+<nav class="lib-tabs" aria-label="{{ _('Library') }}">
+  <a href="/library" class="{{ 'on' if tab == 'courses' }}" {{ 'aria-current=page' if tab == 'courses' }}>{{ icon('book', 18) }}{% trans trimmed %}Courses{% endtrans %} <span class="n">{{ entries|length }}</span></a>
+  <a href="/library?tab=roadmaps" class="{{ 'on' if tab == 'roadmaps' }}" {{ 'aria-current=page' if tab == 'roadmaps' }}>{{ icon('route', 18) }}{% trans trimmed %}Roadmaps{% endtrans %} <span class="n">{{ lib_roadmaps|length }}</span></a>
+</nav>
+{% endif %}
+
+{% if problem %}
+<section class="card empty">{{ mascot('think', 110) }}<p>{{ _(problem) }}</p>
+  <div class="row"><a class="btn primary" href="/library?refresh=1">{% trans trimmed %}Try again{% endtrans %}</a></div></section>
+{% elif tab == 'roadmaps' %}
+{% if index.offline %}<p class="note warn">{% trans trimmed %}You're offline, so this is the list from the last time you looked.{% endtrans %}</p>{% endif %}
+<p class="muted">{% trans trimmed %}A roadmap is a path through several courses of the library, in order, toward one goal. Follow one, and add each course when you get to it.{% endtrans %}</p>
+{% if lib_roadmaps %}
+<div class="lib-tools">
+  <label class="course-filter">{{ icon('search', 18) }}<input type="search" data-course-filter dir="auto" placeholder="{{ _('Search the roadmaps') }}" aria-label="{{ _('Search the roadmaps') }}"></label>
+</div>
+<p class="muted" data-course-none hidden>{% trans trimmed %}No roadmap matches that. Try another word.{% endtrans %}</p>
+<div class="lib-grid">{% for r in lib_roadmaps %}{{ R.lib_card(r, titles, r.id in followed) }}{% endfor %}</div>
+{% else %}
+<section class="card empty">{{ mascot('librarian', 100, _('Tempo the librarian')) }}<p>{% trans trimmed %}No roadmaps in the library yet. Make the first one!{% endtrans %}</p></section>
+{% endif %}
+<section class="card soft row between" style="margin-top:2rem">
+  <span><b>{% trans trimmed %}Make your own roadmap{% endtrans %}</b><br><span class="muted small">{% trans trimmed %}Pick a goal and inPace suggests the courses. Then share it, or publish it here.{% endtrans %}</span></span>
+  <a class="btn" href="/roadmaps/new">{% trans trimmed %}Make a roadmap{% endtrans %}</a>
+</section>
+{% else %}
+{% if missing %}<p class="note warn">{% trans trimmed %}The course in that link isn't in the library anymore.{% endtrans %}</p>{% endif %}
+{% if index.offline %}<p class="note warn">{% trans trimmed %}You're offline, so this is the list from the last time you looked.{% endtrans %}</p>{% endif %}
+<div class="lib-tools">
+  <label class="course-filter">{{ icon('search', 18) }}<input type="search" data-course-filter dir="auto" value="{{ show or '' }}" placeholder="{{ _('Search the library') }}" aria-label="{{ _('Search the library') }}"></label>
+  <div class="lib-filters" role="group" aria-label="{{ _('Filters') }}">
+    <select data-lib-level aria-label="{{ _('Level') }}">
+      <option value="">{% trans trimmed %}Any level{% endtrans %}</option>
+      <option value="beginner">{% trans trimmed %}Beginner{% endtrans %}</option>
+      <option value="intermediate">{% trans trimmed %}Intermediate{% endtrans %}</option>
+      <option value="advanced">{% trans trimmed %}Advanced{% endtrans %}</option>
+    </select>
+    <select data-lib-lang aria-label="{{ _('Language') }}">
+      <option value="">{% trans trimmed %}Any language{% endtrans %}</option>
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+    </select>
+  </div>
+  {% if topics %}
+  <div class="lib-topics" role="group" aria-label="{{ _('Topics') }}">
+    <button type="button" class="lib-topic" data-lib-topic="" aria-pressed="true">{% trans trimmed %}All{% endtrans %}</button>
+    {% for tp in topics %}<button type="button" class="lib-topic" data-lib-topic="{{ tp.id }}" aria-pressed="false" dir="auto">{{ tp.label }}</button>{% endfor %}
+  </div>
+  {% endif %}
+  <a class="btn lib-refresh" href="/library?refresh=1" title="{{ _('Look for new courses') }}">{{ icon('undo', 18) }} {% trans trimmed %}Refresh{% endtrans %}</a>
+  {% if checked_min is not none %}<span class="lib-checked muted small">{% if checked_min < 1 %}{% trans trimmed %}Checked just now{% endtrans %}{% elif checked_min < 120 %}{{ T('Checked {n} min ago', n=checked_min) }}{% else %}{{ T('Checked {n} h ago', n=checked_min // 60) }}{% endif %}</span>{% endif %}
+</div>
+{% if new_count %}<p class="note lib-new-note">{{ icon('spark', 18) }} {{ T('{n} new course(s) since you last looked. They are first in the list.', n=new_count) }}</p>{% endif %}
+<p class="muted" data-course-none hidden>{% trans trimmed %}No course matches that. Try another word.{% endtrans %}</p>
+{% for g in groups %}
+<section class="lib-section" data-lib-section="{{ g.id }}">
+{% if g.label %}<h2 class="lib-section-title" dir="auto">{{ g.label }} <span class="lib-section-n">{{ g.entries|length }}</span></h2>{% endif %}
+<div class="lib-grid">
+{% for e in g.entries %}
+<article class="lib-card{{ ' picked' if show and e.id == show }}" id="lib-{{ e.id }}" data-course-search="{{ e.search }}" data-search-title="{{ e.search_title }}" data-level="{{ e.level }}" data-lang="{{ e.language }}" data-section="{{ g.id }}" data-tags="{{ (e.tags or [])|map('lower')|join('|') }}">
+  <a class="lib-cover" href="/library/{{ e.id }}" tabindex="-1" aria-hidden="true">
+    {% if e.cover %}<img src="{{ e.cover }}" alt="" loading="lazy">{% else %}<span class="blank" style="--hue:{{ (e.id|length * 47) % 360 }}">{{ (e.title or '?')[:1]|upper }}</span>{% endif %}
+  </a>
+  <div class="lib-body">
+    {% if e.new %}<span class="lib-new-tag">{% trans trimmed %}New{% endtrans %}</span>{% endif %}
+    <h3 dir="auto"><a href="/library/{{ e.id }}">{{ e.title }}</a></h3>
+    <ul class="lib-facts">
+      {% if e.minutes and e.minutes < 90 %}<li>{{ icon('clock', 15) }}{{ T('{n} min of lessons', n=e.minutes) }}</li>{% elif e.hours %}<li>{{ icon('clock', 15) }}{{ T('about {n} h of lessons', n=e.hours) }}</li>{% endif %}
+      <li>{{ icon('book', 15) }}{{ T('{a} modules · {b} lessons', a=e.modules, b=e.lessons) }}</li>
+      <li>{{ 'العربية' if e.language == 'ar' else 'English' }}</li>
+    </ul>
+    {% if e.description %}<p class="lib-desc" dir="auto">{{ e.description }}</p>{% endif %}
+    <p class="muted small lib-by">{% if e.author %}{{ T('by {name}', name=e.author.name) }}{% if e.author.verified %} ✓{% endif %}{% endif %}
+      {% if e.downloads %}<span class="chip warn">{{ T('Extra downloads{size}', size=(' · ' ~ e.downloads[0].size) if e.downloads[0].size else '') }}</span>{% endif %}</p>
+    <div class="lib-actions">
+      {% if e.state == 'have' %}<span class="chip good">{% trans trimmed %}Added{% endtrans %}</span>
+      {% else %}<form method="post" action="/library/{{ e.id }}/add"><button class="btn primary">{{ _('Update') if e.state == 'update' else _('Add') }}</button></form>{% endif %}
+      <a class="btn" href="/library/{{ e.id }}">{% trans trimmed %}See what's inside{% endtrans %}</a>
+    </div>
+  </div>
+</article>
+{% endfor %}
+</div>
+</section>
+{% endfor %}
+{% endif %}
+
+{% if tab != 'roadmaps' %}
+<section class="card soft row between" style="margin-top:2rem">
+  <span><b>{% trans trimmed %}Share your own course{% endtrans %}</b><br><span class="muted small">{% trans trimmed %}Made a course? Publish it here so anyone can take it for free. A bot checks it in a few minutes.{% endtrans %}</span></span>
+  <a class="btn" href="/share">{{ icon('send', 16) }}{% trans trimmed %}Share a course{% endtrans %}</a>
+</section>
+{% endif %}
+{% endblock %}

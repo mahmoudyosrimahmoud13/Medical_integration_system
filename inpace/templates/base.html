@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="{{ lang or 'en' }}" dir="{{ lang_dir(lang or 'en') }}"{% if theme %} data-theme="{{ theme }}"{% endif %}{% if accent %} data-accent="{{ accent }}"{% endif %}>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% block title %}{% trans trimmed %}inPace{% endtrans %}{% endblock %} {% trans trimmed %}· inPace{% endtrans %}</title>
+<link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/style.css?v={{ static_v['style.css'] }}">
+{% if dispose %}<meta name="inpace-dispose" content="{{ dispose }}">{% endif %}
+<script>
+/* Pages are never cached, but a few are one-off (a quiz you already sent, a finished focus session).
+   If Back lands on one of them, go to the page it belongs to instead. If the browser brings back a
+   page from its memory, load it again so it shows the colors and language you have now. */
+(function () {
+  var m = document.querySelector('meta[name="inpace-dispose"]');
+  var nav = window.performance && performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+  if (m && nav && nav.type === "back_forward") location.replace(m.content);
+  window.addEventListener("pageshow", function (e) {
+    if (!e.persisted) return;
+    if (m) location.replace(m.content); else location.reload();
+  });
+  /* Which way the new page moves in: forward slides in, back slides back, tabs and saved forms fade.
+     The styles read <html data-nav>. Runs before the page is first drawn. */
+  window.addEventListener("pagereveal", function (e) {
+    if (!e.viewTransition) return;
+    var kind = "forward", hint = null;
+    try { hint = sessionStorage.getItem("inpace-nav"); sessionStorage.removeItem("inpace-nav"); } catch (x) {}
+    try {
+      var act = window.navigation && navigation.activation;
+      if (act && act.navigationType === "traverse" && act.from) kind = act.entry.index < act.from.index ? "back" : "forward";
+      else if (act && (act.navigationType === "replace" || act.navigationType === "reload")) kind = "fade";
+    } catch (x) {}
+    if (hint === "back") kind = "back"; else if (hint === "tab") kind = "fade";
+    var root = document.documentElement;
+    root.setAttribute("data-nav", kind);
+    e.viewTransition.finished.then(function () { root.removeAttribute("data-nav"); }, function () { root.removeAttribute("data-nav"); });
+  });
+  /* Tell the app the real clock, so the island's mornings, sunsets and nights match the sky outside. */
+  try { document.cookie = "tz=" + (-new Date().getTimezoneOffset()) + ";path=/;max-age=31536000;samesite=lax"; } catch (e) {}
+})();
+</script>
+</head>
+<body>
+<header class="top">
+  <span class="nav-btns" role="group" aria-label="{{ _('Go back or forward') }}">
+    <button type="button" class="nav-btn" data-nav-back title="{{ _('Back (Alt+←)') }}" aria-label="{{ _('Back') }}">{{ icon('back', 20) }}</button>
+    <button type="button" class="nav-btn" data-nav-fwd title="{{ _('Forward (Alt+→)') }}" aria-label="{{ _('Forward') }}">{{ icon('forward', 20) }}</button>
+  </span>
+  <a class="brand" href="/">
+    <img src="/static/icon.svg" alt="" width="30" height="30">
+    <span class="brand-word"><span class="in">in</span><b>Pace</b></span>
+  </a>
+  {% if me %}<span class="top-title" dir="auto">{{ self.title() }}</span>{% endif %}
+  <span class="pill" title="{{ _('Nothing leaves this computer unless you send a file yourself') }}"><i class="dot"></i>{% trans trimmed %}Offline · on this computer{% endtrans %}</span>
+  {% if me %}<button type="button" class="search-btn" data-search title="{{ _('Search and jump (Ctrl+K)') }}">{{ icon('search', 18) }}<span>{{ _('Search…') }}</span><kbd>Ctrl K</kbd></button>{% endif %}
+  {% if me %}<button type="button" class="timer-btn" data-timer-open aria-haspopup="dialog" title="{{ _('Focus timer') }}" aria-label="{{ _('Focus timer') }}">{{ icon('timer', 20) }}</button>{% endif %}
+  <button type="button" class="theme-toggle" data-theme-toggle aria-label="{{ _('Switch light or dark mode') }}" title="{{ _('Switch light or dark mode') }}">
+    <span class="when-light">{{ icon('moon', 20) }}</span><span class="when-dark">{{ icon('sun', 20) }}</span>
+  </button>
+  {% if me %}
+  <a class="me" href="/settings" title="{{ _('Settings') }}">{{ avatar(me, 32) }}<span>{{ me.name }}</span></a>
+  {% endif %}
+</header>
+<div class="shell {{ 'no-side' if not me }}">
+  {% if me %}
+  {% set p = active_path %}
+  <nav class="side" aria-label="{{ _('Main') }}">
+    {% if resume and not p.startswith('/learn') %}
+    <a class="continue" href="{{ resume.url }}"><span class="small">{% trans trimmed %}Continue{% endtrans %}</span><b dir="auto">{{ resume.lesson }}</b><span class="small muted" dir="auto">{{ resume.course }}</span></a>
+    {% endif %}
+    <p class="side-h">{% trans trimmed %}My learning{% endtrans %}</p>
+    <a href="/" class="{{ 'on' if p == '/' }}">{{ icon('home', 22) }}{{ _("Home") }}</a>
+    <a href="/courses" class="{{ 'on' if p.startswith('/courses') or p.startswith('/learn') }}">{{ icon('book', 22) }}{{ _("My courses") }}</a>
+    <a href="/roadmaps" class="{{ 'on' if p.startswith('/roadmaps') }}">{{ icon('route', 22) }}{{ _("Roadmaps") }}</a>
+    <a href="/milestones" class="{{ 'on' if p.startswith('/milestones') }}">{{ icon('shield', 22) }}{{ _("Milestones") }}</a>
+    <a href="/island" class="{{ 'on' if p.startswith('/island') }}">{{ icon('island', 22) }}{{ _("Tempo's island") }}</a>
+    <a href="/races" class="{{ 'on' if p.startswith('/races') }}">{{ icon('flag', 22) }}{{ _("Races") }}</a>
+    <a href="/add" class="{{ 'on' if p.startswith('/add') or p.startswith('/ai') or p.startswith('/edit') }}">{{ icon('plus', 22) }}{{ _("Add a course") }}</a>
+    <a href="/library" class="{{ 'on' if p.startswith('/library') }}">{{ icon('library', 22) }}{{ _("Course library") }}{% if lib_new %}<em class="badge" title="{{ _('New courses') }}">{{ lib_new }}</em>{% endif %}</a>
+    <p class="side-h">{% trans trimmed %}People I check on{% endtrans %}</p>
+    {% for x in checking %}
+      <a href="/people#p-{{ x.id[:12] }}" class="person-link">{{ avatar(x, 24) }}<span>{{ display_name(x) }}</span>{% if x.waiting %}<em class="badge">{{ x.waiting }}</em>{% endif %}</a>
+    {% else %}
+      <p class="side-empty">{% trans trimmed %}Nobody yet{% endtrans %}</p>
+    {% endfor %}
+    <a href="/people" class="{{ 'on' if p.startswith('/people') or p.startswith('/review') }}">{{ icon('users', 22) }}{{ _("People") }}</a>
+    <a href="/reminders" class="{{ 'on' if p.startswith('/reminders') }}">{{ icon('bell', 22) }}{{ _("Reminders") }}</a>
+    <a href="/settings" class="{{ 'on' if p.startswith('/settings') }}">{{ icon('settings', 22) }}{{ _("Settings") }}</a>
+    <a href="/feedback" class="{{ 'on' if p.startswith('/feedback') }}">{{ icon('chat', 22) }}{{ _("Feedback and ideas") }}</a>
+    <a href="{{ DISCORD_URL }}" target="_blank" rel="noopener">{{ icon('discord', 22) }}{{ _("Discord community") }}</a>
+    <a href="{{ TELEGRAM_URL }}" target="_blank" rel="noopener">{{ icon('telegram', 22) }}{{ _("Telegram channel") }}</a>
+    <div class="side-bottom">
+      <a class="btn primary wide" href="/open">{{ icon('open', 18) }}{{ _("Open a file") }}</a>
+    </div>
+  </nav>
+  {% endif %}
+  <main>
+    <div class="page {% block width %}{% endblock %}">
+      {% if update and update.kind not in ('source', 'android') %}
+        {% if not update.setting %}
+        <form class="update-bar" method="post" action="/updates/setting">
+          <span>{% trans trimmed %}Keep inPace up to date automatically? It checks once a day and installs new versions for you. Nothing else leaves your computer.{% endtrans %}</span>
+          <span class="row"><button class="btn primary" name="choice" value="auto">{% trans trimmed %}Yes, keep it updated{% endtrans %}</button>
+          <button class="btn" name="choice" value="off">{% trans trimmed %}Not now{% endtrans %}</button></span>
+        </form>
+        {% elif update.status.state == 'installed' %}
+        <form class="update-bar" method="post" action="/updates/restart">
+          <span>{{ T('inPace {v} is installed. Restart to use it.', v=update.status.version) }}</span>
+          <button class="btn primary">{% trans trimmed %}Restart now{% endtrans %}</button>
+        </form>
+        {% elif update.status.state == 'ready' %}
+        <form class="update-bar" method="post" action="/updates/install">
+          <span>{% if update.kind == 'windows' %}{{ T('inPace {v} is ready. Installing takes a moment, then inPace opens again.', v=update.status.version) }}{% else %}{{ T('inPace {v} is ready. Your computer will ask for your password to install it.', v=update.status.version) }}{% endif %}</span>
+          <button class="btn primary">{% trans trimmed %}Install and restart{% endtrans %}</button>
+        </form>
+        {% endif %}
+      {% endif %}
+      {% if msg %}<div class="note ok" role="status">{{ msg }}</div>{% endif %}
+      {% if err %}<div class="note bad" role="alert">{{ err }}</div>{% endif %}
+      {% if live_page is defined and live_page %}<div id="live-page" data-live class="live-page">{% endif %}
+      {% block main %}{% endblock %}
+      {% if live_page is defined and live_page %}</div>{% endif %}
+      {% if island_news %}
+      <div class="yay isle-news" role="status" data-confetti>
+        {% set n = island_news[0] %}
+        <span class="isle-news-art">{% if n.kind == 'plant' %}{{ island_plant(n.key)|safe }}{% elif n.kind in ('chest', 'trophy', 'harbour') %}{{ chest(True, n.kind == 'trophy') }}{% else %}{{ island_friend(n.key)|safe }}{% endif %}</span>
+        <p>{% if n.kind == 'chest' %}<b>{{ _('Treasure chest!') }}</b><br>{{ T('{s} shells for reaching {n}% of {course}.', s=n.shells, n=n.at, course=n.name) }}
+        {% elif n.kind == 'harbour' %}<b>{{ _('You reached the harbour!') }}</b><br>{{ T('{s} shells for finishing the roadmap “{name}”.', s=n.shells, name=n.name) }}
+        {% elif n.kind == 'trophy' %}<b>{{ _('A trophy!') }}</b><br>{{ T('{s} shells for finishing {course}. The trophy is on your island.', s=n.shells, course=n.name) }}
+        {% else %}<b>{{ _('New on your island!') }}</b><br>{% if n.kind == 'plant' %}{{ T('You can grow a {plant} now.', plant=_(n.name)) }}{% else %}{{ T('{name} moved in.', name=_(n.name)) }}{% endif %}{% endif %}
+          {% if island_news|length > 1 %}{{ T('And {n} more.', n=island_news|length - 1) }}{% endif %} <a href="{{ '/island/voyages' if n.kind == 'harbour' else '/island' }}">{{ _('See the voyage') if n.kind == 'harbour' else _('See the island') }}</a></p>
+        <button type="button" class="yay-close" aria-label="{{ _('Close') }}">×</button>
+      </div>
+      {% endif %}
+      {% if yay %}
+      <div class="yay" role="status" {{ 'data-confetti' if yay[0] in ('cheer', 'proud') }}>
+        {{ mascot(yay[0], 76) }}
+        <p>{{ _(yay[1]) }}</p>
+        <button type="button" class="yay-close" aria-label="{{ _('Close') }}">×</button>
+      </div>
+      {% endif %}
+    </div>
+    {% if me %}
+    <footer class="big-foot">
+      <div class="foot-top">
+        <div><b>{{ _('Slow and steady wins the race.') }}</b><p>{{ _('Free and open source. Everything stays on this computer.') }}</p></div>
+        <nav class="foot-links" aria-label="{{ _('More') }}">
+          <a href="/courses">{{ _('My courses') }}</a><a href="/races">{{ _('Races') }}</a><a href="/people">{{ _('People') }}</a>
+          <a href="/settings">{{ _('Settings') }}</a><a href="/settings#about">{{ _('About') }}</a>
+          <a href="https://github.com/mahmoudyosrimahmoud13/inpace" target="_blank" rel="noopener">GitHub</a>
+        </nav>
+      </div>
+      <p class="word" aria-hidden="true"><span>in</span>Pace</p>
+      {{ mascot('happy', 120) }}
+    </footer>
+    {% endif %}
+  </main>
+</div>
+  {% if me %}
+  {% set p = active_path %}
+  {% set waiting = checking|sum(attribute='waiting') if checking else 0 %}
+  {% set more_on = p.startswith('/roadmaps') or p.startswith('/island') or p.startswith('/races') or p.startswith('/library') or p.startswith('/people') or p.startswith('/review') or p.startswith('/settings') or p.startswith('/open') or p.startswith('/reminders') or p.startswith('/feedback') or p.startswith('/share') %}
+  <nav class="tabbar" aria-label="{{ _('Main') }}">
+    <a href="/" class="{{ 'on' if p == '/' }}" {{ 'aria-current=page' if p == '/' }}>{{ icon('home', 22) }}<span>{{ _("Home") }}</span></a>
+    <a href="/courses" class="{{ 'on' if p.startswith('/courses') or p.startswith('/learn') }}">{{ icon('book', 22) }}<span>{{ _("Courses") }}</span></a>
+    <a href="/add" class="tab-add {{ 'on' if p.startswith('/add') or p.startswith('/ai') or p.startswith('/edit') }}">{{ icon('plus', 24) }}<span>{{ _("Add") }}</span></a>
+    <a href="/milestones" class="{{ 'on' if p.startswith('/milestones') }}">{{ icon('shield', 22) }}<span>{{ _("Milestones") }}</span></a>
+    <button type="button" class="{{ 'on' if more_on }}" data-more-open aria-haspopup="dialog">{{ icon('more', 22) }}<span>{{ _("More") }}</span>{% set more_n = (waiting or 0) + (lib_new or 0) %}{% if more_n %}<em class="badge">{{ more_n }}</em>{% endif %}</button>
+  </nav>
+  <dialog class="more-sheet" data-more-sheet aria-label="{{ _('More') }}">
+    <div class="sheet-head"><b>{{ _("More") }}</b><button type="button" class="btn icon-btn" data-more-close aria-label="{{ _('Close') }}">{{ icon('x', 20) }}</button></div>
+    <a href="/roadmaps" class="{{ 'on' if p.startswith('/roadmaps') }}">{{ icon('route', 22) }}{{ _("Roadmaps") }}</a>
+    <a href="/island" class="{{ 'on' if p.startswith('/island') }}">{{ icon('island', 22) }}{{ _("Tempo's island") }}</a>
+    <a href="/races" class="{{ 'on' if p.startswith('/races') }}">{{ icon('flag', 22) }}{{ _("Races") }}</a>
+    <a href="/library" class="{{ 'on' if p.startswith('/library') }}">{{ icon('library', 22) }}{{ _("Course library") }}{% if lib_new %}<em class="badge" title="{{ _('New courses') }}">{{ lib_new }}</em>{% endif %}</a>
+    <a href="/people" class="{{ 'on' if p.startswith('/people') or p.startswith('/review') }}">{{ icon('users', 22) }}{{ _("People") }}{% if waiting %}<em class="badge">{{ waiting }}</em>{% endif %}</a>
+    <a href="/open" class="{{ 'on' if p.startswith('/open') }}">{{ icon('open', 22) }}{{ _("Open a file") }}</a>
+    <a href="/reminders" class="{{ 'on' if p.startswith('/reminders') }}">{{ icon('bell', 22) }}{{ _("Reminders") }}</a>
+    <a href="/settings" class="{{ 'on' if p.startswith('/settings') }}">{{ icon('settings', 22) }}{{ _("Settings") }}</a>
+    <a href="/feedback" class="{{ 'on' if p.startswith('/feedback') }}">{{ icon('chat', 22) }}{{ _("Feedback and ideas") }}</a>
+    <a href="{{ DISCORD_URL }}" target="_blank" rel="noopener">{{ icon('discord', 22) }}{{ _("Discord community") }}</a>
+    <a href="{{ TELEGRAM_URL }}" target="_blank" rel="noopener">{{ icon('telegram', 22) }}{{ _("Telegram channel") }}</a>
+    <button type="button" data-theme-toggle><span class="when-light">{{ icon('moon', 22) }}</span><span class="when-dark">{{ icon('sun', 22) }}</span>{{ _('Switch light or dark mode') }}</button>
+  </dialog>
+  {% endif %}
+{% if update_news and not tour %}
+<dialog class="news-dialog" data-news-dialog aria-labelledby="news-title">
+  <div class="news-head">{{ mascot('cheer', 92) }}<div><p class="eyebrow">{{ T('You have {v}', v=update_news.current) }}</p>
+    <h2 id="news-title">{{ T('inPace {v} is out!', v=update_news.version) }}</h2></div></div>
+  {% if update_news.notes_html %}<div class="prose news-notes" dir="auto">{{ update_news.notes_html }}</div>{% endif %}
+  <p class="small muted">{% trans trimmed %}Your courses, progress and milestones stay as they are.{% endtrans %}</p>
+  <div class="row wrap news-actions">
+    {% if update_news.kind == 'android' %}
+    <a class="btn primary" href="{{ update_news.apk }}" target="_blank" rel="noopener">{{ icon('download', 18) }}{% trans trimmed %}Download the update{% endtrans %}</a>
+    {% elif update_news.kind == 'source' %}
+    <p class="small"><b>{% trans trimmed %}This copy runs from its code folder. To update, run this in the inPace folder:{% endtrans %}</b> <code>git pull</code></p>
+    {% else %}
+    <form method="post" action="/updates/check"><button class="btn primary" data-busy="{{ _('Updating…') }}">{{ icon('download', 18) }}{% trans trimmed %}Update now{% endtrans %}</button></form>
+    {% endif %}
+    {% if update_news.page %}<a class="btn" href="{{ update_news.page }}" target="_blank" rel="noopener">{% trans trimmed %}What's new{% endtrans %}</a>{% endif %}
+    <form method="post" action="/updates/later" data-news-later><button class="btn ghost">{% trans trimmed %}Later{% endtrans %}</button></form>
+  </div>
+  {% if update_news.kind == 'android' %}<p class="small muted">{% trans trimmed %}Open the downloaded file to install it over this one. If Android asks, allow installing from your browser or files app.{% endtrans %}</p>{% endif %}
+</dialog>
+{% endif %}
+{% if tour %}
+<script type="application/json" id="tour-data">{{ {"steps": tour, "next": _("Next"), "back": _("Back"), "skip": _("Skip the tour"), "done": _("Let's go!")}|tojson }}</script>
+{% for mood in ("wave", "happy", "think", "proud", "cheer", "sleepy") %}<template id="tour-tempo-{{ mood }}">{{ mascot(mood, 110) }}</template>{% endfor %}
+{% endif %}
+{% if me %}<template id="search-labels" data-placeholder="{{ _('Search courses, lessons and pages…') }}" data-empty="{{ _('Nothing found.') }}" data-hint="{{ _('↑ ↓ to choose · Enter to open · Esc to close') }}"></template>{% endif %}
+{% if me and timer_json is defined %}{% include "_timer.html" %}{% endif %}
+{% if trip_live_json is defined %}<script type="application/json" id="inpace-trip">{{ trip_live_json|safe }}</script>{% endif %}
+<script src="/static/app.js?v={{ static_v['app.js'] }}"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}{{ _('My courses') }}{% endblock %}
+{% macro course_menu(r) %}{% set c = r.course %}
+<details class="menu course-menu">
+  <summary class="btn icon-btn" aria-label="{{ _('More') }}" title="{{ _('More') }}">{{ icon('more', 20) }}</summary>
+  <div class="menu-box">
+    <a href="/build/{{ c.id }}"><b>{% trans trimmed %}Edit{% endtrans %}</b></a>
+    <a href="/edit/{{ c.id }}">{% trans trimmed %}Tasks, quizzes and more settings{% endtrans %}</a>
+    <p class="menu-h">{% trans trimmed %}Share{% endtrans %}</p>
+    <a href="/courses/{{ c.id }}/share">{% trans trimmed %}Send a link…{% endtrans %}</a>
+    <a href="/courses/{{ c.id }}/export">{% trans trimmed %}For learners (no answers){% endtrans %}</a>
+    {% if c.has_answers %}<a href="/courses/{{ c.id }}/export?answers=1">{% trans trimmed %}For checkers and teachers (with answers){% endtrans %}</a>{% endif %}
+    {% if c.extra.media_index or r.has_files %}<a href="/courses/{{ c.id }}/export?files=1">{% trans trimmed %}With its small files (PDFs, slides, pictures; no videos){% endtrans %}</a>{% endif %}
+    <a href="/courses/{{ c.id }}/publish">{% trans trimmed %}Publish to the library…{% endtrans %}</a>
+    <p class="menu-h">{% trans trimmed %}Update{% endtrans %}</p>
+    <a href="/open">{% trans trimmed %}From a newer course file{% endtrans %}</a>
+    {% if r.media_root %}<form method="post" action="/courses/{{ c.id }}/refresh"><button class="link btn" style="justify-content:flex-start">{% trans trimmed %}Refresh from its folder{% endtrans %}</button></form>{% endif %}
+    <p class="menu-h">{% trans trimmed %}Folder{% endtrans %}</p>
+    <form method="post" action="/courses/{{ c.id }}/folder" class="menu-form">
+      {% if folder_list %}<select name="folder" aria-label="{{ _('Folder') }}">
+        <option value="">{% trans trimmed %}Not in a folder{% endtrans %}</option>
+        {% for fd in folder_list %}<option value="{{ fd.id }}" {{ 'selected' if folder_of.get(c.id) == fd.id }}>{{ fd.name }}</option>{% endfor %}
+      </select>{% endif %}
+      <input name="new_name" dir="auto" placeholder="{{ _('New folder name') }}" aria-label="{{ _('New folder name') }}">
+      <button class="btn small">{% trans trimmed %}Move{% endtrans %}</button>
+    </form>
+    <p class="menu-h"></p>
+    <a class="danger" href="/courses/{{ c.id }}/remove">{% trans trimmed %}Delete course…{% endtrans %}</a>
+  </div>
+</details>{% endmacro %}
+{% macro course_card(r) %}{% set c = r.course %}
+<article class="card course-card{{ ' finished' if r.finished }}" data-course-search="{{ r.search }}">
+  {% if r.journey %}
+  <a class="course-main" href="/learn/{{ r.journey }}">
+  {% else %}
+  <form method="post" action="/courses/{{ c.id }}/start" class="course-start"><button class="course-main">
+  {% endif %}
+    {{ cover(c) }}
+    <span class="course-body">
+      <b class="course-title" dir="auto">{{ c.title }}</b>
+      {% if r.journey %}
+        <span class="bar" aria-hidden="true"><span style="width: {{ r.percent }}%"></span></span>
+        <span class="small muted course-meta" dir="auto">
+          {% if r.finished %}{{ icon('check', 14) }} {% trans trimmed %}Finished{% endtrans %}
+          {% elif r.next %}{{ T('{p}% · Next: {name}', p=r.percent, name=r.next.title if r.next.kind == 'lesson' else _('Module tasks')) }}
+          {% else %}{{ T('{p}% done', p=r.percent) }}{% endif %}</span>
+      {% else %}
+        <span class="small muted course-meta">{{ T('{a} modules · {b} lessons', a=c.modules|length, b=c.lesson_count) }} · {% trans trimmed %}Not started{% endtrans %}</span>
+      {% endif %}
+      {% if c.questions and not c.has_answers %}<span class="chip warn">{% trans trimmed %}No answers included{% endtrans %}</span>{% endif %}
+    </span>
+  {% if r.journey %}</a>{% else %}</button></form>{% endif %}
+  {{ course_menu(r) }}
+</article>
+{% endmacro %}
+{% block main %}
+<div class="page-head courses-head">
+  <h1>{% trans trimmed %}My courses{% endtrans %}.</h1>
+  <span class="row">
+    {% if rows %}<details class="menu new-folder">
+      <summary class="btn">{{ icon('folder', 18) }}{% trans trimmed %}New folder{% endtrans %}</summary>
+      <div class="menu-box">
+        <form method="post" action="/folders/new" class="menu-form">
+          <input name="name" dir="auto" required placeholder="{{ _('For example: Networks') }}" aria-label="{{ _('Folder name') }}">
+          <button class="btn primary small">{% trans trimmed %}Make folder{% endtrans %}</button>
+        </form>
+      </div>
+    </details>{% endif %}
+    <a class="btn primary" href="/add">{{ icon('plus', 18) }}{% trans trimmed %}Add a course{% endtrans %}</a>
+  </span>
+</div>
+
+{% if rows %}
+{% if rows|length > 3 %}
+<label class="course-filter course-find">{{ icon('search', 18) }}<input type="search" data-course-filter dir="auto" placeholder="{{ _('Search your courses and lessons') }}" aria-label="{{ _('Search your courses and lessons') }}"></label>
+{% endif %}
+<p class="muted" data-course-none hidden>{% trans trimmed %}No course matches that. Try another word.{% endtrans %}</p>
+{% if folder_list %}
+{% for g in groups %}
+<section class="folder-box" id="folder-{{ g.id or 'none' }}" data-folder-box>
+  <details open>
+    <summary class="folder-head">
+      <span class="folder-ico">{{ icon('folder', 20) }}</span>
+      <b dir="auto">{{ g.name if g.id else _('Not in a folder') }}</b>
+      <span class="muted small">{{ _('1 course') if g.rows|length == 1 else T('{n} courses', n=g.rows|length) }}</span>
+    </summary>
+    {% if g.id %}
+    <details class="menu folder-menu">
+      <summary class="btn icon-btn small" aria-label="{{ _('Folder options') }}" title="{{ _('Folder options') }}">{{ icon('more', 18) }}</summary>
+      <div class="menu-box">
+        <form method="post" action="/folders/{{ g.id }}/rename" class="menu-form">
+          <input name="name" dir="auto" value="{{ g.name }}" aria-label="{{ _('Folder name') }}" required>
+          <button class="btn small">{% trans trimmed %}Rename{% endtrans %}</button>
+        </form>
+        <form method="post" action="/folders/{{ g.id }}/delete"><button class="link btn danger" style="justify-content:flex-start">{% trans trimmed %}Delete folder (keeps its courses){% endtrans %}</button></form>
+      </div>
+    </details>
+    {% endif %}
+    {% if g.rows %}
+    <div class="course-grid">{% for r in g.rows %}{{ course_card(r) }}{% endfor %}</div>
+    {% else %}
+    <p class="muted small folder-empty">{% trans trimmed %}No courses here yet. Open More on a course and choose this folder.{% endtrans %}</p>
+    {% endif %}
+  </details>
+</section>
+{% endfor %}
+{% else %}
+<div class="course-grid">
+{% for r in rows %}{{ course_card(r) }}{% endfor %}
+</div>
+{% endif %}
+{% else %}
+<section class="card empty-courses">
+  {{ mascot('wave', 72) }}
+  <div><b>{% trans trimmed %}No courses yet.{% endtrans %}</b>
+  <p class="muted" style="margin:.2rem 0 0">{% trans trimmed %}Add one from a folder, a book, the library or AI, or try a sample below.{% endtrans %}</p>
+  <div class="row wrap" style="margin-block-start:.8rem">
+    <a class="btn primary" href="/library">{{ icon('library', 18) }}{% trans trimmed %}Browse free courses{% endtrans %}</a>
+    <a class="btn" href="/add">{{ icon('plus', 18) }}{% trans trimmed %}Add your own{% endtrans %}</a>
+  </div></div>
+</section>
+{% endif %}
+
+{% if samples %}
+<details class="section samples" {{ 'open' if not rows }}>
+  <summary><h2>{{ T('Sample courses ({n})', n=samples|length) }}</h2></summary>
+  <ul class="sample-list">
+  {% for c in samples %}
+    <li>
+      {{ cover(c, sample=True) }}
+      <span class="grow"><b dir="auto">{{ c.title }}</b><br><span class="small muted">{{ T('{a} modules · {b} lessons', a=c.modules|length, b=c.lesson_count) }}</span></span>
+      <form method="post" action="/courses/sample/{{ c.id }}"><button class="btn">{{ icon('plus', 18) }}{% trans trimmed %}Add{% endtrans %}</button></form>
+    </li>
+  {% endfor %}
+  </ul>
+</details>
+{% endif %}
+
+<p class="library-line">{{ icon('library', 18) }} <a href="/library">{% trans trimmed %}Find free courses in the course library{% endtrans %}</a></p>
+{% endblock %}

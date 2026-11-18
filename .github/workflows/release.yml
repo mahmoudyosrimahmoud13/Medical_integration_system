@@ -1,0 +1,138 @@
+name: release
+
+# Push a version tag and GitHub does the rest:
+#   git tag v1.0.0 && git push --tags
+# It tests, builds the Windows, Mac and Linux apps (the Linux "with its own engine" download has its own
+# workflow, release-linux-full.yml, which adds its files to the same release page), checks each one starts,
+# then publishes one release page with all three downloads and the notes from CHANGELOG.md.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:   # "Run workflow" button: builds the apps without publishing a release
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            label: Windows
+            file: |
+              dist/inPace-setup.exe
+              dist/inPace-windows.zip
+            extra: pywebview
+          - os: macos-latest
+            label: Mac
+            file: dist/inPace-mac.dmg
+            extra: pywebview
+          - os: ubuntu-22.04
+            label: Linux
+            file: |
+              dist/inPace-linux.tar.gz
+              dist/inPace-linux.deb
+              dist/inPace-linux.AppImage
+            extra: pillow
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use the tag as the version number
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          python3 - "${GITHUB_REF_NAME#v}" <<'PY'
+          import pathlib, re, sys
+          v = sys.argv[1]
+          for f, pat, rep in (("inpace/__init__.py", r'__version__ = "[^"]*"', f'__version__ = "{v}"'),
+                              ("pyproject.toml", r'(?m)^version = "[^"]*"', f'version = "{v}"')):
+              p = pathlib.Path(f)
+              p.write_text(re.sub(pat, rep, p.read_text(encoding="utf-8"), count=1), encoding="utf-8")
+          print("Building inPace", v)
+          PY
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python -m pip install . pyinstaller ${{ matrix.extra }} pytest httpx
+      - name: Test
+        run: python -m pytest -q
+      - name: Get Inno Setup (makes the Windows installer)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) { choco install innosetup -y --no-progress }
+      - name: Build the app
+        run: python packaging/build.py
+      - name: Check the app starts
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then APP=dist/inPace/inPace.exe;
+          elif [ "$RUNNER_OS" = "macOS" ]; then APP=dist/inPace.app/Contents/MacOS/inPace;
+          else APP=dist/inPace; fi
+          INPACE_HOME="$RUNNER_TEMP/vault" "$APP" --no-browser --port 8799 &
+          for i in $(seq 1 90); do curl -s -o /dev/null http://127.0.0.1:8799/setup && break; sleep 1; done
+          # Save the page first, then look in it. (Piping into "grep -q" cuts curl off on big pages: exit code 23.)
+          curl -sf -o "$RUNNER_TEMP/setup.html" http://127.0.0.1:8799/setup
+          grep -q "Welcome to inPace" "$RUNNER_TEMP/setup.html"
+          curl -sf -X POST http://127.0.0.1:8799/quit > /dev/null || true
+      - name: Check the app opens in its own window (not a browser tab)
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then
+            # Refresh the package list first: GitHub's machine image can point at package versions that are gone.
+            sudo apt-get update -q > /dev/null
+            sudo apt-get install -y -q --fix-missing python3-gi gir1.2-gtk-3.0 gir1.2-webkit2-4.1 > /dev/null
+            APP=dist/inPace; WANT=gtk
+          elif [ "$RUNNER_OS" = "macOS" ]; then APP=dist/inPace.app/Contents/MacOS/inPace; WANT=pywebview
+          else APP=dist/inPace/inPace.exe; WANT=pywebview; fi
+          "$APP" --which-window "$RUNNER_TEMP/window.txt"
+          GOT=$(cat "$RUNNER_TEMP/window.txt")
+          echo "Window type: $GOT"
+          [ "$GOT" = "$WANT" ]
+      - name: Check the Windows installer installs and uninstalls
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Start-Process dist\inPace-setup.exe -ArgumentList "/VERYSILENT","/SUPPRESSMSGBOXES","/NORESTART","/CURRENTUSER" -Wait
+          $app = "$env:LOCALAPPDATA\Programs\inPace\inPace.exe"
+          if (-not (Test-Path $app)) { throw "inPace.exe wasn't installed" }
+          (Get-Item $app).VersionInfo | Format-List CompanyName, ProductName, FileVersion
+          Start-Process "$env:LOCALAPPDATA\Programs\inPace\unins000.exe" -ArgumentList "/VERYSILENT","/SUPPRESSMSGBOXES" -Wait
+          Start-Sleep -Seconds 3
+          if (Test-Path $app) { throw "the uninstaller left inPace.exe behind" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ matrix.label }}
+          path: ${{ matrix.file }}
+
+  publish:
+    name: Publish the release page
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: downloads
+          merge-multiple: true
+      - name: Write the checksums (the app's auto-update checks every download against these)
+        run: cd downloads && sha256sum inPace-setup.exe inPace-windows.zip inPace-mac.dmg inPace-linux.tar.gz inPace-linux.deb inPace-linux.AppImage > SHA256SUMS && cat SHA256SUMS
+      - name: Write the release notes
+        run: python packaging/release_notes.py "${GITHUB_REF_NAME}" "${GITHUB_REPOSITORY}" > notes.md
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: inPace ${{ github.ref_name }}
+          body_path: notes.md
+          files: |
+            downloads/inPace-setup.exe
+            downloads/inPace-windows.zip
+            downloads/inPace-mac.dmg
+            downloads/inPace-linux.tar.gz
+            downloads/inPace-linux.deb
+            downloads/inPace-linux.AppImage
+            downloads/SHA256SUMS

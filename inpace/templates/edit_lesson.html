@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ T('Edit {name}', name=lesson.title) }}{% endblock %}
+{% block width %}read{% endblock %}
+{% block main %}
+<div class="page-head">
+  <p class="eyebrow"><a href="/edit/{{ c.id }}#{{ module.id }}">{{ c.title }} › {{ module.title }}</a></p>
+  <h1 dir="auto">{% trans trimmed %}Edit lesson{% endtrans %}</h1>
+</div>
+<form method="post" action="/edit/{{ c.id }}" class="card stack" data-lesson-editor data-preview="/edit/{{ c.id }}/preview">
+  <input type="hidden" name="action" value="edit_lesson"><input type="hidden" name="lesson" value="{{ lesson.id }}"><input type="hidden" name="module" value="{{ module.id }}">
+  <label>{% trans trimmed %}Title{% endtrans %}<input name="title" value="{{ lesson.title }}" required dir="auto"></label>
+  <label>{% trans trimmed %}Main video, link or file (optional, shown at the top){% endtrans %}
+    <input name="media" value="{{ lesson.media or '' }}" dir="ltr" placeholder="https://youtu.be/…  ·  /home/you/Videos/intro.mp4  ·  folder/demo-app/"></label>
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab on" data-tab="write">{% trans trimmed %}Write{% endtrans %}</button>
+    <button type="button" class="tab" data-tab="preview">{% trans trimmed %}Preview{% endtrans %}</button>
+  </div>
+  <div data-pane="write" class="stack">
+    <div class="md-bar" role="toolbar" aria-label="{{ _('Formatting') }}">
+      <button type="button" class="btn" data-md="## " title="{{ _('Heading') }}">H</button>
+      <button type="button" class="btn" data-md-wrap="**" title="{{ _('Bold') }}"><b>B</b></button>
+      <button type="button" class="btn" data-md-wrap="*" title="{{ _('Italic') }}"><i>I</i></button>
+      <button type="button" class="btn" data-md="- " title="{{ _('List') }}">•</button>
+      <button type="button" class="btn" data-md="1. " title="{{ _('Numbered list') }}">1.</button>
+      <button type="button" class="btn" data-md-wrap="`" title="{{ _('Code') }}">&lt;/&gt;</button>
+      <button type="button" class="btn" data-md-block="```" title="{{ _('Code block') }}">{ }</button>
+      <button type="button" class="btn" data-md-link title="{{ _('Link') }}">{{ icon('link', 16) }}</button>
+      <button type="button" class="btn" data-md-video title="{{ _('Video or file') }}">{{ icon('play', 16) }}</button>
+      <button type="button" class="btn" data-md="> " title="{{ _('Note') }}">❝</button>
+    </div>
+    <textarea name="content" rows="20" class="mono" dir="auto" data-md-target>{{ lesson.content }}</textarea>
+    <p class="small muted" style="margin:0">{% trans trimmed %}# Heading · **bold** · - list item · ``` around code{% endtrans %}</p>
+  </div>
+  <div data-pane="preview" hidden><div class="prose preview-box" dir="{{ 'rtl' if c.language == 'ar' else 'auto' }}"></div></div>
+  <label>{% trans trimmed %}Minutes (optional){% endtrans %}<input type="number" name="minutes" min="0" max="600" value="{{ lesson.minutes or '' }}" style="max-width:8rem"></label>
+  <input type="hidden" name="has_optional" value="1">
+  <label class="check"><input type="checkbox" name="optional" value="1" {{ 'checked' if lesson.optional }}> {% trans trimmed %}Optional lesson: the module can be finished without it{% endtrans %}</label>
+  <p class="small muted" style="margin:0">{% trans trimmed %}Good for extras: a long video, further reading or a bonus exercise. inPace shows it, but doesn't wait for it, and it doesn't count in the progress.{% endtrans %}</p>
+  <button class="btn primary big">{% trans trimmed %}Save lesson{% endtrans %}</button>
+</form>
+
+<section class="card stack" id="media">
+  <h2>{% trans trimmed %}Add a video, audio, page or link{% endtrans %}</h2>
+  <p class="small muted" style="margin:0">{% trans trimmed %}It's added to the end of the lesson text. You can move the line it adds anywhere in the text.{% endtrans %}</p>
+  <form method="post" action="/edit/{{ c.id }}/lesson/{{ lesson.id }}/media" enctype="multipart/form-data" class="stack">
+    <label>{% trans trimmed %}A link (YouTube, Vimeo or any web page){% endtrans %}<input name="ref" dir="ltr" placeholder="https://www.youtube.com/watch?v=..."></label>
+    <details class="more"><summary>{% trans trimmed %}Or a file on this computer{% endtrans %}</summary>
+      <label style="margin-block-start:.6rem">{% trans trimmed %}Full path (the file stays where it is){% endtrans %}<input name="ref_path" dir="ltr" placeholder="/home/you/Videos/lesson-1.mp4"></label>
+      <label>{% trans trimmed %}Or add a small file to the course itself{% endtrans %}<input type="file" name="file" accept="video/*,audio/*,image/*,.html,.htm,.pdf"></label>
+    </details>
+    <label>{% trans trimmed %}Caption (optional){% endtrans %}<input name="label" dir="auto"></label>
+    <button class="btn primary">{% trans trimmed %}Add to lesson{% endtrans %}</button>
+  </form>
+</section>
+{% endblock %}
